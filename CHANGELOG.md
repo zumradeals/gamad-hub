@@ -13,3 +13,4 @@
 - Add Activity Core activity, task, workflow transition and report flows.
 - Add minimal Communication Core announcements, direct messages and notifications.
 - Add MVP frontend shell, navigation, route pages, tables and status components.
+- Add initial QA tests, CI validation steps and MVP test report.
