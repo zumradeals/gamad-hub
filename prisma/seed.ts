@@ -32,6 +32,7 @@ const permissionDefinitions = [
   ["announcement.create", "announcement", "create"],
   ["announcement.publish", "announcement", "publish"],
   ["message.send", "message", "send"],
+  ["notification.create", "notification", "create"],
   ["notification.read", "notification", "read"]
 ] as const;
 
