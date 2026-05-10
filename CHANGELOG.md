@@ -10,3 +10,4 @@
 - Add Organization Core endpoints, repository, memberships, Zumara and archival flow.
 - Add Audit & Event Engine with internal event bus, audit listing, export and payload sanitization.
 - Add Knowledge Core document, version, validation, archive and export flows.
+- Add Activity Core activity, task, workflow transition and report flows.
