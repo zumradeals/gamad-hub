@@ -14,8 +14,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand">GAMAD HUB CORE</div>
-        <nav>
+        <div className="brand">
+          <span className="brand-mark" aria-hidden="true">G</span>
+          <span>
+            <strong>GAMAD</strong>
+            <small>HUB CORE</small>
+          </span>
+        </div>
+        <nav className="sidebar-nav" aria-label="Navigation principale">
           {navItems.map(([label, href]) => (
             <Link key={href} href={href}>
               {label}
@@ -23,7 +29,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
       </aside>
-      <main className="content">{children}</main>
+      <div className="workspace">
+        <header className="topbar">
+          <div>
+            <span className="eyebrow">CORE MVP</span>
+            <strong>Gouvernance interne</strong>
+          </div>
+          <div className="topbar-context">Organisation active</div>
+        </header>
+        <main className="content">{children}</main>
+      </div>
     </div>
   );
 }

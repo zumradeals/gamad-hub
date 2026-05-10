@@ -3,8 +3,12 @@ import { AppShell } from "../components/layout/app-shell";
 export default function HomePage() {
   return (
     <AppShell>
-      <h1>GAMAD HUB CORE</h1>
-      <p>Noyau MVP en cours de bootstrap.</p>
+      <div className="page-header">
+        <h1>GAMAD HUB CORE</h1>
+      </div>
+      <section className="panel">
+        <p>Noyau MVP de coordination, gouvernance et tracabilite.</p>
+      </section>
     </AppShell>
   );
 }

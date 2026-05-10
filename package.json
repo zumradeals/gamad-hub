@@ -6,6 +6,7 @@
     "apps/web",
     "api/core",
     "packages/contracts",
+    "packages/design-tokens",
     "packages/shared-types",
     "packages/validators"
   ],

@@ -9,10 +9,10 @@ export default function DashboardPage() {
         <StatusBadge value="MVP CORE" />
       </div>
       <div className="grid">
-        <div className="metric">Identites<strong>0</strong></div>
-        <div className="metric">Structures<strong>0</strong></div>
-        <div className="metric">Documents<strong>0</strong></div>
-        <div className="metric">Activites<strong>0</strong></div>
+        <div className="metric">Identites actives<strong>0</strong></div>
+        <div className="metric">Structures suivies<strong>0</strong></div>
+        <div className="metric">Documents recents<strong>0</strong></div>
+        <div className="metric">Activites en cours<strong>0</strong></div>
       </div>
     </AppShell>
   );

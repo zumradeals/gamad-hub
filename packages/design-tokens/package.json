@@ -1,0 +1,7 @@
+{
+  "name": "@gamad-hub/design-tokens",
+  "version": "0.1.0-alpha",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts"
+}

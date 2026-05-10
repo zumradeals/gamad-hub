@@ -8,7 +8,7 @@ export default function LoginPage() {
         <form>
           <input type="email" name="email" placeholder="Email" />
           <input type="password" name="password" placeholder="Mot de passe" />
-          <button type="submit">Connexion</button>
+          <button type="submit">Se connecter</button>
         </form>
       </section>
     </main>
