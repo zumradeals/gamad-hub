@@ -2,6 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException,
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { IdentityStatus, IdentityType } from "@prisma/client";
 import { IdentityRepository } from "./identity.repository";
+import { PermissionsService } from "../permissions/permissions.service";
 import { CreateGamadIdDto } from "./dto/create-gamad-id.dto";
 import { LoginDto } from "./dto/login.dto";
 import { SuspendMemberDto } from "./dto/suspend-member.dto";
@@ -9,7 +10,10 @@ import { UpdateProfileDto } from "./dto/update-profile.dto";
 
 @Injectable()
 export class IdentityService {
-  constructor(private readonly identityRepository: IdentityRepository) {}
+  constructor(
+    private readonly identityRepository: IdentityRepository,
+    private readonly permissionsService: PermissionsService
+  ) {}
 
   async createGamadId(actorId: string | undefined, dto: CreateGamadIdDto) {
     await this.assertPermission(actorId, "identity.create");
@@ -200,10 +204,7 @@ export class IdentityService {
     if (!actorId) {
       throw new UnauthorizedException("Authentication required");
     }
-    const allowed = await this.identityRepository.hasPermission(actorId, permissionCode);
-    if (!allowed) {
-      throw new ForbiddenException(`Missing permission: ${permissionCode}`);
-    }
+    await this.permissionsService.assertPermission({ actorId, permissionCode });
   }
 
   private assertEmail(email: string) {
