@@ -1,0 +1,1 @@
+# Documentation GAMAD HUB CORE
