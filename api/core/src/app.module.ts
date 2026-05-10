@@ -7,9 +7,11 @@ import { KnowledgeModule } from "./modules/knowledge/knowledge.module";
 import { CommunicationModule } from "./modules/communication/communication.module";
 import { AuditModule } from "./modules/audit/audit.module";
 import { SystemModule } from "./modules/system/system.module";
+import { PrismaModule } from "./common/prisma/prisma.module";
 
 @Module({
   imports: [
+    PrismaModule,
     IdentityModule,
     OrganizationModule,
     PermissionsModule,

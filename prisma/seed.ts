@@ -9,6 +9,7 @@ const permissionDefinitions = [
   ["identity.validate", "identity", "validate"],
   ["identity.suspend", "identity", "suspend"],
   ["identity.manage_roles", "identity", "manage_roles"],
+  ["profile.read", "profile", "read"],
   ["profile.update.self", "profile", "update_self"],
   ["organization.create", "organization", "create"],
   ["organization.read", "organization", "read"],
