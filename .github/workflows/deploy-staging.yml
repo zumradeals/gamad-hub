@@ -7,4 +7,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Staging deployment is implemented during the deployment phase."
+      - uses: actions/checkout@v4
+      - run: echo "Configure SSH deployment with GitHub Secrets before enabling live staging deploy."
+      - run: docker compose -f docker/docker-compose.yml config
