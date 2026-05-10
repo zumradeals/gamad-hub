@@ -47,6 +47,19 @@ npm run prisma:validate
 npm run prisma:generate
 ```
 
+## Verification
+
+```bash
+DATABASE_URL=postgresql://user:password@localhost:5432/gamad_hub npm run prisma:validate
+npm run test --workspace @gamad-hub/api-core
+npm run build --workspace @gamad-hub/api-core
+npm run build --workspace @gamad-hub/web
+```
+
+## Deployment
+
+See `docs/deployment/vps-deployment.md`.
+
 ## Regles fondatrices
 
 - Le backend porte la logique metier et les permissions.

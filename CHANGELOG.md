@@ -15,3 +15,4 @@
 - Add MVP frontend shell, navigation, route pages, tables and status components.
 - Add initial QA tests, CI validation steps and MVP test report.
 - Add Docker VPS deployment docs, backup/restore policies, compose healthcheck and deployment scripts.
+- Add final MVP documentation index, API docs, roadmap and MVP exclusions.
