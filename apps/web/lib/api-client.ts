@@ -1,18 +1,144 @@
 export const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 
+type ApiEnvelope<TData> = {
+  success?: boolean;
+  data?: TData;
+  error?: {
+    code?: string;
+    message?: string;
+  };
+  message?: string | string[];
+};
+
+export type CreateGamadIdInput = {
+  displayName: string;
+  email: string;
+  phone: string;
+  password: string;
+  identityType: string;
+};
+
+export type CreateOrganizationUnitInput = {
+  name: string;
+  type: string;
+  parentId?: string;
+  description?: string;
+};
+
+export type CreateDocumentInput = {
+  title: string;
+  documentType: string;
+  classification: string;
+  organizationUnitId?: string;
+};
+
+export type CreateActivityInput = {
+  title: string;
+  description: string;
+  organizationUnitId: string;
+  priority: string;
+  startDate: string;
+  endDate: string;
+};
+
+export class ApiClientError extends Error {
+  code: string;
+  status: number;
+
+  constructor(message: string, code: string, status: number) {
+    super(message);
+    this.name = "ApiClientError";
+    this.code = code;
+    this.status = status;
+  }
+}
+
+function getActorId(): string | undefined {
+  if (typeof window === "undefined") {
+    return process.env.NEXT_PUBLIC_GAMAD_ACTOR_ID;
+  }
+  return window.localStorage.getItem("gamadActorId") ?? process.env.NEXT_PUBLIC_GAMAD_ACTOR_ID;
+}
+
+function resolveErrorMessage(payload: ApiEnvelope<unknown>, fallback: string): string {
+  if (payload.error?.message) {
+    return payload.error.message;
+  }
+  if (Array.isArray(payload.message)) {
+    return payload.message.join(" ");
+  }
+  if (typeof payload.message === "string") {
+    return payload.message;
+  }
+  return fallback;
+}
+
+function resolveErrorCode(response: Response, message: string, payload: ApiEnvelope<unknown>): string {
+  if (payload.error?.code) {
+    return payload.error.code;
+  }
+  if (response.status === 401) {
+    return "AUTH_REQUIRED";
+  }
+  if (response.status === 403 || message.toLowerCase().includes("permission")) {
+    return "PERMISSION_DENIED";
+  }
+  return "API_ERROR";
+}
+
 export async function apiRequest<TData>(path: string, init?: RequestInit): Promise<TData> {
+  const actorId = getActorId();
   const response = await fetch(`${apiBaseUrl}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(actorId ? { "x-gamad-actor-id": actorId } : {}),
       ...(init?.headers ?? {})
     },
     cache: "no-store"
   });
 
-  const payload = await response.json();
+  const payload = (await response.json().catch(() => ({}))) as ApiEnvelope<TData>;
   if (!response.ok || !payload.success) {
-    throw new Error(payload.error?.message ?? "API request failed");
+    const message = resolveErrorMessage(payload, "API request failed");
+    const code = resolveErrorCode(response, message, payload);
+    throw new ApiClientError(message, code, response.status);
   }
   return payload.data as TData;
 }
+
+export const identityApi = {
+  createGamadId(input: CreateGamadIdInput) {
+    return apiRequest("/v1/identity/gamad-ids", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  }
+};
+
+export const organizationApi = {
+  createUnit(input: CreateOrganizationUnitInput) {
+    return apiRequest("/v1/organization/units", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  }
+};
+
+export const documentsApi = {
+  createDocument(input: CreateDocumentInput) {
+    return apiRequest("/v1/documents", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  }
+};
+
+export const activitiesApi = {
+  createActivity(input: CreateActivityInput) {
+    return apiRequest("/v1/activities", {
+      method: "POST",
+      body: JSON.stringify(input)
+    });
+  }
+};

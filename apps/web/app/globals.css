@@ -305,6 +305,127 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.crud-action {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-sm);
+  width: min(100%, 480px);
+}
+
+.action-button {
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.action-button-primary {
+  background: var(--gamad-gold);
+  border-color: var(--gamad-gold);
+  color: var(--gamad-deep-navy);
+}
+
+.action-button-secondary {
+  background: var(--gamad-surface);
+  border-color: var(--gamad-deep-navy);
+  color: var(--gamad-deep-navy);
+}
+
+.form-panel {
+  width: min(100%, 480px);
+  max-width: none;
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--gamad-surface);
+  border: 1px solid var(--gamad-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.form-panel label {
+  display: grid;
+  gap: 6px;
+  color: var(--gamad-graphite);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-panel input,
+.form-panel select,
+.form-panel textarea {
+  width: 100%;
+  min-width: 0;
+  background: var(--gamad-soft-white);
+  color: var(--gamad-graphite);
+  font-weight: 400;
+}
+
+.form-panel textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.api-alert {
+  width: min(100%, 480px);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.api-alert-error {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.26);
+  color: var(--gamad-danger);
+}
+
+.api-alert-success {
+  background: rgba(14, 159, 75, 0.1);
+  border: 1px solid rgba(14, 159, 75, 0.24);
+  color: var(--gamad-earth-green);
+}
+
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+  background: rgba(7, 19, 38, 0.42);
+}
+
+.confirm-dialog-panel {
+  width: min(100%, 420px);
+  padding: var(--space-lg);
+  background: var(--gamad-surface);
+  border: 1px solid var(--gamad-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(7, 19, 38, 0.22);
+}
+
+.confirm-dialog-panel h2 {
+  margin: 0 0 var(--space-sm);
+  color: var(--gamad-deep-navy);
+  font-size: 20px;
+}
+
+.confirm-dialog-panel p {
+  margin: 0 0 var(--space-md);
+  color: var(--gamad-graphite);
+}
+
 @media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -332,5 +453,21 @@ button {
   .page-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .crud-action,
+  .form-panel,
+  .api-alert {
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  .action-button,
+  .form-actions button {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
   }
 }
