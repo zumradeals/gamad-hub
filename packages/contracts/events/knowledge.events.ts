@@ -1,0 +1,1 @@
+export const knowledgeEvents: string[] = [];

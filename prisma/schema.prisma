@@ -1,0 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Prompt operationnel n1 keeps Prisma minimal.
+// The full data model is implemented in Prompt operationnel n2.
