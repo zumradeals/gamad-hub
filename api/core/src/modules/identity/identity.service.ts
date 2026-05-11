@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import * as jwt from "jsonwebtoken";
 import { IdentityStatus, IdentityType } from "@prisma/client";
 import { IdentityRepository } from "./identity.repository";
 import { PermissionsService } from "../permissions/permissions.service";
@@ -237,10 +238,11 @@ export class IdentityService {
     return expected.length === computed.length && timingSafeEqual(expected, computed);
   }
 
-  private signToken(payload: Record<string, string>) {
-    const secret = process.env.JWT_SECRET ?? "change_me";
-    const encodedPayload = Buffer.from(JSON.stringify({ ...payload, iat: Date.now() })).toString("base64url");
-    const signature = createHmac("sha256", secret).update(encodedPayload).digest("base64url");
-    return `${encodedPayload}.${signature}`;
+  private signToken(payload: Record<string, string>): string {
+    const secret = process.env.JWT_SECRET;
+    if (!secret || secret === "change_me") {
+      throw new Error("JWT_SECRET is not configured");
+    }
+    return jwt.sign(payload, secret, { expiresIn: "1d" });
   }
 }
