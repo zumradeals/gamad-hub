@@ -1,316 +1,218 @@
-# 📘 GAMAD CIVILIZATION MODEL v0.1
-## Doctrine civilisationnelle, structure humaine et architecture numérique de GAMAD
+# GAMAD CIVILIZATION MODEL v0.1
+> Doctrine civilisationnelle, structure humaine et architecture numérique de GAMAD
+
+**Version :** 0.1  
+**Statut :** Fondation officielle  
+**Couche :** 00-foundation
 
 ---
 
-# 0. Objet du document
+## 0. Objet du document
 
 Ce document définit la nature civilisationnelle de GAMAD.
 
-GAMAD n’est pas conçu comme :
-- une startup ;
-- un simple SaaS ;
-- une plateforme sociale ;
-- une entreprise technologique classique.
+GAMAD n'est pas conçu comme une startup, un simple SaaS, une plateforme sociale, ni une entreprise technologique classique.
 
 GAMAD est conçu comme une architecture humaine, organisationnelle, spirituelle, éducative et numérique.
 
 ---
 
-# 1. Principe fondamental
+## 1. Principe fondamental
 
 Le principe fondamental de GAMAD est :
 
-```text
-Formation
-→ Travail
-→ Adoration
-```
+> **Formation → Travail → Adoration**
 
 Ces trois dimensions sont inséparables.
 
 ---
 
-# 2. Vision civilisationnelle
+## 2. Vision civilisationnelle
 
-GAMAD vise la construction d’une continuité humaine par la transmission organisée de la connaissance, du travail, de la responsabilité et de la mémoire.
+GAMAD vise la construction d'une continuité humaine par la transmission organisée de la connaissance, du travail, de la responsabilité et de la mémoire.
 
 ---
 
-# 3. Nature réelle de GAMAD
+## 3. Nature réelle de GAMAD
+
+GAMAD doit être compris comme :
 
 | Niveau | Nature |
 |---|---|
-| spirituel | responsabilité humaine |
-| éducatif | transmission |
-| organisationnel | coordination |
-| économique | autonomie |
-| numérique | infrastructure |
-| civilisationnel | continuité |
+| Spirituel | Responsabilité humaine |
+| Éducatif | Transmission |
+| Organisationnel | Coordination |
+| Économique | Autonomie |
+| Numérique | Infrastructure |
+| Civilisationnel | Continuité |
 
 ---
 
-# 4. GAMAD comme Nation Numérique
+## 4. GAMAD comme Nation Numérique
 
-GAMAD fonctionne comme une nation numérique souveraine.
+GAMAD fonctionne comme une nation numérique souveraine, avec :
 
-Avec :
-- identité ;
-- règles ;
-- responsabilités ;
-- gouvernance ;
-- mémoire ;
-- citoyenneté ;
-- structures ;
-- transmission.
-
----
-
-# 5. Humanité et GAMAD
-
-Principe majeur : chaque être humain est un potentiel acteur de transmission.
-
-Donc :
-- tout humain peut bénéficier des technologies ;
-- tout humain peut contribuer ;
-- tout humain peut apprendre ;
-- tout humain peut transmettre.
-
-Même sans être citoyen GAMAD.
+- identité
+- règles
+- responsabilités
+- gouvernance
+- mémoire
+- citoyenneté
+- structures
+- transmission
 
 ---
 
-# 6. Distinction fondamentale
+## 5. Humanité et GAMAD
 
-## Humanité
+> Chaque être humain est un potentiel acteur de transmission.
 
-Accès :
-- services ;
-- outils ;
-- produits ;
-- connaissances publiques.
-
-## Citoyen GAMAD
-
-Accès :
-- CORE ;
-- structures internes ;
-- gouvernance ;
-- transmission ;
-- responsabilités ;
-- Zumra ;
-- coordination.
+Tout humain peut bénéficier des technologies, contribuer, apprendre et transmettre — même sans être citoyen GAMAD.
 
 ---
 
-# 7. Le GAMAD ID
+## 6. Distinction fondamentale
 
-Le GAMAD ID représente l’identité souveraine du citoyen GAMAD.
+### Humanité
+Accès aux services, outils, produits et connaissances publiques.
 
-Ce n’est pas :
-- un simple compte utilisateur ;
-- un email ;
-- un login technique.
-
-Mais :
-- une identité ;
-- une responsabilité ;
-- une traçabilité ;
-- une appartenance ;
-- une continuité.
+### Citoyen GAMAD
+Accès au CORE, aux structures internes, à la gouvernance, à la transmission, aux responsabilités, aux Zumra et à la coordination.
 
 ---
 
-# 8. Le CORE
+## 7. Le GAMAD ID
 
-Le GAMAD HUB CORE représente l’espace souverain interne de GAMAD.
+Le GAMAD ID représente l'identité souveraine du citoyen GAMAD.
 
-Le CORE contient :
-- gouvernance ;
-- mémoire ;
-- coordination ;
-- transmissions ;
-- notifications ;
-- structures ;
-- audit ;
-- organisation.
+Ce n'est pas un simple compte utilisateur, un email ou un login technique. C'est :
+
+- une identité
+- une responsabilité
+- une traçabilité
+- une appartenance
+- une continuité
 
 ---
 
-# 9. Les Zumra
+## 8. Le CORE
 
-Les Zumra représentent les cellules de transmission.
+Le GAMAD HUB CORE représente l'espace souverain interne de GAMAD. Il contient :
 
-Leur mission :
-- transmettre ;
-- former ;
-- structurer ;
-- accompagner ;
-- faire circuler la connaissance.
-
----
-
-# 10. Doctrine de transmission
-
-Tout citoyen GAMAD est potentiellement formateur.
-
-Toute connaissance utile doit circuler.
+- gouvernance
+- mémoire
+- coordination
+- transmissions
+- notifications
+- structures
+- audit
+- organisation
 
 ---
 
-# 11. Objectif communautaire
+## 9. Les Zumra
 
-Chaque citoyen doit tendre vers la création ou l’accompagnement d’une communauté de transmission.
-
-Exemples :
-- Zumra ;
-- groupe d’apprentissage ;
-- cellule technique ;
-- transmission métier.
+Les Zumra représentent les cellules de transmission. Leur mission : transmettre, former, structurer, accompagner, faire circuler la connaissance.
 
 ---
 
-# 12. Rôle du HCG
+## 10. Doctrine de transmission
 
-Le HCG représente la gouvernance supérieure de continuité.
-
-Le HCG supervise :
-- doctrine ;
-- cohérence ;
-- validation ;
-- continuité ;
-- transmission stratégique.
+> Tout citoyen GAMAD est potentiellement formateur.  
+> Toute connaissance utile doit circuler.
 
 ---
 
-# 13. Secret et discrétion
+## 11. Objectif communautaire
 
-Le secret est une composante de stabilité.
-
-Donc :
-- certaines infrastructures peuvent rester discrètes ;
-- certains outils peuvent ne pas afficher GAMAD ;
-- certaines architectures restent invisibles publiquement.
+Chaque citoyen doit tendre vers la création ou l'accompagnement d'une communauté de transmission : Zumra, groupe d'apprentissage, cellule technique, transmission métier.
 
 ---
 
-# 14. Doctrine technologique
+## 12. Rôle du HCG
 
-La technologie GAMAD doit servir l’humain avant le système.
-
-Pas :
-- créer dépendance vide ;
-- maximiser distraction ;
-- produire chaos cognitif.
+Le HCG représente la gouvernance supérieure de continuité. Il supervise la doctrine, la cohérence, la validation, la continuité et la transmission stratégique.
 
 ---
 
-# 15. Doctrine économique
+## 13. Secret et discrétion
 
-L’économie GAMAD vise :
-- autonomie ;
-- continuité ;
-- responsabilité ;
-- soutien communautaire ;
-- transmission durable.
+> Le secret est une composante de stabilité.
 
-Pas :
-- spéculation ;
-- extraction ;
-- dépendance.
+Certaines infrastructures peuvent rester discrètes. Certains outils peuvent ne pas afficher GAMAD. Certaines architectures restent invisibles publiquement.
 
 ---
 
-# 16. Doctrine numérique
+## 14. Doctrine technologique
 
-Le numérique dans GAMAD est une infrastructure de transmission.
-
-Pas une finalité.
+La technologie GAMAD doit servir l'humain avant le système. Pas créer dépendance vide, maximiser distraction ou produire chaos cognitif.
 
 ---
 
-# 17. Architecture civilisationnelle
+## 15. Doctrine économique
 
-## Couche 1 — Humanité
-
-Tous les humains.
-
-## Couche 2 — Écosystème public
-
-Services ouverts.
-
-## Couche 3 — Identité GAMAD
-
-GAMAD ID.
-
-## Couche 4 — CORE souverain
-
-Citoyenneté active.
-
-## Couche 5 — Gouvernance HCG
-
-Continuité stratégique.
+L'économie GAMAD vise autonomie, continuité, responsabilité, soutien communautaire et transmission durable. Pas spéculation, extraction ou dépendance.
 
 ---
 
-# 18. Doctrine des technologies publiques
+## 16. Doctrine numérique
 
-Certaines technologies créées dans le CORE peuvent :
-- devenir publiques ;
-- servir l’humanité ;
-- fonctionner indépendamment de la marque GAMAD.
-
-Mais les initiés reconnaissent l’infrastructure.
+> Le numérique dans GAMAD est une infrastructure de transmission. Pas une finalité.
 
 ---
 
-# 19. Doctrine de continuité
+## 17. Architecture civilisationnelle
 
-GAMAD doit survivre :
-- aux outils ;
-- aux plateformes ;
-- aux développeurs ;
-- aux IA ;
-- aux infrastructures ;
-- aux générations.
-
----
-
-# 20. Doctrine de mémoire
-
-Toute connaissance utile doit pouvoir :
-- être conservée ;
-- transmise ;
-- reconstruite ;
-- réutilisée.
+| Couche | Contenu |
+|---|---|
+| Couche 1 — Humanité | Tous les humains |
+| Couche 2 — Écosystème public | Services ouverts |
+| Couche 3 — Identité GAMAD | GAMAD ID |
+| Couche 4 — CORE souverain | Citoyenneté active |
+| Couche 5 — Gouvernance HCG | Continuité stratégique |
 
 ---
 
-# 21. Doctrine de responsabilité
+## 18. Doctrine des technologies publiques
 
-Le citoyen GAMAD n’est pas :
-- un consommateur passif ;
-- un simple utilisateur.
-
-Il devient :
-- acteur ;
-- transmetteur ;
-- bâtisseur ;
-- responsable.
+Certaines technologies créées dans le CORE peuvent devenir publiques, servir l'humanité et fonctionner indépendamment de la marque GAMAD. Mais les initiés reconnaissent l'infrastructure.
 
 ---
 
-# 22. Doctrine de croissance
+## 19. Doctrine de continuité
 
-La croissance GAMAD doit être organique, structurée et transmissible.
-
-Pas :
-- virale artificiellement ;
-- chaotique ;
-- dépendante d’un effet de mode.
+GAMAD doit survivre aux outils, aux plateformes, aux développeurs, aux IA, aux infrastructures et aux générations.
 
 ---
 
-# 23. Doctrine finale
+## 20. Doctrine de mémoire
 
-GAMAD doit toujours rester une architecture humaine de transmission, de responsabilité, de continuité et de souveraineté numérique.
+Toute connaissance utile doit pouvoir être conservée, transmise, reconstruite et réutilisée.
+
+---
+
+## 21. Doctrine de responsabilité
+
+Le citoyen GAMAD n'est pas un consommateur passif ni un simple utilisateur. Il devient acteur, transmetteur, bâtisseur, responsable.
+
+---
+
+## 22. Doctrine de croissance
+
+La croissance GAMAD doit être organique, structurée, transmissible. Pas virale artificiellement, chaotique ou dépendante d'un effet de mode.
+
+---
+
+## 23. Doctrine finale
+
+> GAMAD doit toujours rester une architecture humaine de transmission, de responsabilité, de continuité et de souveraineté numérique.
+
+---
+
+## 24. Slogan officiel
+
+> **Vivre la religion de Dieu pour chaque mouvement religieux.**
+
+Cela signifie que GAMAD est avant tout composé d'humains croyants, ayant une mission mondaine et spirituelle. Cette valeur est exprimée à travers la formation, le travail et l'adoration, sans offenser ni contraindre le prochain. Chacun vit sa vérité et contribue au développement humain.
+
+> **Nul n'a le droit de juger. Le seul Juge est Dieu.**
