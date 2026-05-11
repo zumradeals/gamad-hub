@@ -4,11 +4,8 @@ import { PortalShell } from "../../components/portal-shell";
 export default function ContactPage() {
   return (
     <PortalShell>
-      <PageHero eyebrow="Contact" title="Un point d’entrée public pour les demandes utiles.">
-        <p>
-          Partenariat, compétence, support, information ou autre demande publique peuvent être
-          préparés ici.
-        </p>
+      <PageHero eyebrow="Contact" title="Un point d'entree pour les demandes publiques.">
+        <p>Assistance, information, service ou autre demande peuvent etre prepares ici.</p>
       </PageHero>
       <section className="section narrow">
         <form className="public-form">
@@ -17,14 +14,14 @@ export default function ContactPage() {
             <input name="name" type="text" autoComplete="name" />
           </label>
           <label>
-            Email ou téléphone
+            Email ou telephone
             <input name="contact" type="text" autoComplete="email" />
           </label>
           <label>
             Type de demande
             <select name="requestType" defaultValue="information">
-              <option value="partenariat">Partenariat</option>
-              <option value="competence">Compétence</option>
+              <option value="service">Service</option>
+              <option value="ressource">Ressource</option>
               <option value="support">Support</option>
               <option value="information">Information</option>
               <option value="autre">Autre</option>
@@ -38,7 +35,7 @@ export default function ContactPage() {
             Message
             <textarea name="message" rows={6} />
           </label>
-          <button type="button">Préparer le message</button>
+          <button type="button">Preparer le message</button>
         </form>
       </section>
     </PortalShell>

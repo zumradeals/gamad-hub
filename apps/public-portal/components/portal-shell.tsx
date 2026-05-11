@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { mainNavigation } from "../lib/portal-content";
+import { footerColumns, mainNavigation } from "../lib/portal-content";
 
 export function PortalShell({ children }: { children: ReactNode }) {
   return (
@@ -10,7 +10,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
           <span className="brand-mark" aria-hidden="true">G</span>
           <span>
             <strong>GAMAD</strong>
-            <small>Portail public</small>
+            <small>Portail</small>
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="Navigation principale">
@@ -32,21 +32,20 @@ export function PortalShell({ children }: { children: ReactNode }) {
       </header>
       <main>{children}</main>
       <footer className="site-footer">
-        <div>
+        <div className="footer-intro">
           <strong>GAMAD</strong>
-          <p>Formation, travail, adoration au service de la transmission et de la continuité.</p>
+          <p>Portail d'information, de ressources et de services numériques.</p>
         </div>
-        <div>
-          <strong>Navigation</strong>
-          <Link href="/vision">Vision</Link>
-          <Link href="/ecosysteme">Écosystème</Link>
-          <Link href="/ressources">Ressources</Link>
-        </div>
-        <div>
-          <strong>Contact</strong>
-          <Link href="/contact">Formulaire public</Link>
-          <Link href="/connexion">Accès membre</Link>
-        </div>
+        {footerColumns.map((column) => (
+          <div key={column.title}>
+            <strong>{column.title}</strong>
+            {column.links.map((link) => (
+              <Link href={link.includes("Connexion") || link.includes("compte") ? "/connexion" : "/"} key={link}>
+                {link}
+              </Link>
+            ))}
+          </div>
+        ))}
         <p className="copyright">© GAMAD</p>
       </footer>
     </>
