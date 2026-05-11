@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": [
     "apps/web",
+    "apps/public-portal",
     "api/core",
     "packages/contracts",
     "packages/design-tokens",
