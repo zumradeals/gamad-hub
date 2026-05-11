@@ -5,10 +5,10 @@ import { serviceCategories } from "../../lib/portal-content";
 export default function ServicesPage() {
   return (
     <PortalShell>
-      <PageHero eyebrow="Services" title="Des services publics présentés avec sobriété.">
+      <PageHero eyebrow="Services" title="Acces aux services numeriques et ressources.">
         <p>
-          Les services GAMAD peuvent être directs, partenaires, hybrides ou satellites discrets.
-          Cette page reste volontairement générale.
+          Les cartes ci-dessous servent de points d'entree vers les modules publics ou satellites
+          lorsqu'ils sont disponibles.
         </p>
       </PageHero>
       <section className="section">
@@ -16,7 +16,7 @@ export default function ServicesPage() {
           {serviceCategories.map((category) => (
             <article className="info-card" key={category}>
               <h2>{category}</h2>
-              <p>Une catégorie de service destinée à soutenir les usages utiles de l’écosystème.</p>
+              <p>Une categorie de service presentee comme acces public de portail.</p>
             </article>
           ))}
         </div>

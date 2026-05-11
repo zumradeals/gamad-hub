@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata = {
-  title: "GAMAD | Portail public",
+  title: "GAMAD | Portail",
   description:
-    "Portail public GAMAD pour découvrir la vision, l’écosystème, la transmission et les accès publics."
+    "Portail GAMAD pour rechercher des articles, ressources, services, formations et modules publics."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

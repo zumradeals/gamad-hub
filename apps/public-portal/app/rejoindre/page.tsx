@@ -2,26 +2,25 @@ import { PageHero } from "../../components/page-hero";
 import { PortalShell } from "../../components/portal-shell";
 
 const path = [
-  "Proposer une compétence",
-  "Demander un accès",
-  "Candidature",
-  "Validation interne",
-  "GAMAD ID",
-  "Orientation"
+  "Creer une demande",
+  "Indiquer un contact",
+  "Choisir les services d'interet",
+  "Recevoir une reponse",
+  "Activer mon compte"
 ] as const;
 
 export default function RejoindrePage() {
   return (
     <PortalShell>
-      <PageHero eyebrow="Rejoindre" title="Un parcours progressif pour contribuer avec clarté.">
+      <PageHero eyebrow="Rejoindre GAMAD" title="Creer une demande d'acces.">
         <p>
-          La première étape reste simple et publique. Les informations sensibles ou internes ne
-          sont pas demandées ici.
+          Le formulaire public prepare une prise de contact simple pour acceder progressivement aux
+          services disponibles.
         </p>
       </PageHero>
       <section className="section split">
         <div>
-          <h2>Parcours public initial</h2>
+          <h2>Parcours public</h2>
           <ol className="ordered-list">
             {path.map((item) => (
               <li key={item}>{item}</li>
@@ -34,11 +33,11 @@ export default function RejoindrePage() {
             <input name="lastName" type="text" autoComplete="family-name" />
           </label>
           <label>
-            Prénom
+            Prenom
             <input name="firstName" type="text" autoComplete="given-name" />
           </label>
           <label>
-            Email ou téléphone
+            Email ou telephone
             <input name="contact" type="text" autoComplete="email" />
           </label>
           <label>
@@ -50,26 +49,18 @@ export default function RejoindrePage() {
             <input name="city" type="text" autoComplete="address-level2" />
           </label>
           <label>
-            Compétence principale
-            <input name="skill" type="text" />
+            Service souhaite
+            <input name="service" type="text" />
           </label>
           <label>
-            Domaine d’activité
-            <input name="domain" type="text" />
-          </label>
-          <label>
-            Motivation
-            <textarea name="motivation" rows={5} />
-          </label>
-          <label>
-            Disponibilité
-            <input name="availability" type="text" />
+            Message
+            <textarea name="message" rows={5} />
           </label>
           <label className="checkbox-line">
             <input name="respect" type="checkbox" />
-            <span>Accepter les règles de respect mutuel</span>
+            <span>Accepter les regles d'utilisation du portail</span>
           </label>
-          <button type="button">Préparer la demande</button>
+          <button type="button">Preparer la demande</button>
         </form>
       </section>
     </PortalShell>

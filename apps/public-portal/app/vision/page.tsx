@@ -2,20 +2,20 @@ import { PageHero } from "../../components/page-hero";
 import { PortalShell } from "../../components/portal-shell";
 
 const values = [
-  "Développement humain",
-  "Transmission du savoir",
-  "Responsabilité collective",
-  "Continuité",
-  "Souveraineté discrète"
+  "Information utile",
+  "Ressources accessibles",
+  "Services numeriques",
+  "Apprentissage",
+  "Aide aux utilisateurs"
 ] as const;
 
 export default function VisionPage() {
   return (
     <PortalShell>
-      <PageHero eyebrow="Vision" title="Une infrastructure humaine pour transmettre et construire.">
+      <PageHero eyebrow="A propos" title="Un portail simple pour trouver ce qui est utile.">
         <p>
-          GAMAD considère chaque être humain comme un potentiel acteur de développement, de
-          transmission et de responsabilité.
+          GAMAD met en avant des contenus, des ressources et des services avec une navigation claire
+          et directe.
         </p>
       </PageHero>
       <section className="section">
@@ -23,10 +23,7 @@ export default function VisionPage() {
           {values.map((value) => (
             <article className="info-card" key={value}>
               <h2>{value}</h2>
-              <p>
-                Une orientation publique qui place la dignité, l’utilité et la continuité au
-                centre de l’action.
-              </p>
+              <p>Une rubrique publique pensee pour consulter, rechercher et acceder rapidement.</p>
             </article>
           ))}
         </div>
