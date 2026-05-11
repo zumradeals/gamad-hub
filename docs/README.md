@@ -1,4 +1,4 @@
-# Documentation GAMAD HUB CORE
+# Documentation GAMAD HUB
 
 > Source de vérité officielle du projet. Tout ce qui n'est pas ici n'est pas officiel.
 
@@ -10,20 +10,22 @@ Cette documentation est organisée en couches hiérarchiques strictes.
 Chaque couche dépend de celle qui la précède. Ne jamais lire une couche technique
 sans avoir compris la couche doctrinale qui la gouverne.
 
+```text
+00-civilization    <- Les lois du monde (invariants absolus)
+00-foundation      <- Les modèles humains et civils
+01-core            <- Les spécifications techniques du noyau
+02-ui              <- Les fondations visuelles et interfaces
+03-ecosystem       <- L'architecture de l'écosystème public
+04-build           <- La stratégie et les spécifications de construction
+05-repository      <- Le blueprint Git officiel
+api/               <- Les contrats API par domaine
+deployment/        <- La documentation opérationnelle
+qa/                <- Les rapports de qualité et tests
+roadmap/           <- Le futur et les exclusions MVP
 ```
-00-civilization    ← Les lois du monde (invariants absolus)
-00-foundation      ← Les modèles humains et civils
-01-core            ← Les spécifications techniques du noyau
-02-ui              ← Les fondations visuelles et interfaces
-03-ecosystem       ← L'architecture de l'écosystème public
-04-build           ← La stratégie et les spécifications de construction
-05-repository      ← Le blueprint Git officiel
-06-prompts         ← Les prompts de développement (usage IA uniquement)
-api/               ← Les contrats API par domaine
-deployment/        ← La documentation opérationnelle
-qa/                ← Les rapports de qualité et tests
-roadmap/           ← Le futur et les exclusions MVP
-```
+
+Les prompts de développement IA sont volontairement isolés hors de `docs/`, dans `tools/prompts/`.
+Ils sont des outils de travail, pas des références d'architecture ou de doctrine.
 
 ---
 
@@ -40,7 +42,7 @@ Ils définissent ce que GAMAD est, pas comment il fonctionne.
 | `sovereignty-laws.md` | Ce que le Core contrôle absolument, frontières inviolables |
 | `zumara-doctrine.md` | Nature, cycle de vie et rôle des cellules Zumara |
 
-> ⚠️ Toute décision d'architecture ou d'implémentation doit rester cohérente
+> Toute décision d'architecture ou d'implémentation doit rester cohérente
 > avec ces documents. En cas de contradiction, la doctrine prime.
 
 ---
@@ -70,9 +72,9 @@ Ils définissent le MVP opérationnel.
 | `gamad-hub-permission-model-v0.1.md` | RBAC, rôles, permissions, contexte organisationnel |
 | `gamad-hub-event-model-v0.1.md` | Événements système, audit, correlation_id, causation_id |
 | `gamad-hub-api-contracts-v0.1.md` | Contrats API complets par domaine |
-| `gamad-hub-mvp-scope-v0.1.md` | Périmètre officiel du MVP — ce qui est inclus et exclu |
+| `gamad-hub-mvp-scope-v0.1.md` | Périmètre officiel du MVP - ce qui est inclus et exclu |
 
-> ⚠️ Le frontend ne décide jamais des permissions.
+> Le frontend ne décide jamais des permissions.
 > Le backend est l'autorité. Ces documents définissent les règles du backend.
 
 ---
@@ -114,18 +116,6 @@ Ces documents guident les décisions techniques et le séquencement du développ
 | Fichier | Rôle |
 |---|---|
 | `gamad-hub-repository-blueprint-v0.1.md` | Structure officielle du dépôt, conventions, branches, commits |
-
----
-
-## Couche 06-prompts — Prompts de développement IA
-
-> ⚠️ Ces documents sont des outils de travail pour les IA de développement.
-> Ils ne font PAS partie de la doctrine officielle du projet.
-> Ne pas les utiliser comme référence d'architecture.
-
-| Fichier | Rôle |
-|---|---|
-| `gamad-hub-prompt-pack-v0.1.md` | 13 prompts séquentiels pour construire le MVP module par module |
 
 ---
 
@@ -172,6 +162,17 @@ Documentation de référence rapide pour chaque domaine API.
 
 ---
 
+## Prompts IA
+
+Les prompts de développement IA sont conservés dans `tools/prompts/`.
+Ils ne font pas partie de la documentation officielle du projet.
+
+| Fichier | Rôle |
+|---|---|
+| `tools/prompts/gamad-hub-prompt-pack-v0.1.md` | 13 prompts séquentiels pour construire le MVP module par module |
+
+---
+
 ## Modules inclus dans le MVP
 
 - Identity Core
@@ -195,8 +196,8 @@ Documentation de référence rapide pour chaque domaine API.
 - Réseau social complet
 - Gamification massive
 
-> Ces modules attendent la stabilisation complète du Core.
-> Voir `roadmap/excluded-from-mvp.md` pour les détails.
+Ces modules attendent la stabilisation complète du Core.
+Voir `roadmap/excluded-from-mvp.md` pour les détails.
 
 ---
 
@@ -205,7 +206,7 @@ Documentation de référence rapide pour chaque domaine API.
 1. Tout nouveau document doit être placé dans la couche correspondant à sa nature.
 2. Un document de doctrine (`00-civilization`) ne contient jamais de détails techniques.
 3. Un contrat API (`api/`) ne contient jamais de logique de déploiement.
-4. Les prompts IA (`06-prompts`) ne sont jamais des références d'architecture.
+4. Les prompts IA (`tools/prompts/`) ne sont jamais des références d'architecture.
 5. Toute modification d'un document `01-core` doit être versionnée (`v0.2`, etc.).
 6. Aucun secret, mot de passe ou clé API ne doit apparaître dans ce dossier.
 
