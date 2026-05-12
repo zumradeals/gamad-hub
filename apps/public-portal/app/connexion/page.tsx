@@ -12,7 +12,7 @@ export default function ConnexionPage() {
         <div className="access-panel">
           <h2>Connexion</h2>
           <p>Continuer vers l'espace membre GAMAD.</p>
-          <Link className="button button-primary" href="/login">
+          <Link className="button button-primary" href="https://hub.gamad.net/login">
             Connexion
           </Link>
         </div>
