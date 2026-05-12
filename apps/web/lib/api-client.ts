@@ -32,6 +32,22 @@ export type CreateGamadIdInput = {
   identityType: string;
 };
 
+export type GamadIdListItem = {
+  id: string;
+  publicCode: string;
+  status: string;
+  identityType: string;
+  displayName: string;
+  email: string;
+};
+
+export type GamadIdListPayload = {
+  items: GamadIdListItem[];
+  total: number;
+  skip: number;
+  take: number;
+};
+
 export type CreateOrganizationUnitInput = {
   name: string;
   type: string;
@@ -100,14 +116,27 @@ function resolveErrorCode(response: Response, message: string, payload: ApiEnvel
   return "API_ERROR";
 }
 
-export async function apiRequest<TData>(path: string, init?: RequestInit): Promise<TData> {
+function authHeaders(): Record<string, string> {
+  const h: Record<string, string> = { "Content-Type": "application/json" };
   const actorId = getActorId();
+  if (actorId) {
+    h["x-gamad-actor-id"] = actorId;
+  }
+  if (typeof window !== "undefined") {
+    const token = window.localStorage.getItem("gamadAuthToken");
+    if (token) {
+      h["Authorization"] = `Bearer ${token}`;
+    }
+  }
+  return h;
+}
+
+export async function apiRequest<TData>(path: string, init?: RequestInit): Promise<TData> {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
-      ...(actorId ? { "x-gamad-actor-id": actorId } : {}),
-      ...(init?.headers ?? {})
+      ...authHeaders(),
+      ...(init?.headers as Record<string, string> | undefined)
     },
     cache: "no-store"
   });
@@ -127,6 +156,18 @@ export const identityApi = {
       method: "POST",
       body: JSON.stringify(input)
     });
+  },
+
+  listGamadIds(params?: { skip?: number; take?: number }) {
+    const q = new URLSearchParams();
+    if (params?.skip !== undefined) {
+      q.set("skip", String(params.skip));
+    }
+    if (params?.take !== undefined) {
+      q.set("take", String(params.take));
+    }
+    const qs = q.toString();
+    return apiRequest<GamadIdListPayload>(`/v1/identity/gamad-ids${qs ? `?${qs}` : ""}`);
   }
 };
 

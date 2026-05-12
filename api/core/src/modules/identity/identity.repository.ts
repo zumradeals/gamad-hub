@@ -123,6 +123,26 @@ export class IdentityRepository {
     );
   }
 
+  countGamadIds() {
+    return this.prisma.gamadId.count();
+  }
+
+  listGamadIdsSummary(params: { skip: number; take: number }) {
+    return this.prisma.gamadId.findMany({
+      skip: params.skip,
+      take: params.take,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        publicCode: true,
+        status: true,
+        identityType: true,
+        profile: { select: { displayName: true } },
+        accounts: { select: { email: true }, take: 1 }
+      }
+    });
+  }
+
   writeAudit(input: {
     actorId?: string;
     action: string;

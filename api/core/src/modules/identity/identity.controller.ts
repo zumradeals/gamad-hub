@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Patch, Post, Query } from "@nestjs/common";
 import { ok } from "../../common/api-response";
 import { CreateGamadIdDto } from "./dto/create-gamad-id.dto";
 import { LoginDto } from "./dto/login.dto";
@@ -16,6 +16,19 @@ export class IdentityController {
     return ok(await this.identityService.createGamadId(actorId, dto), {
       events: ["GAMAD_ID_CREATED", "ACCOUNT_CREATED"]
     });
+  }
+
+  @Get("gamad-ids")
+  async listGamadIds(
+    @Headers("x-gamad-actor-id") actorId: string | undefined,
+    @Query("skip") skipRaw?: string,
+    @Query("take") takeRaw?: string
+  ) {
+    const skipParsed = skipRaw !== undefined ? Number.parseInt(skipRaw, 10) : 0;
+    const takeParsed = takeRaw !== undefined ? Number.parseInt(takeRaw, 10) : 100;
+    const skip = Number.isFinite(skipParsed) && skipParsed >= 0 ? skipParsed : 0;
+    const take = Number.isFinite(takeParsed) && takeParsed > 0 ? takeParsed : 100;
+    return ok(await this.identityService.listGamadIds(actorId, { skip, take }));
   }
 
   @Get("gamad-ids/:id")

@@ -14,7 +14,12 @@ const initialForm: CreateGamadIdInput = {
   identityType: "person"
 };
 
-export function CreateMemberForm() {
+type CreateMemberFormProps = {
+  /** Appele apres creation reussie pour rafraichir la liste cote client. */
+  onCreated?: () => void | Promise<void>;
+};
+
+export function CreateMemberForm({ onCreated }: CreateMemberFormProps) {
   const [form, setForm] = useState(initialForm);
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -39,9 +44,10 @@ export function CreateMemberForm() {
     try {
       await identityApi.createGamadId(form);
       setForm(initialForm);
-      setSuccess("Membre cree. Rafraichissement manuel necessaire si la liste ne se met pas a jour.");
+      setSuccess("Membre cree.");
       setIsOpen(false);
       setIsConfirming(false);
+      await onCreated?.();
     } catch (caughtError) {
       setError(caughtError);
       setIsConfirming(false);

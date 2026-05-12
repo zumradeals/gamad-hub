@@ -54,6 +54,30 @@ export class IdentityService {
     };
   }
 
+  async listGamadIds(actorId: string | undefined, query?: { skip?: number; take?: number }) {
+    await this.assertPermission(actorId, "identity.read");
+    const skip = query?.skip ?? 0;
+    const take = Math.min(Math.max(query?.take ?? 100, 1), 500);
+    const [rows, total] = await Promise.all([
+      this.identityRepository.listGamadIdsSummary({ skip, take }),
+      this.identityRepository.countGamadIds()
+    ]);
+
+    return {
+      items: rows.map((row) => ({
+        id: row.id,
+        publicCode: row.publicCode,
+        status: row.status.toLowerCase(),
+        identityType: row.identityType.toLowerCase(),
+        displayName: row.profile?.displayName ?? "—",
+        email: row.accounts[0]?.email ?? "—"
+      })),
+      total,
+      skip,
+      take
+    };
+  }
+
   async readIdentity(actorId: string | undefined, id: string) {
     await this.assertPermission(actorId, "identity.read");
     const identity = await this.identityRepository.findIdentity(id);
