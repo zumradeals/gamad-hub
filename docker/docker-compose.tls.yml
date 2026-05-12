@@ -1,0 +1,11 @@
+# À fusionner pour HTTPS : monte les certificats Let's Encrypt (le webroot ACME est déjà dans docker-compose.yml).
+# Usage :
+#   export NGINX_CONF_FILE=gamad-hub-tls.conf
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.tls.yml --env-file .env up -d
+#
+# Sur le VPS : mkdir -p /var/www/certbot ; obtenir les certs (certbot --webroot -w /var/www/certbot ...) puis activer TLS.
+
+services:
+  nginx:
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro

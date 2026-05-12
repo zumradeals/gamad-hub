@@ -1,4 +1,18 @@
-export const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
+/**
+ * Base URL vers l’API Nest (préfixe `/api` côté Nginx).
+ * - Navigateur : même origine que le Hub (`/api`) → fonctionne en HTTP/HTTPS sans variable de build.
+ * - SSR / Node : `INTERNAL_API_URL` (Docker : http://api:4000/api) ou repli localhost en dev local.
+ */
+export function getApiBaseUrl(): string {
+  if (typeof window !== "undefined") {
+    return "/api";
+  }
+  return (
+    process.env.INTERNAL_API_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
+    "http://localhost:4000/api"
+  );
+}
 
 type ApiEnvelope<TData> = {
   success?: boolean;
@@ -88,7 +102,7 @@ function resolveErrorCode(response: Response, message: string, payload: ApiEnvel
 
 export async function apiRequest<TData>(path: string, init?: RequestInit): Promise<TData> {
   const actorId = getActorId();
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

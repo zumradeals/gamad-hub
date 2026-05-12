@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiBaseUrl } from "../../lib/api-client";
+import { getApiBaseUrl } from "../../lib/api-client";
 
 type LoginSuccessPayload = {
   token: string;
@@ -48,7 +48,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/v1/auth/login`, {
+      const response = await fetch(`${getApiBaseUrl()}/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
