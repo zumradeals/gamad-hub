@@ -36,6 +36,10 @@ services:
       dockerfile: docker/Dockerfile.web
     env_file:
       - ../.env
+    environment:
+      # Docker injecte HOSTNAME=container_id ; Next peut s'y fier et ne pas écouter pour le proxy Nginx.
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
     depends_on:
       - api
     networks:
@@ -47,6 +51,9 @@ services:
       dockerfile: docker/Dockerfile.portal
     env_file:
       - ../.env
+    environment:
+      HOSTNAME: "0.0.0.0"
+      PORT: "3001"
     networks:
       - gamad_internal
 
