@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Post, Query } from "@nestjs/common";
 import { ok } from "../../common/api-response";
 import { ArchiveUnitDto } from "./dto/archive-unit.dto";
 import { AssignMemberDto } from "./dto/assign-member.dto";
@@ -16,6 +16,15 @@ export class OrganizationController {
     return ok(await this.organizationService.createUnit(actorId, dto), {
       events: ["ORGANIZATION_UNIT_CREATED"]
     });
+  }
+
+  @Get("units")
+  async listUnits(
+    @Headers("x-gamad-actor-id") actorId: string | undefined,
+    @Query("skip") skipRaw?: string,
+    @Query("take") takeRaw?: string
+  ) {
+    return ok(await this.organizationService.listUnits(actorId, { skip: skipRaw ? Number(skipRaw) : undefined, take: takeRaw ? Number(takeRaw) : undefined }));
   }
 
   @Get("units/:id")

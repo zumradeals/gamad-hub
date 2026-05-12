@@ -55,11 +55,49 @@ export type CreateOrganizationUnitInput = {
   description?: string;
 };
 
+export type OrganizationUnitListItem = {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  description?: string | null;
+  createdAt: string;
+  parent?: { id: string; name: string } | null;
+  zumara?: { activityDomain: string } | null;
+  _count: { memberships: number; children: number };
+};
+
+export type OrganizationUnitListPayload = {
+  items: OrganizationUnitListItem[];
+  total: number;
+  skip: number;
+  take: number;
+};
+
 export type CreateDocumentInput = {
   title: string;
   documentType: string;
   classification: string;
   organizationUnitId?: string;
+};
+
+export type DocumentListItem = {
+  id: string;
+  title: string;
+  documentType: string;
+  classification: string;
+  status: string;
+  createdAt: string;
+  owner?: { profile?: { displayName?: string } | null } | null;
+  organizationUnit?: { id: string; name: string } | null;
+  versions?: Array<{ versionNumber: string }>;
+};
+
+export type DocumentListPayload = {
+  items: DocumentListItem[];
+  total: number;
+  skip: number;
+  take: number;
 };
 
 export type CreateActivityInput = {
@@ -69,6 +107,43 @@ export type CreateActivityInput = {
   priority: string;
   startDate: string;
   endDate: string;
+};
+
+export type ActivityListItem = {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+  owner?: { profile?: { displayName?: string } | null } | null;
+  organizationUnit?: { id: string; name: string } | null;
+  _count: { tasks: number };
+};
+
+export type ActivityListPayload = {
+  items: ActivityListItem[];
+  total: number;
+  skip: number;
+  take: number;
+};
+
+export type AuditEventListItem = {
+  id: string;
+  action: string;
+  targetType: string;
+  targetId?: string | null;
+  actorId?: string | null;
+  organizationUnitId?: string | null;
+  oldValue?: unknown;
+  newValue?: unknown;
+  createdAt: string;
+};
+
+export type AuditEventListPayload = {
+  items: AuditEventListItem[];
+  page: number;
+  limit: number;
+  total: number;
 };
 
 export class ApiClientError extends Error {
@@ -177,6 +252,14 @@ export const organizationApi = {
       method: "POST",
       body: JSON.stringify(input)
     });
+  },
+
+  listUnits(params?: { skip?: number; take?: number }) {
+    const q = new URLSearchParams();
+    if (params?.skip !== undefined) q.set("skip", String(params.skip));
+    if (params?.take !== undefined) q.set("take", String(params.take));
+    const qs = q.toString();
+    return apiRequest<OrganizationUnitListPayload>(`/v1/organization/units${qs ? `?${qs}` : ""}`);
   }
 };
 
@@ -186,6 +269,14 @@ export const documentsApi = {
       method: "POST",
       body: JSON.stringify(input)
     });
+  },
+
+  listDocuments(params?: { skip?: number; take?: number }) {
+    const q = new URLSearchParams();
+    if (params?.skip !== undefined) q.set("skip", String(params.skip));
+    if (params?.take !== undefined) q.set("take", String(params.take));
+    const qs = q.toString();
+    return apiRequest<DocumentListPayload>(`/v1/documents${qs ? `?${qs}` : ""}`);
   }
 };
 
@@ -195,5 +286,24 @@ export const activitiesApi = {
       method: "POST",
       body: JSON.stringify(input)
     });
+  },
+
+  listActivities(params?: { skip?: number; take?: number }) {
+    const q = new URLSearchParams();
+    if (params?.skip !== undefined) q.set("skip", String(params.skip));
+    if (params?.take !== undefined) q.set("take", String(params.take));
+    const qs = q.toString();
+    return apiRequest<ActivityListPayload>(`/v1/activities${qs ? `?${qs}` : ""}`);
+  }
+};
+
+export const auditApi = {
+  listEvents(params?: { page?: number; limit?: number; targetType?: string }) {
+    const q = new URLSearchParams();
+    if (params?.page !== undefined) q.set("page", String(params.page));
+    if (params?.limit !== undefined) q.set("limit", String(params.limit));
+    if (params?.targetType) q.set("targetType", params.targetType);
+    const qs = q.toString();
+    return apiRequest<AuditEventListPayload>(`/v1/audit/events${qs ? `?${qs}` : ""}`);
   }
 };

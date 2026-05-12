@@ -15,6 +15,17 @@ export class OrganizationService {
     private readonly permissionsService: PermissionsService
   ) {}
 
+  async listUnits(actorId: string | undefined, query?: { skip?: number; take?: number }) {
+    await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "organization.read" });
+    const skip = Math.max(query?.skip ?? 0, 0);
+    const take = Math.min(Math.max(query?.take ?? 100, 1), 500);
+    const [items, total] = await Promise.all([
+      this.organizationRepository.listUnits({ skip, take }),
+      this.organizationRepository.countUnits()
+    ]);
+    return { items, total, skip, take };
+  }
+
   async createUnit(actorId: string | undefined, dto: CreateOrganizationUnitDto) {
     await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "organization.create" });
     this.assertName(dto.name);

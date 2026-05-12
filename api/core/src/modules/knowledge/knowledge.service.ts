@@ -14,6 +14,17 @@ export class KnowledgeService {
     private readonly auditService: AuditService
   ) {}
 
+  async listDocuments(actorId: string | undefined, query?: { skip?: number; take?: number }) {
+    await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "document.read" });
+    const skip = Math.max(query?.skip ?? 0, 0);
+    const take = Math.min(Math.max(query?.take ?? 100, 1), 500);
+    const [items, total] = await Promise.all([
+      this.knowledgeRepository.listDocuments({ skip, take }),
+      this.knowledgeRepository.countDocuments()
+    ]);
+    return { items, total, skip, take };
+  }
+
   async createDocument(actorId: string | undefined, dto: CreateDocumentDto) {
     await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "document.create", organizationUnitId: dto.organizationUnitId });
     this.assertTitle(dto.title);

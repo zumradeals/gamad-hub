@@ -16,6 +16,17 @@ export class ActivityService {
     private readonly auditService: AuditService
   ) {}
 
+  async listActivities(actorId: string | undefined, query?: { skip?: number; take?: number }) {
+    await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "activity.read" });
+    const skip = Math.max(query?.skip ?? 0, 0);
+    const take = Math.min(Math.max(query?.take ?? 100, 1), 500);
+    const [items, total] = await Promise.all([
+      this.activityRepository.listActivities({ skip, take }),
+      this.activityRepository.countActivities()
+    ]);
+    return { items, total, skip, take };
+  }
+
   async createActivity(actorId: string | undefined, dto: CreateActivityDto) {
     await this.permissionsService.assertPermission({ actorId: actorId ?? "", permissionCode: "activity.create", organizationUnitId: dto.organizationUnitId });
     this.assertText(dto.title, "title");

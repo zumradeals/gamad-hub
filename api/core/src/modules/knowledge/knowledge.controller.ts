@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Post, Query } from "@nestjs/common";
 import { ok } from "../../common/api-response";
 import { CreateDocumentDto } from "./dto/create-document.dto";
 import { CreateDocumentVersionDto } from "./dto/create-document-version.dto";
@@ -14,6 +14,15 @@ export class KnowledgeController {
     return ok(await this.knowledgeService.createDocument(actorId, dto), {
       events: ["DOCUMENT_CREATED"]
     });
+  }
+
+  @Get()
+  async listDocuments(
+    @Headers("x-gamad-actor-id") actorId: string | undefined,
+    @Query("skip") skipRaw?: string,
+    @Query("take") takeRaw?: string
+  ) {
+    return ok(await this.knowledgeService.listDocuments(actorId, { skip: skipRaw ? Number(skipRaw) : undefined, take: takeRaw ? Number(takeRaw) : undefined }));
   }
 
   @Get(":id")

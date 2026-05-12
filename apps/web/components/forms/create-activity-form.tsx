@@ -15,7 +15,11 @@ const initialForm: CreateActivityInput = {
   endDate: ""
 };
 
-export function CreateActivityForm() {
+type CreateActivityFormProps = {
+  onCreated?: () => void | Promise<void>;
+};
+
+export function CreateActivityForm({ onCreated }: CreateActivityFormProps) {
   const [form, setForm] = useState(initialForm);
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -40,9 +44,10 @@ export function CreateActivityForm() {
     try {
       await activitiesApi.createActivity(form);
       setForm(initialForm);
-      setSuccess("Activite creee. Rafraichissement manuel necessaire si la liste ne se met pas a jour.");
+      setSuccess("Activité créée.");
       setIsOpen(false);
       setIsConfirming(false);
+      await onCreated?.();
     } catch (caughtError) {
       setError(caughtError);
       setIsConfirming(false);

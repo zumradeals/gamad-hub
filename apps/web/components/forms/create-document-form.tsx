@@ -13,7 +13,11 @@ const initialForm: CreateDocumentInput = {
   organizationUnitId: ""
 };
 
-export function CreateDocumentForm() {
+type CreateDocumentFormProps = {
+  onCreated?: () => void | Promise<void>;
+};
+
+export function CreateDocumentForm({ onCreated }: CreateDocumentFormProps) {
   const [form, setForm] = useState(initialForm);
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -41,9 +45,10 @@ export function CreateDocumentForm() {
         organizationUnitId: form.organizationUnitId || undefined
       });
       setForm(initialForm);
-      setSuccess("Document cree. Rafraichissement manuel necessaire si la liste ne se met pas a jour.");
+      setSuccess("Document créé.");
       setIsOpen(false);
       setIsConfirming(false);
+      await onCreated?.();
     } catch (caughtError) {
       setError(caughtError);
       setIsConfirming(false);

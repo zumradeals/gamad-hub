@@ -13,7 +13,11 @@ const initialForm: CreateOrganizationUnitInput = {
   description: ""
 };
 
-export function CreateOrganizationUnitForm() {
+type CreateOrganizationUnitFormProps = {
+  onCreated?: () => void | Promise<void>;
+};
+
+export function CreateOrganizationUnitForm({ onCreated }: CreateOrganizationUnitFormProps) {
   const [form, setForm] = useState(initialForm);
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -42,9 +46,10 @@ export function CreateOrganizationUnitForm() {
         description: form.description || undefined
       });
       setForm(initialForm);
-      setSuccess("Structure creee. Rafraichissement manuel necessaire si la liste ne se met pas a jour.");
+      setSuccess("Structure créée.");
       setIsOpen(false);
       setIsConfirming(false);
+      await onCreated?.();
     } catch (caughtError) {
       setError(caughtError);
       setIsConfirming(false);

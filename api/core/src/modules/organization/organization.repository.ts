@@ -6,6 +6,23 @@ import { PrismaService } from "../../common/prisma/prisma.service";
 export class OrganizationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  listUnits(params: { skip: number; take: number }) {
+    return this.prisma.organizationUnit.findMany({
+      skip: params.skip,
+      take: params.take,
+      orderBy: { createdAt: "desc" },
+      include: {
+        parent: { select: { id: true, name: true } },
+        zumara: { select: { activityDomain: true } },
+        _count: { select: { memberships: true, children: true } }
+      }
+    });
+  }
+
+  countUnits() {
+    return this.prisma.organizationUnit.count();
+  }
+
   findUnit(id: string) {
     return this.prisma.organizationUnit.findUnique({
       where: { id },

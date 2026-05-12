@@ -1,11 +1,10 @@
 import { AppShell } from "../../components/layout/app-shell";
-import { SimpleTable } from "../../components/tables/simple-table";
+import { AuditWorkspace } from "../../components/audit/audit-workspace";
 
 export default function AuditPage() {
   return (
     <AppShell>
-      <div className="page-header"><h1>Audit</h1></div>
-      <SimpleTable columns={["Action", "Cible", "Date"]} rows={[["-", "-", "-"]]} />
+      <AuditWorkspace />
     </AppShell>
   );
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Headers, Param, Post, Query } from "@nestjs/common";
 import { ok } from "../../common/api-response";
 import { ActivityDecisionDto } from "./dto/activity-decision.dto";
 import { CreateActivityDto } from "./dto/create-activity.dto";
@@ -13,6 +13,15 @@ export class ActivityController {
   @Post()
   async createActivity(@Headers("x-gamad-actor-id") actorId: string | undefined, @Body() dto: CreateActivityDto) {
     return ok(await this.activityService.createActivity(actorId, dto), { events: ["ACTIVITY_CREATED"] });
+  }
+
+  @Get()
+  async listActivities(
+    @Headers("x-gamad-actor-id") actorId: string | undefined,
+    @Query("skip") skipRaw?: string,
+    @Query("take") takeRaw?: string
+  ) {
+    return ok(await this.activityService.listActivities(actorId, { skip: skipRaw ? Number(skipRaw) : undefined, take: takeRaw ? Number(takeRaw) : undefined }));
   }
 
   @Get(":id")

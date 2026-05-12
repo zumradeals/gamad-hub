@@ -6,6 +6,28 @@ import { PrismaService } from "../../common/prisma/prisma.service";
 export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  listActivities(params: { skip: number; take: number }) {
+    return this.prisma.activity.findMany({
+      skip: params.skip,
+      take: params.take,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        priority: true,
+        createdAt: true,
+        owner: { select: { profile: { select: { displayName: true } } } },
+        organizationUnit: { select: { id: true, name: true } },
+        _count: { select: { tasks: true } }
+      }
+    });
+  }
+
+  countActivities() {
+    return this.prisma.activity.count();
+  }
+
   createActivity(data: {
     title: string;
     description?: string;

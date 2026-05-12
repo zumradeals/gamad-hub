@@ -6,6 +6,29 @@ import { PrismaService } from "../../common/prisma/prisma.service";
 export class KnowledgeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  listDocuments(params: { skip: number; take: number }) {
+    return this.prisma.document.findMany({
+      skip: params.skip,
+      take: params.take,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        documentType: true,
+        classification: true,
+        status: true,
+        createdAt: true,
+        owner: { select: { profile: { select: { displayName: true } } } },
+        organizationUnit: { select: { id: true, name: true } },
+        versions: { select: { versionNumber: true }, orderBy: { createdAt: "desc" }, take: 1 }
+      }
+    });
+  }
+
+  countDocuments() {
+    return this.prisma.document.count();
+  }
+
   createDocument(data: {
     title: string;
     documentType: DocumentType;
