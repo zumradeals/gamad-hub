@@ -34,6 +34,8 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.web
+      args:
+        INTERNAL_API_URL: http://api:4000/api
     env_file:
       - ../.env
     environment:
