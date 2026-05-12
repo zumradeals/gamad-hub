@@ -1,17 +1,23 @@
-FROM node:22-alpine AS deps
+FROM node:22-bookworm-slim AS base
+WORKDIR /app
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends ca-certificates openssl \
+  && rm -rf /var/lib/apt/lists/*
+
+FROM base AS deps
 WORKDIR /app
 COPY package*.json ./
 COPY api/core/package*.json api/core/
 RUN npm install
 
-FROM node:22-alpine AS build
+FROM base AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run prisma:generate
 RUN npm run build --workspace @gamad-hub/api-core
 
-FROM node:22-alpine AS runner
+FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app .
