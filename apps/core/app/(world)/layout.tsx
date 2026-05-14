@@ -15,9 +15,10 @@ const NAV = [
 ];
 
 const GOV_NAV = [
-  { href: '/governance/members',      label: 'Membres',      icon: '◈' },
-  { href: '/governance/organization', label: 'Organisation', icon: '◉' },
-  { href: '/governance/audit',        label: 'Audit',        icon: '▦' },
+  { href: '/governance/members',      label: 'Membres',       icon: '◈' },
+  { href: '/governance/organization', label: 'Organisation',  icon: '◉' },
+  { href: '/governance/candidatures', label: 'Candidatures',  icon: '◎' },
+  { href: '/governance/audit',        label: 'Audit',         icon: '▦' },
 ];
 
 export default function WorldLayout({ children }: { children: React.ReactNode }) {
@@ -45,12 +46,11 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + '/');
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      {/* Sidebar */}
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main, #0d1117)' }}>
       <aside style={{
         width: 240,
-        background: 'var(--bg-sidebar)',
-        borderRight: '1px solid var(--border)',
+        background: 'var(--bg-sidebar, #161b22)',
+        borderRight: '1px solid var(--border, #30363d)',
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
@@ -61,9 +61,9 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
         overflowY: 'auto',
       }}>
         {/* Identity header */}
-        <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ padding: '1.25rem 1.25rem 1rem', borderBottom: '1px solid var(--border, #30363d)' }}>
           <div style={{
-            color: 'var(--accent)',
+            color: 'var(--accent, #d4a017)',
             fontWeight: 700,
             fontSize: '0.9375rem',
             letterSpacing: '0.08em',
@@ -97,7 +97,7 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
               {levelLabel(citizen.level)}
             </span>
           </div>
-          <div style={{ marginTop: 6, color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
+          <div style={{ marginTop: 6, color: 'var(--text-secondary, #8b949e)', fontSize: '0.8125rem' }}>
             {citizen.displayName}
           </div>
         </div>
@@ -115,10 +115,11 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                 padding: '0.5625rem 1.25rem',
                 fontSize: '0.875rem',
                 fontWeight: isActive(item.href) ? 500 : 400,
-                color: isActive(item.href) ? 'var(--text-primary)' : 'var(--text-secondary)',
-                background: isActive(item.href) ? 'rgba(245,158,11,0.08)' : 'transparent',
-                borderLeft: isActive(item.href) ? '2px solid var(--accent)' : '2px solid transparent',
+                color: isActive(item.href) ? 'var(--text-primary, #e6edf3)' : 'var(--text-secondary, #8b949e)',
+                background: isActive(item.href) ? 'rgba(212,160,23,0.08)' : 'transparent',
+                borderLeft: isActive(item.href) ? '2px solid var(--accent, #d4a017)' : '2px solid transparent',
                 transition: 'all 0.12s',
+                textDecoration: 'none',
               }}
             >
               <span style={{ opacity: 0.7, width: 16, textAlign: 'center', fontSize: '1rem' }}>{item.icon}</span>
@@ -128,17 +129,13 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
 
           {citizen.level >= 3 && (
             <>
-              <div style={{
-                margin: '0.75rem 1.25rem',
-                height: 1,
-                background: 'var(--border)',
-              }} />
+              <div style={{ margin: '0.75rem 1.25rem', height: 1, background: 'var(--border, #30363d)' }} />
               <div style={{
                 padding: '0 1.25rem 0.375rem',
                 fontSize: '0.6875rem',
                 fontWeight: 600,
                 letterSpacing: '0.08em',
-                color: 'var(--text-secondary)',
+                color: 'var(--text-secondary, #8b949e)',
                 textTransform: 'uppercase',
               }}>
                 Gouvernance
@@ -154,10 +151,11 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
                     padding: '0.5625rem 1.25rem',
                     fontSize: '0.875rem',
                     fontWeight: isActive(item.href) ? 500 : 400,
-                    color: isActive(item.href) ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    color: isActive(item.href) ? 'var(--text-primary, #e6edf3)' : 'var(--text-secondary, #8b949e)',
                     background: isActive(item.href) ? 'rgba(167,139,250,0.08)' : 'transparent',
-                    borderLeft: isActive(item.href) ? '2px solid var(--level-hcg)' : '2px solid transparent',
+                    borderLeft: isActive(item.href) ? '2px solid #a78bfa' : '2px solid transparent',
                     transition: 'all 0.12s',
+                    textDecoration: 'none',
                   }}
                 >
                   <span style={{ opacity: 0.7, width: 16, textAlign: 'center' }}>{item.icon}</span>
@@ -169,18 +167,19 @@ export default function WorldLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Logout */}
-        <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--border)' }}>
+        <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--border, #30363d)' }}>
           <button
             onClick={logout}
             style={{
               width: '100%',
               padding: '0.5rem 0.875rem',
               background: 'transparent',
-              border: '1px solid var(--border)',
+              border: '1px solid var(--border, #30363d)',
               borderRadius: 6,
-              color: 'var(--text-secondary)',
+              color: 'var(--text-secondary, #8b949e)',
               fontSize: '0.8125rem',
               textAlign: 'left',
+              cursor: 'pointer',
               transition: 'all 0.12s',
             }}
           >

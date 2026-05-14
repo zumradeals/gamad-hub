@@ -100,4 +100,49 @@ export class PortalAuthRepository {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  findApplicationById(id: string) {
+    return this.prisma.portalApplication.findUnique({ where: { id } });
+  }
+
+  async findAllApplications(opts: { skip?: number; take?: number; status?: string }) {
+    const where = opts.status ? { status: opts.status as ApplicationStatus } : {};
+    const [data, total] = await Promise.all([
+      this.prisma.portalApplication.findMany({
+        where,
+        skip: opts.skip ?? 0,
+        take: opts.take ?? 50,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          gamad: {
+            select: {
+              publicCode: true,
+              status: true,
+              profile: { select: { displayName: true } },
+            },
+          },
+        },
+      }),
+      this.prisma.portalApplication.count({ where }),
+    ]);
+    return { data, total, skip: opts.skip ?? 0, take: opts.take ?? 50 };
+  }
+
+  updateApplicationStatus(id: string, status: ApplicationStatus, reviewNote?: string) {
+    return this.prisma.portalApplication.update({
+      where: { id },
+      data: {
+        status,
+        reviewNote,
+        reviewedAt: new Date(),
+      },
+    });
+  }
+
+  upgradeGamadIdToPending(gamadId: string) {
+    return this.prisma.gamadId.update({
+      where: { id: gamadId },
+      data: { status: IdentityStatus.PENDING },
+    });
+  }
 }

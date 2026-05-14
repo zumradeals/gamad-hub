@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsString, IsOptional, MinLength } from 'class-validator';
 
 export class PortalApplyDto {
-  @IsString() @IsNotEmpty() firstName: string;
-  @IsString() @IsNotEmpty() lastName: string;
-  @IsString() @IsOptional() country?: string;
+  @IsString() @MinLength(2) firstName: string;
+  @IsString() @MinLength(2) lastName: string;
+  @IsString() country: string;
   @IsString() @IsOptional() city?: string;
-  @IsString() @IsOptional() @MaxLength(1000) message?: string;
+  @IsString() @IsOptional() message?: string;
 }

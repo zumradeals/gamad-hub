@@ -3,14 +3,17 @@ import {
   ConflictException,
   UnauthorizedException,
   ForbiddenException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { PortalAuthRepository } from './portal-auth.repository';
+import { AuditService } from '../audit/audit.service';
 import { PortalRegisterDto } from './dto/portal-register.dto';
 import { PortalLoginDto } from './dto/portal-login.dto';
 import { PortalApplyDto } from './dto/portal-apply.dto';
-import { ZahabService } from '../zahab/zahab.service';
+import { ReviewApplicationDto } from './dto/review-application.dto';
 
 interface PortalJwtPayload {
   gamadId: string;
@@ -28,7 +31,7 @@ export class PortalAuthService {
 
   constructor(
     private readonly repo: PortalAuthRepository,
-    private readonly zahab: ZahabService,
+    private readonly audit: AuditService,
   ) {}
 
   async register(dto: PortalRegisterDto) {
@@ -44,9 +47,6 @@ export class PortalAuthService {
       country: dto.country,
       city: dto.city,
     });
-
-    // Initialiser wallet Zahab + bonus de bienvenue (fire-and-forget)
-    this.zahab.onRegistration(gamadId.id).catch(() => {});
 
     return {
       message: 'Compte créé avec succès',
@@ -132,5 +132,71 @@ export class PortalAuthService {
       message: 'Votre demande a bien été reçue. Nous reviendrons vers vous prochainement.',
       applicationId: application.id,
     };
+  }
+
+  // ── HCG governance endpoints ──────────────────────────────────────────────
+
+  async listApplications(opts: { skip?: number; take?: number; status?: string }) {
+    return this.repo.findAllApplications(opts);
+  }
+
+  async approveApplication(id: string, actorId: string, dto: ReviewApplicationDto) {
+    const app = await this.repo.findApplicationById(id);
+    if (!app) throw new NotFoundException('Candidature introuvable');
+    if (app.status === 'APPROVED') throw new BadRequestException('Candidature déjà approuvée');
+    if (app.status === 'REJECTED') throw new BadRequestException('Candidature rejetée — ne peut pas être approuvée');
+
+    await this.repo.updateApplicationStatus(id, 'APPROVED', dto.reviewNote ?? 'Approuvé par HCG');
+
+    // Upgrade GamadId status to PENDING (ready for HCG to activate in members page)
+    if (app.gamadId) {
+      await this.repo.upgradeGamadIdToPending(app.gamadId);
+    }
+
+    await this.audit.createEvent({
+      actorId,
+      action: 'APPLICATION_APPROVED',
+      targetType: 'PortalApplication',
+      targetId: id,
+      newValue: { reviewNote: dto.reviewNote, gamadId: app.gamadId },
+    });
+
+    return { success: true, id, status: 'APPROVED' };
+  }
+
+  async rejectApplication(id: string, actorId: string, dto: ReviewApplicationDto) {
+    const app = await this.repo.findApplicationById(id);
+    if (!app) throw new NotFoundException('Candidature introuvable');
+    if (app.status === 'REJECTED') throw new BadRequestException('Candidature déjà rejetée');
+
+    await this.repo.updateApplicationStatus(id, 'REJECTED', dto.reviewNote ?? 'Rejeté par HCG');
+
+    await this.audit.createEvent({
+      actorId,
+      action: 'APPLICATION_REJECTED',
+      targetType: 'PortalApplication',
+      targetId: id,
+      newValue: { reviewNote: dto.reviewNote },
+    });
+
+    return { success: true, id, status: 'REJECTED' };
+  }
+
+  async markUnderReview(id: string, actorId: string) {
+    const app = await this.repo.findApplicationById(id);
+    if (!app) throw new NotFoundException('Candidature introuvable');
+    if (app.status !== 'SUBMITTED') throw new BadRequestException('La candidature doit être au statut SUBMITTED');
+
+    await this.repo.updateApplicationStatus(id, 'UNDER_REVIEW', undefined);
+
+    await this.audit.createEvent({
+      actorId,
+      action: 'APPLICATION_UNDER_REVIEW',
+      targetType: 'PortalApplication',
+      targetId: id,
+      newValue: { status: 'UNDER_REVIEW' },
+    });
+
+    return { success: true, id, status: 'UNDER_REVIEW' };
   }
 }
