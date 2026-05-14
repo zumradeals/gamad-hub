@@ -1,27 +1,64 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { IdentityService } from './identity.service';
+import { CreateGamadIdDto } from './dto/create-gamad-id.dto';
+import { ValidateIdentityDto } from './dto/validate-identity.dto';
+import { SuspendIdentityDto } from './dto/suspend-identity.dto';
+import { ListQueryDto } from './dto/list-query.dto';
+import { PermissionGuard } from '../../common/guards/permission.guard';
+import { ActorId } from '../../common/decorators/actor.decorator';
 
 @Controller('identity')
 export class IdentityController {
-  constructor(private readonly service: IdentityService) {}
+  constructor(private readonly identityService: IdentityService) {}
 
   @Get('gamad-ids')
-  findAll() {
-    return this.service.findAll();
-  }
-
-  @Get('gamad-ids/:id')
-  findById(@Param('id') id: string) {
-    return this.service.findById(id);
+  @UseGuards(PermissionGuard)
+  findAll(@Query() query: ListQueryDto) {
+    return this.identityService.findAll({
+      skip: query.skip,
+      take: query.take,
+      status: query.status,
+      search: query.search,
+    });
   }
 
   @Post('gamad-ids')
-  create(@Body() body: any) {
-    return this.service.create(body);
+  @UseGuards(PermissionGuard)
+  create(@Body() dto: CreateGamadIdDto, @ActorId() actorId: string) {
+    return this.identityService.create(dto, actorId);
   }
 
-  @Patch('gamad-ids/:id')
-  update(@Param('id') id: string, @Body() body: any) {
-    return this.service.update(id, body);
+  @Get('gamad-ids/:id')
+  @UseGuards(PermissionGuard)
+  findById(@Param('id') id: string) {
+    return this.identityService.findById(id);
+  }
+
+  @Post('gamad-ids/:id/validate')
+  @UseGuards(PermissionGuard)
+  validate(
+    @Param('id') id: string,
+    @Body() dto: ValidateIdentityDto,
+    @ActorId() actorId: string,
+  ) {
+    return this.identityService.validate(id, dto, actorId);
+  }
+
+  @Post('gamad-ids/:id/suspend')
+  @UseGuards(PermissionGuard)
+  suspend(
+    @Param('id') id: string,
+    @Body() dto: SuspendIdentityDto,
+    @ActorId() actorId: string,
+  ) {
+    return this.identityService.suspend(id, dto, actorId);
   }
 }
