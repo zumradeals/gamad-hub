@@ -304,6 +304,8 @@ if [[ "$want_tls" =~ ^[Yy]$ ]]; then
     --email "$LE_EMAIL" \
     --agree-tos \
     --no-eff-email \
+    --non-interactive \
+    --keep-until-expiring \
     -d "$PORTAL_DOMAIN" \
     -d "www.$PORTAL_DOMAIN" \
     -d "$CORE_DOMAIN" \
