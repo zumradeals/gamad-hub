@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'GAMAD',
+  title: 'GAMAD — Connaissances, formations et ressources',
   description: 'Carrefour universel de connaissances, formations et ressources.',
 };
 
