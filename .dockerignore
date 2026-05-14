@@ -1,0 +1,10 @@
+**/.git
+**/.next
+**/node_modules
+**/.env
+**/.env.local
+**/npm-debug.log
+**/yarn-error.log
+**/dist
+**/*.log
+.DS_Store

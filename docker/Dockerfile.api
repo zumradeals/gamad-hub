@@ -1,0 +1,40 @@
+# ─── Stage 1: deps ────────────────────────────────────────────────────────────
+FROM node:22-alpine AS deps
+RUN apk add --no-cache openssl
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY prisma ./prisma/
+COPY api/core/package.json ./api/core/
+RUN npm ci --workspace api/core
+
+# ─── Stage 2: build ───────────────────────────────────────────────────────────
+FROM node:22-alpine AS builder
+RUN apk add --no-cache openssl
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/api/core/node_modules ./api/core/node_modules 2>/dev/null || true
+COPY prisma ./prisma/
+COPY api/core ./api/core/
+COPY package.json ./
+RUN npx prisma generate --schema prisma/schema.prisma
+WORKDIR /app/api/core
+RUN npm run build
+
+# ─── Stage 3: runner ──────────────────────────────────────────────────────────
+FROM node:22-alpine AS runner
+RUN apk add --no-cache openssl
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/api/core/node_modules ./api/core/node_modules 2>/dev/null || true
+COPY --from=builder /app/api/core/dist ./api/core/dist
+COPY --from=builder /app/prisma ./prisma
+
+# Entrypoint: migrate then start
+COPY docker/entrypoint-api.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 4000
+ENTRYPOINT ["/entrypoint.sh"]
