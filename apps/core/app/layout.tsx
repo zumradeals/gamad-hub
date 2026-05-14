@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'GAMAD HUB',
+  title: 'GAMAD HUB — Espace citoyen',
   description: 'Espace souverain des citoyens GAMAD',
 };
 

@@ -1,15 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-card: #1c2128;
-  --border: #30363d;
-  --text-primary: #e6edf3;
-  --text-secondary: #8b949e;
-  --accent-amber: #d4a017;
-  --accent-amber-light: #f0c040;
-  --accent-blue: #388bfd;
+  --bg-main: #0d1117;
+  --bg-sidebar: #0a0e1a;
+  --bg-card: #111827;
+  --bg-input: #0d1117;
+  --border: #1f2937;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --level-pending: #60a5fa;
+  --level-active: #34d399;
+  --level-responsable: #f59e0b;
+  --level-hcg: #a78bfa;
+  --danger: #f87171;
 }
 
 * {
@@ -19,14 +24,13 @@
 }
 
 body {
-  font-family: 'DM Sans', sans-serif;
-  background-color: var(--bg-primary);
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg-main);
   color: var(--text-primary);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-.gamad-id {
-  color: var(--accent-amber);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+input, textarea { font-family: inherit; }
