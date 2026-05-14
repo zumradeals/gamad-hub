@@ -547,7 +547,146 @@ Une belle interface sur un mauvais modèle produira :
 
 ---
 
-# **14\. Conclusion**
+# **14\. Domaine Portail Public — ajout v0.2**
 
-Le **GAMAD HUB DATA MODEL v0.1** établit le premier squelette informationnel du système.
+> Ces entités s'appliquent aux utilisateurs du portail (gamad.net), distincts des citoyens Core.
+> Tous partagent un GAMAD ID avec statut `PORTAL_USER`.
+
+## **14.1 PortalApplication** (candidature Réseau)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| gamadId | FK → GamadId | demandeur |
+| firstName | string | prénom déclaré |
+| lastName | string | nom déclaré |
+| country | string | pays de résidence |
+| city | string | ville de résidence |
+| motivation | string | message de candidature |
+| status | ApplicationStatus | SUBMITTED / UNDER_REVIEW / APPROVED / REJECTED |
+| createdAt | datetime | date de soumission |
+
+### Contraintes
+- Un GAMAD ID ne peut avoir qu'une candidature ACTIVE à la fois.
+- Le passage APPROVED déclenche l'envoi du lien Core par email.
+
+## **14.2 PortalFeedPost** (publications sociales)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| authorId | FK → GamadId | auteur |
+| content | string | texte brut (compatible avec futur RichText) |
+| contentBlocks | Json? | blocs de contenu rich media (futur) |
+| mediaUrls | Json? | liste d'URLs media attachés |
+| moderationStatus | ModerationStatus | PENDING / APPROVED / REJECTED / FLAGGED |
+| status | FeedPostStatus | PUBLISHED / HIDDEN / DELETED |
+| zahabRewarded | boolean | récompense ZAHAB déjà distribuée |
+| viewCount | int | compteur de vues |
+| createdAt | datetime | date de publication |
+
+### Enums
+- `ModerationStatus` : PENDING, APPROVED, REJECTED, FLAGGED
+- `FeedPostStatus` : PUBLISHED, HIDDEN, DELETED
+
+## **14.3 PortalFeedReaction** (réactions aux posts)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| postId | FK → PortalFeedPost | post réactionné |
+| userId | FK → GamadId | utilisateur |
+| type | string | type de réaction (ex. LIKE) |
+| createdAt | datetime | date |
+
+### Contraintes
+- Unique par (postId, userId, type) — une seule réaction du même type par utilisateur par post.
+- Toggle : une deuxième réaction identique supprime la première.
+
+---
+
+# **15\. Domaine ZAHAB — ajout v0.2**
+
+> Économie civilisationnelle de GAMAD. Monnaie native du portail, appelée à devenir un stablecoin Stellar.
+
+## **15.1 ZahabWallet** (portefeuille ZAHAB)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| gamadId | FK → GamadId | propriétaire (unique) |
+| balance | Decimal | solde disponible |
+| lockedAmount | Decimal | montant bloqué (conversion en cours) |
+| totalEarned | Decimal | cumul total gagné depuis création |
+| totalSpent | Decimal | cumul total dépensé |
+| createdAt | datetime | création |
+| updatedAt | datetime | mise à jour |
+
+### Contraintes
+- Un GAMAD ID possède exactement un ZahabWallet (créé automatiquement à l'inscription).
+- `balance` ne peut pas être négatif.
+- `lockedAmount` ≤ `balance`.
+
+## **15.2 ZahabTransaction** (historique financier)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| fromId | FK → GamadId? | expéditeur (null = système GAMAD) |
+| toId | FK → GamadId | bénéficiaire |
+| amount | Decimal | montant (toujours positif) |
+| reason | ZahabTransactionReason | motif de la transaction |
+| note | string? | note libre optionnelle |
+| createdAt | datetime | date (append-only) |
+
+### Règle absolue
+`ZahabTransaction` est **append-only**. Jamais modifiée, jamais supprimée.
+Une correction passe par une transaction inverse, avec note explicative.
+
+### Enum ZahabTransactionReason
+| Valeur | Description |
+|---|---|
+| REGISTRATION_BONUS | Bonus de bienvenue à l'inscription |
+| CONTENT_PUBLISHED | Publication d'un post ou article |
+| CONTENT_REWARD | Récompense qualité contenu |
+| COMMENT_REWARD | Commentaire posté |
+| REACTION_RECEIVED | Réaction reçue sur un contenu |
+| REFERRAL | Parrainage d'un nouvel utilisateur |
+| MANUAL_CREDIT | Crédit manuel par opérateur |
+| MANUAL_DEBIT | Débit manuel par opérateur |
+| CONVERSION_REQUEST | Demande de conversion en monnaie locale |
+| COTISATION_PAYMENT | Paiement cotisation Core |
+
+## **15.3 ReputationScore** (système de réputation)
+
+| Champ | Type | Rôle |
+|---|---|---|
+| id | UUID | identifiant interne |
+| gamadId | FK → GamadId | propriétaire (unique) |
+| score | int | score global |
+| contentScore | int | score basé sur le contenu |
+| engagementScore | int | score basé sur l'engagement |
+| trustLevel | TrustLevel | niveau de confiance calculé |
+| totalPosts | int | nombre de publications |
+| totalComments | int | nombre de commentaires |
+| totalReactions | int | réactions reçues |
+| totalReported | int | signalements reçus |
+| totalFlagged | int | contenus flaggés |
+| updatedAt | datetime | dernière mise à jour |
+
+### Enum TrustLevel et seuils
+| Niveau | Seuil minimum | Effet |
+|---|---|---|
+| NEWCOMER | 0 | Publications soumises à modération |
+| MEMBER | 50 | Modération accélérée |
+| TRUSTED | 200 | Publication directe sans modération |
+| VETERAN | 1 000 | Accès modérateur |
+| GUARDIAN | 5 000 | Autorité éditoriale |
+
+---
+
+# **16\. Conclusion**
+
+Le **GAMAD HUB DATA MODEL v0.2** étend le squelette Core avec le domaine Portail Public et l'économie ZAHAB.
+Ces trois nouveaux domaines (Portal, Feed, ZAHAB) forment la couche économique et sociale visible depuis gamad.net.
 
