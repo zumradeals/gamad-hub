@@ -1,27 +1,33 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
-function token(): string | null {
+function getToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('gamadToken');
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const headers: HeadersInit = { 'Content-Type': 'application/json', ...(init.headers ?? {}) };
-  const tok = token();
-  if (tok) (headers as Record<string, string>)['Authorization'] = `Bearer ${tok}`;
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
 
-  const res = await fetch(`${BASE}${path}`, { ...init, headers });
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message ?? `HTTP ${res.status}`);
+    const err = await res.json().catch(() => ({ message: `HTTP ${res.status}` }));
+    throw new Error(err.message ?? `HTTP ${res.status}`);
   }
-  return res.json() as Promise<T>;
+
+  const text = await res.text();
+  return text ? JSON.parse(text) : ({} as T);
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'POST', body: body ? JSON.stringify(body) : undefined }),
-  patch: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined }),
+  get:    <T>(path: string)                => request<T>('GET',    path),
+  post:   <T>(path: string, body?: unknown) => request<T>('POST',   path, body),
+  patch:  <T>(path: string, body?: unknown) => request<T>('PATCH',  path, body),
+  delete: <T>(path: string)                => request<T>('DELETE', path),
 };

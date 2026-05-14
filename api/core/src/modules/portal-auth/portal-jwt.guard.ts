@@ -1,26 +1,17 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class PortalJwtGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<Request>();
-    const authHeader = (request.headers as any)['authorization'] as string | undefined;
-
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Token manquant');
-    }
-
-    const token = authHeader.slice(7);
+    const req = context.switchToHttp().getRequest();
+    const auth: string | undefined = req.headers['authorization'];
+    if (!auth?.startsWith('Bearer ')) throw new UnauthorizedException('Token manquant');
+    const token = auth.slice(7);
     try {
-      const secret = process.env.JWT_SECRET ?? 'fallback_secret';
-      const payload = jwt.verify(token, secret) as any;
-      (request as any)['portalUserId'] = payload.gamadId;
+      const payload = jwt.verify(token, process.env.JWT_SECRET ?? 'fallback_secret') as any;
+      if (!payload.portalUser) throw new UnauthorizedException('Token non-portail');
+      req.portalUserId = payload.gamadId;
       return true;
     } catch {
       throw new UnauthorizedException('Token invalide ou expiré');

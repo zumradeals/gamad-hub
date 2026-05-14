@@ -12,10 +12,6 @@ import { AuditModule } from './modules/audit/audit.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { SystemModule } from './modules/system/system.module';
 import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
-import { PortalFeedModule } from './modules/portal-feed/portal-feed.module';
-import { ZahabModule } from './modules/zahab/zahab.module';
-import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
-import { ModerationModule } from './modules/moderation/moderation.module';
 
 @Module({
   imports: [
@@ -31,10 +27,6 @@ import { ModerationModule } from './modules/moderation/moderation.module';
     PermissionsModule,
     SystemModule,
     PortalAuthModule,
-    PortalFeedModule,
-    ZahabModule,
-    PortalBlogModule,
-    ModerationModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
