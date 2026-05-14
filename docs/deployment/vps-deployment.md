@@ -159,3 +159,6 @@ echo '0 3 * * * root docker exec gamad_postgres pg_dump -U gamad_user gamad_hub 
 - **Certbot** — renouvellement automatique toutes les 12h via le conteneur certbot
 - **Nginx upstreams** — blocs `upstream {}` statiques (`api:4000`, `portal:3001`, `core:3000`) résolus via le DNS interne Docker (`127.0.0.11`)
 - **Next.js standalone** — les `node_modules` du workspace root sont copiés dans l'image finale pour garantir la disponibilité de toutes les dépendances runtime en contexte monorepo
+- **Certbot webroot** — bind mounts sur le dossier hôte `/opt/gamad-hub/certbot/` partagé entre nginx et certbot ; pas de volume Docker nommé pour éviter les conflits de nommage selon le projet Compose
+  - `/opt/gamad-hub/certbot/www` → monté comme `/var/www/certbot` dans nginx ET certbot
+  - `/opt/gamad-hub/certbot/certs` → monté comme `/etc/letsencrypt` dans certbot (TLS uniquement)

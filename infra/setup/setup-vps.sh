@@ -284,15 +284,20 @@ if [[ "$want_tls" =~ ^[Yy]$ ]]; then
   read -rp "  Email pour Let's Encrypt (notifications expiration) : " LE_EMAIL </dev/tty
   [ -n "$LE_EMAIL" ] || error "Email requis pour Let's Encrypt"
 
+  # Préparer les dossiers webroot et certs sur l'hôte
+  mkdir -p "$INSTALL_DIR/certbot/www/.well-known/acme-challenge"
+  mkdir -p "$INSTALL_DIR/certbot/certs"
+
   # Démarrer nginx en HTTP seul pour le challenge ACME
+  # nginx monte ../certbot/www:/var/www/certbot — les fichiers challenge seront servis
   log "Démarrage de nginx en mode HTTP pour le challenge ACME..."
   docker compose -f docker/docker-compose.yml up -d nginx postgres api || true
   sleep 5
 
   log "Obtention des certificats pour $PORTAL_DOMAIN et $CORE_DOMAIN..."
   if docker run --rm \
-    -v gamad-hub_certbot_certs:/etc/letsencrypt \
-    -v gamad-hub_certbot_www:/var/www/certbot \
+    -v "$INSTALL_DIR/certbot/certs:/etc/letsencrypt" \
+    -v "$INSTALL_DIR/certbot/www:/var/www/certbot" \
     certbot/certbot certonly \
     --webroot \
     --webroot-path=/var/www/certbot \
