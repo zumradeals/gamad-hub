@@ -177,7 +177,7 @@ section "Configuration de l'environnement"
 
 configure_env=false
 
-if [ -f "$INSTALL_DIR/.env" ]; then
+if [ -f "$INSTALL_DIR/docker/.env" ]; then
   warn ".env existant détecté."
   read -rp "Reconfigurer le .env ? [y/N] " reconf </dev/tty
   if [[ "$reconf" =~ ^[Yy]$ ]]; then
@@ -221,7 +221,7 @@ if [ "$configure_env" = "true" ]; then
   echo ""
   read -rp "  Appuyez sur Entrée pour continuer..." _ </dev/tty
 
-  cat > "$INSTALL_DIR/.env" <<ENVEOF
+  cat > "$INSTALL_DIR/docker/.env" <<ENVEOF
 # ─── Généré par setup-vps.sh le $(date '+%Y-%m-%d %H:%M:%S') ─────────────────
 APP_ENV=production
 
@@ -252,20 +252,20 @@ CORS_ORIGINS=https://${PORTAL_DOMAIN},https://${CORE_DOMAIN}
 # ─── Compte admin initial ─────────────────────────────────────────────────────
 ADMIN_EMAIL=${ADMIN_EMAIL}
 ADMIN_PASSWORD=${ADMIN_PASS}
-ADMIN_DISPLAY_NAME=Super Admin GAMAD
+ADMIN_DISPLAY_NAME="Super Admin GAMAD"
 
 # ─── Backup ──────────────────────────────────────────────────────────────────
 BACKUP_RETENTION_DAYS=14
 ENVEOF
 
-  chmod 600 "$INSTALL_DIR/.env"
+  chmod 600 "$INSTALL_DIR/docker/.env"
   ok ".env généré avec succès"
 fi
 
 # Charger les variables pour usage dans ce script
 set -a
 # shellcheck source=/dev/null
-source "$INSTALL_DIR/.env"
+source "$INSTALL_DIR/docker/.env"
 set +a
 
 PORTAL_DOMAIN="${PORTAL_DOMAIN:-gamad.net}"
