@@ -218,6 +218,9 @@ enum ZahabTransactionReason {
   MANUAL_CREDIT
   MANUAL_DEBIT
   CONVERSION_REQUEST
+  ARTICLE_PUBLISHED
+  ARTICLE_MILESTONE_100
+  ARTICLE_MILESTONE_1K
 }
 
 enum TrustLevel {
@@ -264,6 +267,7 @@ model GamadId {
   reputation      ReputationScore?
   sentZahab       ZahabTransaction[] @relation("ZahabSender")
   receivedZahab   ZahabTransaction[] @relation("ZahabReceiver")
+  articles        Article[]          @relation("ArticleAuthor")
 }
 
 model Account {
@@ -687,11 +691,14 @@ model Article {
   categoryId       String?
   category         ArticleCategory? @relation(fields: [categoryId], references: [id])
   authorId         String?
+  author           GamadId?         @relation("ArticleAuthor", fields: [authorId], references: [id])
   status           ArticleStatus    @default(DRAFT)
   moderationStatus ModerationStatus @default(PENDING)
   zahabRewarded    Boolean          @default(false)
   rewardAmount     Float            @default(0)
   viewCount        Int              @default(0)
+  milestone100     Boolean          @default(false)
+  milestone1k      Boolean          @default(false)
   publishedAt      DateTime?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
