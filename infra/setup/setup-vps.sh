@@ -252,7 +252,7 @@ CORS_ORIGINS=https://${PORTAL_DOMAIN},https://${CORE_DOMAIN}
 # ─── Compte admin initial ─────────────────────────────────────────────────────
 ADMIN_EMAIL=${ADMIN_EMAIL}
 ADMIN_PASSWORD=${ADMIN_PASS}
-ADMIN_DISPLAY_NAME=Super Admin GAMAD
+ADMIN_DISPLAY_NAME="Super Admin GAMAD"
 
 # ─── Backup ──────────────────────────────────────────────────────────────────
 BACKUP_RETENTION_DAYS=14
