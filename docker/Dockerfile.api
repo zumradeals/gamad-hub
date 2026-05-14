@@ -12,7 +12,6 @@ FROM node:22-alpine AS builder
 RUN apk add --no-cache openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/api/core/node_modules ./api/core/node_modules 2>/dev/null || true
 COPY prisma ./prisma/
 COPY api/core ./api/core/
 COPY package.json ./
@@ -28,7 +27,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/api/core/node_modules ./api/core/node_modules 2>/dev/null || true
 COPY --from=builder /app/api/core/dist ./api/core/dist
 COPY --from=builder /app/prisma ./prisma
 

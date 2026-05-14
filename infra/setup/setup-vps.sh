@@ -50,7 +50,7 @@ if [ -f /etc/os-release ]; then
   . /etc/os-release
   if [[ "$ID" != "ubuntu" ]]; then
     warn "OS détecté : $ID $VERSION_ID. Ce script est optimisé pour Ubuntu 22.04/24.04."
-    read -rp "Continuer quand même ? [y/N] " yn
+    read -rp "Continuer quand même ? [y/N] " yn </dev/tty
     [[ "$yn" =~ ^[Yy]$ ]] || exit 1
   fi
 fi
@@ -175,41 +175,43 @@ cd "$INSTALL_DIR"
 # =============================================================================
 section "Configuration de l'environnement"
 
+configure_env=false
+
 if [ -f "$INSTALL_DIR/.env" ]; then
   warn ".env existant détecté."
-  read -rp "Reconfigurer le .env ? [y/N] " reconf
-  if [[ ! "$reconf" =~ ^[Yy]$ ]]; then
-    log ".env conservé tel quel"
-  else
+  read -rp "Reconfigurer le .env ? [y/N] " reconf </dev/tty
+  if [[ "$reconf" =~ ^[Yy]$ ]]; then
     configure_env=true
+  else
+    log ".env conservé tel quel"
   fi
 else
   configure_env=true
 fi
 
-if [ "${configure_env:-false}" = "true" ]; then
+if [ "$configure_env" = "true" ]; then
   echo ""
   echo -e "${BOLD}Configuration interactive de GAMAD HUB${RESET}"
   echo "Appuyez sur Entrée pour accepter la valeur par défaut [entre crochets]."
   echo ""
 
-  read -rp "  Domaine principal du portail [gamad.net] : " INPUT_PORTAL_DOMAIN
+  read -rp "  Domaine principal du portail [gamad.net] : " INPUT_PORTAL_DOMAIN </dev/tty
   PORTAL_DOMAIN="${INPUT_PORTAL_DOMAIN:-gamad.net}"
 
-  read -rp "  Domaine du Core GAMAD [hub.gamad.net] : " INPUT_CORE_DOMAIN
+  read -rp "  Domaine du Core GAMAD [hub.gamad.net] : " INPUT_CORE_DOMAIN </dev/tty
   CORE_DOMAIN="${INPUT_CORE_DOMAIN:-hub.gamad.net}"
 
-  read -rp "  Nom de la base de données [gamad_hub] : " INPUT_PG_DB
+  read -rp "  Nom de la base de données [gamad_hub] : " INPUT_PG_DB </dev/tty
   PG_DB="${INPUT_PG_DB:-gamad_hub}"
 
-  read -rp "  Utilisateur PostgreSQL [gamad_user] : " INPUT_PG_USER
+  read -rp "  Utilisateur PostgreSQL [gamad_user] : " INPUT_PG_USER </dev/tty
   PG_USER="${INPUT_PG_USER:-gamad_user}"
 
   # Génération automatique des secrets
   PG_PASS=$(openssl rand -base64 24 | tr -dc 'a-zA-Z0-9' | head -c 32)
   JWT_SECRET=$(openssl rand -base64 48)
 
-  read -rp "  Email administrateur GAMAD [admin@${PORTAL_DOMAIN}] : " INPUT_ADMIN_EMAIL
+  read -rp "  Email administrateur GAMAD [admin@${PORTAL_DOMAIN}] : " INPUT_ADMIN_EMAIL </dev/tty
   ADMIN_EMAIL="${INPUT_ADMIN_EMAIL:-admin@${PORTAL_DOMAIN}}"
 
   ADMIN_PASS=$(openssl rand -base64 12 | tr -dc 'a-zA-Z0-9' | head -c 16)
@@ -217,9 +219,9 @@ if [ "${configure_env:-false}" = "true" ]; then
   echo -e "  ${YELLOW}Mot de passe admin généré : ${BOLD}${ADMIN_PASS}${RESET}"
   echo -e "  ${YELLOW}↳ Notez-le maintenant, il ne sera plus affiché.${RESET}"
   echo ""
-  read -rp "  Appuyez sur Entrée pour continuer..." _
+  read -rp "  Appuyez sur Entrée pour continuer..." _ </dev/tty
 
-  cat > "$INSTALL_DIR/.env" <<EOF
+  cat > "$INSTALL_DIR/.env" <<ENVEOF
 # ─── Généré par setup-vps.sh le $(date '+%Y-%m-%d %H:%M:%S') ─────────────────
 APP_ENV=production
 
@@ -254,14 +256,17 @@ ADMIN_DISPLAY_NAME=Super Admin GAMAD
 
 # ─── Backup ──────────────────────────────────────────────────────────────────
 BACKUP_RETENTION_DAYS=14
-EOF
+ENVEOF
 
   chmod 600 "$INSTALL_DIR/.env"
   ok ".env généré avec succès"
 fi
 
 # Charger les variables pour usage dans ce script
-set -a; source "$INSTALL_DIR/.env"; set +a
+set -a
+# shellcheck source=/dev/null
+source "$INSTALL_DIR/.env"
+set +a
 
 PORTAL_DOMAIN="${PORTAL_DOMAIN:-gamad.net}"
 CORE_DOMAIN="${CORE_DOMAIN:-hub.gamad.net}"
@@ -273,10 +278,10 @@ section "Certificats TLS (Let's Encrypt)"
 
 USE_TLS=false
 
-read -rp "Obtenir les certificats Let's Encrypt maintenant ? (DNS doit déjà pointer vers ce serveur) [y/N] : " want_tls
+read -rp "Obtenir les certificats Let's Encrypt maintenant ? (DNS doit déjà pointer vers ce serveur) [y/N] : " want_tls </dev/tty
 if [[ "$want_tls" =~ ^[Yy]$ ]]; then
 
-  read -rp "  Email pour Let's Encrypt (notifications expiration) : " LE_EMAIL
+  read -rp "  Email pour Let's Encrypt (notifications expiration) : " LE_EMAIL </dev/tty
   [ -n "$LE_EMAIL" ] || error "Email requis pour Let's Encrypt"
 
   # Démarrer nginx en HTTP seul pour le challenge ACME
@@ -285,7 +290,7 @@ if [[ "$want_tls" =~ ^[Yy]$ ]]; then
   sleep 5
 
   log "Obtention des certificats pour $PORTAL_DOMAIN et $CORE_DOMAIN..."
-  docker run --rm \
+  if docker run --rm \
     -v gamad-hub_certbot_certs:/etc/letsencrypt \
     -v gamad-hub_certbot_www:/var/www/certbot \
     certbot/certbot certonly \
@@ -297,12 +302,11 @@ if [[ "$want_tls" =~ ^[Yy]$ ]]; then
     -d "$PORTAL_DOMAIN" \
     -d "www.$PORTAL_DOMAIN" \
     -d "$CORE_DOMAIN" \
-    -d "www.$CORE_DOMAIN" \
-    && USE_TLS=true \
-    || warn "Échec obtention certificats. Déploiement en HTTP uniquement."
-
-  if [ "$USE_TLS" = "true" ]; then
+    -d "www.$CORE_DOMAIN"; then
+    USE_TLS=true
     ok "Certificats obtenus pour $PORTAL_DOMAIN et $CORE_DOMAIN"
+  else
+    warn "Échec obtention certificats. Déploiement en HTTP uniquement."
   fi
 else
   log "Certificats ignorés — déploiement HTTP uniquement"
@@ -368,10 +372,8 @@ section "Vérification finale"
 
 log "Test API..."
 API_HEALTH=$(docker exec gamad_api curl -sf http://localhost:4000/api/v1/system/health 2>/dev/null || echo "FAIL")
-if echo "$API_HEALTH" | grep -qi "ok\|healthy\|running" || [ "$(echo "$API_HEALTH" | python3 -c 'import sys,json; d=json.load(sys.stdin); print("ok")' 2>/dev/null)" = "ok" ]; then
+if [ "$API_HEALTH" != "FAIL" ]; then
   ok "API répond"
-elif [ "$API_HEALTH" != "FAIL" ]; then
-  ok "API répond (réponse non-vide)"
 else
   warn "API ne répond pas encore — vérifier avec: docker logs gamad_api"
 fi
@@ -405,7 +407,7 @@ fi
 echo ""
 echo -e "  ${BOLD}Installation :${RESET}    $INSTALL_DIR"
 echo -e "  ${BOLD}Logs API :${RESET}        docker logs gamad_api -f"
-echo -e "  ${BOLD}Redéployer :${RESET}      bash $INSTALL_DIR/infra/deploy/deploy-prod.sh"
+echo -e "  ${BOLD}Redéployer :${RESET}      bash $INSTALL_DIR/infra/setup/update.sh"
 echo ""
 echo -e "  ${YELLOW}${BOLD}Sécurité — à faire maintenant :${RESET}"
 echo -e "  ${YELLOW}  1. Vérifier que .env n'est pas exposé (chmod 600 .env) ✓${RESET}"
