@@ -29,6 +29,7 @@ ENV NODE_ENV=production
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/api/core/dist ./api/core/dist
 COPY --from=builder /app/prisma ./prisma
+COPY scripts/seed-admin.js ./scripts/seed-admin.js
 
 # Entrypoint: migrate then start
 COPY docker/entrypoint-api.sh /entrypoint.sh
