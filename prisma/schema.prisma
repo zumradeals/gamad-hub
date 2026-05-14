@@ -802,8 +802,6 @@ model ZahabWallet {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  sentTransactions     ZahabTransaction[] @relation("ZahabSender")
-  receivedTransactions ZahabTransaction[] @relation("ZahabReceiver")
 }
 
 model ZahabTransaction {
