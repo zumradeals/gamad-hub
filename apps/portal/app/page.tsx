@@ -20,7 +20,7 @@ const PILLARS = [
   {
     icon: '⚙️',
     title: 'Travail',
-    desc: 'Projets utiles, collaborations, opportunités professionnelles dans l'écosystème GAMAD.',
+    desc: "Projets utiles, collaborations, opportunités professionnelles dans l'écosystème GAMAD.",
     accent: 'var(--green)',
   },
   {
