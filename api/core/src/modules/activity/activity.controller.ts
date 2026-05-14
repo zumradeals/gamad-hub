@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Actor } from '../../common/decorators/actor.decorator';
+import { ActorId as Actor } from '../../common/decorators/actor.decorator';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 import { RejectActivityDto } from './dto/reject-activity.dto';
