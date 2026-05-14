@@ -12,6 +12,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY apps/portal ./apps/portal/
 COPY package.json ./
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_* vars are baked into the JS bundle at build time — must be ARGs
+ARG NEXT_PUBLIC_API_URL=https://gamad.net/api/v1
+ARG NEXT_PUBLIC_CORE_URL=https://hub.gamad.net
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_CORE_URL=${NEXT_PUBLIC_CORE_URL}
 WORKDIR /app/apps/portal
 RUN npm run build
 

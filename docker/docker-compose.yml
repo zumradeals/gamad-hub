@@ -54,6 +54,9 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.core
+      args:
+        NEXT_PUBLIC_API_URL: https://${CORE_DOMAIN:-hub.gamad.net}/api/v1
+        NEXT_PUBLIC_PORTAL_URL: https://${PORTAL_DOMAIN:-gamad.net}
     container_name: gamad_core
     restart: unless-stopped
     environment:
@@ -72,6 +75,9 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.portal
+      args:
+        NEXT_PUBLIC_API_URL: https://${PORTAL_DOMAIN:-gamad.net}/api/v1
+        NEXT_PUBLIC_CORE_URL: https://${CORE_DOMAIN:-hub.gamad.net}
     container_name: gamad_portal
     restart: unless-stopped
     environment:

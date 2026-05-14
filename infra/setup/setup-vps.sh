@@ -247,6 +247,7 @@ PORTAL_PORT=3001
 # ─── URLs publiques ──────────────────────────────────────────────────────────
 NEXT_PUBLIC_API_URL=https://${PORTAL_DOMAIN}/api/v1
 NEXT_PUBLIC_CORE_URL=https://${CORE_DOMAIN}
+NEXT_PUBLIC_PORTAL_URL=https://${PORTAL_DOMAIN}
 CORS_ORIGINS=https://${PORTAL_DOMAIN},https://${CORE_DOMAIN}
 
 # ─── Compte admin initial ─────────────────────────────────────────────────────
