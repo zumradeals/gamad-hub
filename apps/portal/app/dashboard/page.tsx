@@ -7,12 +7,12 @@ import Footer from '../../components/Footer';
 import { getUser, getToken, clearSession, authGet } from '../../lib/api';
 
 const SHORTCUTS = [
+  { icon: '💰', label: 'Wallet ZAHAB', href: '/dashboard/wallet' },
   { icon: '📰', label: 'Blog', href: '/blog' },
   { icon: '🌐', label: 'Communauté', href: '/feed' },
   { icon: '📚', label: 'Ressources', href: '/ressources' },
   { icon: '🎓', label: 'Formation', href: '/services' },
   { icon: '💼', label: 'Services', href: '/services' },
-  { icon: '📋', label: 'Mon profil', href: '/dashboard/profil' },
 ];
 
 interface Me {

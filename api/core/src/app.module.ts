@@ -13,6 +13,7 @@ import { PermissionsModule } from './modules/permissions/permissions.module';
 import { SystemModule } from './modules/system/system.module';
 import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
 import { PortalFeedModule } from './modules/portal-feed/portal-feed.module';
+import { ZahabModule } from './modules/zahab/zahab.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PortalFeedModule } from './modules/portal-feed/portal-feed.module';
     SystemModule,
     PortalAuthModule,
     PortalFeedModule,
+    ZahabModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

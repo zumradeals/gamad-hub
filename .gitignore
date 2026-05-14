@@ -14,8 +14,7 @@ out/
 .env.local
 .env.*.local
 
-# Prisma
-prisma/migrations/
+# Prisma — migrations versionnées intentionnellement (ne pas ignorer)
 
 # Logs
 *.log
