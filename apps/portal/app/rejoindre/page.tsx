@@ -1,150 +1,145 @@
 'use client';
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
+import { authPost, publicPost, getToken } from '../../lib/api';
+import Link from 'next/link';
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '0.6875rem 0.875rem',
-  border: '1px solid var(--border)',
-  borderRadius: 6,
-  fontSize: '0.9375rem',
-  background: 'var(--bg-card)',
-  color: 'var(--text)',
-  outline: 'none',
-};
-
-export default function RejoindrePagePage() {
+export default function RejoindreePage() {
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '',
-    country: '', city: '', domain: '', motivation: '',
+    firstName: '', lastName: '', country: '', city: '', message: '',
   });
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
 
-  function set(key: string, val: string) {
-    setForm(f => ({ ...f, [key]: val }));
+  const isLoggedIn = typeof window !== 'undefined' && !!getToken();
+
+  function set(field: string) {
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm(f => ({ ...f, [field]: e.target.value }));
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      // POST to public apply endpoint (best-effort — backend may not have model yet)
-      const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
-      await fetch(`${BASE}/public/apply`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
+      await authPost('/portal/auth/apply', form);
       setDone(true);
-    } catch {
-      // Treat any network error gracefully — show confirmation anyway
-      setDone(true);
+    } catch (err: any) {
+      setError(err.message ?? 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
   }
 
+  if (!isLoggedIn) {
+    return (
+      <>
+        <Nav />
+        <main style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
+          <div className="card" style={{ maxWidth: '480px', width: '100%', textAlign: 'center', padding: '2.5rem' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🤝</div>
+            <h2 style={{ fontSize: '1.375rem', marginBottom: '0.75rem' }}>Créez un compte d'abord</h2>
+            <p style={{ color: 'var(--muted)', marginBottom: '1.75rem', fontSize: '0.9rem', lineHeight: 1.7 }}>
+              Pour soumettre une candidature, vous devez avoir un compte sur la plateforme.
+              L'inscription est gratuite et instantanée.
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+              <Link href="/inscription" className="btn btn-primary">Créer un compte</Link>
+              <Link href="/connexion" className="btn btn-outline">Se connecter</Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Nav />
-      <main>
-        <div style={{ maxWidth: 580, margin: '0 auto', padding: '3rem 2rem' }}>
-          <h1 style={{ fontSize: '2.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>Nous rejoindre</h1>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem' }}>
-            Soumettez votre candidature pour intégrer l'écosystème GAMAD.
-          </p>
-
+      <main style={{ padding: '3rem 1.5rem', minHeight: '80vh' }}>
+        <div style={{ maxWidth: '540px', margin: '0 auto' }}>
           {done ? (
-            <div style={{
-              background: '#e6f2ef',
-              border: '1px solid #0f6e5640',
-              borderRadius: 10,
-              padding: '2rem',
-              textAlign: 'center',
-            }}>
-              <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>✓</div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--teal)', marginBottom: 8 }}>
-                Candidature reçue
+            <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✓</div>
+              <h2 style={{ fontSize: '1.375rem', marginBottom: '0.75rem', color: 'var(--green)' }}>
+                Demande reçue
               </h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem' }}>
-                Votre candidature a été reçue. Nous vous contacterons prochainement.
+              <p style={{ color: 'var(--muted)', lineHeight: 1.8, fontSize: '0.9375rem' }}>
+                Votre demande a bien été enregistrée. Nous reviendrons vers vous prochainement.
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.125rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <Field label="Prénom">
-                  <input required value={form.firstName} onChange={e => set('firstName', e.target.value)} style={inputStyle} placeholder="Votre prénom" />
-                </Field>
-                <Field label="Nom">
-                  <input required value={form.lastName} onChange={e => set('lastName', e.target.value)} style={inputStyle} placeholder="Votre nom" />
-                </Field>
+            <>
+              <div style={{ marginBottom: '2rem' }}>
+                <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>Rejoindre le Réseau</h1>
+                <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.7 }}>
+                  Remplissez ce formulaire pour exprimer votre intérêt. Nous reviendrons vers vous
+                  si votre profil correspond à nos besoins actuels.
+                </p>
               </div>
 
-              <Field label="Adresse email">
-                <input required type="email" value={form.email} onChange={e => set('email', e.target.value)} style={inputStyle} placeholder="votre@email.com" />
-              </Field>
+              <div className="card">
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Prénom</label>
+                      <input className="form-input" value={form.firstName} onChange={set('firstName')} required placeholder="Jean" />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Nom</label>
+                      <input className="form-input" value={form.lastName} onChange={set('lastName')} required placeholder="Dupont" />
+                    </div>
+                  </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <Field label="Pays">
-                  <input value={form.country} onChange={e => set('country', e.target.value)} style={inputStyle} placeholder="Côte d'Ivoire" />
-                </Field>
-                <Field label="Ville">
-                  <input value={form.city} onChange={e => set('city', e.target.value)} style={inputStyle} placeholder="Abidjan" />
-                </Field>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Pays <span style={{ color: 'var(--muted)' }}>(optionnel)</span></label>
+                      <input className="form-input" value={form.country} onChange={set('country')} placeholder="France" />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Ville <span style={{ color: 'var(--muted)' }}>(optionnel)</span></label>
+                      <input className="form-input" value={form.city} onChange={set('city')} placeholder="Paris" />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      Votre message <span style={{ color: 'var(--muted)' }}>(optionnel)</span>
+                    </label>
+                    <textarea
+                      className="form-input form-textarea"
+                      value={form.message}
+                      onChange={set('message')}
+                      placeholder="Quelque chose à partager avec nous ?"
+                      maxLength={1000}
+                    />
+                  </div>
+
+                  {error && (
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 'var(--radius-md)', padding: '0.75rem', color: 'var(--danger)', fontSize: '0.875rem' }}>
+                      {error}
+                    </div>
+                  )}
+
+                  <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', marginTop: '0.25rem' }}>
+                    {loading ? 'Envoi…' : 'Soumettre ma candidature'}
+                  </button>
+                </form>
               </div>
 
-              <Field label="Domaine de compétence">
-                <input value={form.domain} onChange={e => set('domain', e.target.value)} style={inputStyle} placeholder="Technologie, Santé, Droit…" />
-              </Field>
-
-              <Field label="Motivation">
-                <textarea
-                  required
-                  rows={5}
-                  value={form.motivation}
-                  onChange={e => set('motivation', e.target.value)}
-                  style={{ ...inputStyle, resize: 'vertical' }}
-                  placeholder="Pourquoi souhaitez-vous rejoindre l'écosystème ?"
-                />
-              </Field>
-
-              {error && (
-                <div style={{ color: '#c0392b', fontSize: '0.875rem', padding: '0.5rem 0' }}>{error}</div>
-              )}
-
-              <button type="submit" disabled={loading} style={{
-                padding: '0.9375rem',
-                background: loading ? '#ccc' : 'var(--teal)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 8,
-                fontWeight: 600,
-                fontSize: '1rem',
-                marginTop: '0.5rem',
-              }}>
-                {loading ? 'Envoi…' : 'Soumettre ma candidature'}
-              </button>
-            </form>
+              <p style={{ textAlign: 'center', marginTop: '1.25rem', color: 'var(--muted)', fontSize: '0.8125rem', lineHeight: 1.7 }}>
+                Ces informations sont traitées de manière confidentielle.
+                Nous ne partageons aucune donnée sans votre consentement.
+              </p>
+            </>
           )}
         </div>
       </main>
       <Footer />
     </>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text)', marginBottom: 5 }}>
-        {label}
-      </label>
-      {children}
-    </div>
   );
 }

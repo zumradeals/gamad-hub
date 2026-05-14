@@ -17,12 +17,20 @@ enum IdentityType {
 }
 
 enum IdentityStatus {
+  PORTAL_USER
   PENDING
   ACTIVE
   LIMITED
   SUSPENDED
   ARCHIVED
   BANNED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
 }
 
 enum AccountStatus {
@@ -221,6 +229,9 @@ model GamadId {
   reactions       PostReaction[]
   publishedAnnouncements Announcement[]
   activityReports ActivityReport[]
+  portalApplications PortalApplication[]
+  feedPosts       PortalFeedPost[]
+  feedReactions   PortalFeedReaction[]
 }
 
 model Account {
@@ -672,4 +683,58 @@ model Video {
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+}
+
+// ─── PORTAIL — CANDIDATURES RÉSEAU ───────────────────────────────────────────
+
+model PortalApplication {
+  id          String            @id @default(uuid())
+  gamadId     String?
+  gamad       GamadId?          @relation(fields: [gamadId], references: [id])
+  firstName   String
+  lastName    String
+  email       String
+  country     String?
+  city        String?
+  message     String?
+  status      ApplicationStatus @default(SUBMITTED)
+  reviewNote  String?
+  reviewedAt  DateTime?
+  advancedFormSentAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+// ─── PORTAIL — FEED SOCIAL ────────────────────────────────────────────────────
+
+enum FeedPostStatus {
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+model PortalFeedPost {
+  id        String         @id @default(uuid())
+  gamadId   String
+  gamad     GamadId        @relation(fields: [gamadId], references: [id])
+  content   String
+  imageUrl  String?
+  status    FeedPostStatus @default(PUBLISHED)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  reactions PortalFeedReaction[]
+}
+
+model PortalFeedReaction {
+  id        String         @id @default(uuid())
+  postId    String
+  post      PortalFeedPost @relation(fields: [postId], references: [id])
+  gamadId   String
+  gamad     GamadId        @relation(fields: [gamadId], references: [id])
+  emoji     String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([postId, gamadId, emoji])
 }
