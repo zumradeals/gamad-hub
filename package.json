@@ -1,0 +1,26 @@
+{
+  "name": "gamad-hub",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/portal",
+    "apps/core",
+    "api/core",
+    "packages/contracts",
+    "packages/shared-types",
+    "packages/design-tokens",
+    "packages/validators"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace api/core\" \"npm run dev --workspace apps/core\" \"npm run dev --workspace apps/portal\"",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "prisma:generate": "npx prisma generate --schema prisma/schema.prisma",
+    "prisma:validate": "npx prisma validate --schema prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "typescript": "^5.5.0"
+  }
+}
