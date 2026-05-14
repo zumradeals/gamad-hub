@@ -15,6 +15,7 @@ import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
 import { PortalFeedModule } from './modules/portal-feed/portal-feed.module';
 import { ZahabModule } from './modules/zahab/zahab.module';
 import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
+import { ModerationModule } from './modules/moderation/moderation.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
     PortalFeedModule,
     ZahabModule,
     PortalBlogModule,
+    ModerationModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

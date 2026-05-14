@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { FeedPostStatus } from '@prisma/client';
+import { FeedPostStatus, ModerationStatus } from '@prisma/client';
 
 const POST_INCLUDE = {
   gamad: { include: { profile: { select: { displayName: true, avatarUrl: true } } } },
@@ -48,6 +48,17 @@ export class PortalFeedRepository {
     }
     await this.prisma.portalFeedReaction.create({ data: { postId, gamadId, emoji } });
     return { action: 'added' };
+  }
+
+  createWithStatus(gamadId: string, data: { content: string; imageUrl?: string }, moderationStatus: ModerationStatus) {
+    return this.prisma.portalFeedPost.create({
+      data: { gamadId, content: data.content, imageUrl: data.imageUrl, moderationStatus },
+      include: POST_INCLUDE,
+    });
+  }
+
+  markZahabRewarded(id: string) {
+    return this.prisma.portalFeedPost.update({ where: { id }, data: { zahabRewarded: true } });
   }
 
   async delete(id: string, gamadId: string) {

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Nav from '../../../components/Nav';
 import Footer from '../../../components/Footer';
+import SignalButton from '../../../components/SignalButton';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
@@ -109,9 +110,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <Link href="/blog" style={{ color: 'var(--blue)', fontWeight: 500, fontSize: '0.9375rem' }}>
                 ← Retour au blog
               </Link>
-              <Link href="/blog/new" className="btn btn-primary" style={{ fontSize: '0.875rem' }}>
-                ✍️ Écrire un article
-              </Link>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <SignalButton contentId={article.id} contentType="blog" />
+                <Link href="/blog/new" className="btn btn-primary" style={{ fontSize: '0.875rem' }}>
+                  ✍️ Écrire un article
+                </Link>
+              </div>
             </div>
           </div>
         </div>

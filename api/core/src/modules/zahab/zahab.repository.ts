@@ -114,6 +114,16 @@ export class ZahabRepository {
     });
   }
 
+  async decrementReputation(gamadId: string, points: number) {
+    const current = await this.getOrCreateReputation(gamadId);
+    const newScore = Math.max(0, current.score - points);
+    const newTrust = computeTrustLevel(newScore);
+    return this.prisma.reputationScore.update({
+      where: { gamadId },
+      data: { score: newScore, trustLevel: newTrust },
+    });
+  }
+
   async incrementStats(gamadId: string, field: 'totalPosts' | 'totalComments' | 'totalReactions' | 'totalReported' | 'totalFlagged') {
     return this.prisma.reputationScore.update({
       where: { gamadId },

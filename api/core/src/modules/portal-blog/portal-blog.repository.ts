@@ -96,14 +96,18 @@ export class PortalBlogRepository {
     });
   }
 
-  async submit(id: string, authorId: string) {
+  async submit(id: string, authorId: string, moderationStatus: ModerationStatus = ModerationStatus.PENDING) {
     return this.prisma.article.updateMany({
       where: {
         id,
         authorId,
         status: { in: [ArticleStatus.DRAFT] },
       },
-      data: { status: ArticleStatus.PUBLISHED, publishedAt: new Date() },
+      data: {
+        status: ArticleStatus.PUBLISHED,
+        publishedAt: new Date(),
+        moderationStatus,
+      },
     });
   }
 

@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException, Inject, forwardRef } from '@nestjs/common';
 import { PortalBlogRepository } from './portal-blog.repository';
 import { ZahabService } from '../zahab/zahab.service';
+import { ModerationService } from '../moderation/moderation.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ModerationStatus } from '@prisma/client';
@@ -10,6 +11,8 @@ export class PortalBlogService {
   constructor(
     private readonly repo: PortalBlogRepository,
     private readonly zahab: ZahabService,
+    @Inject(forwardRef(() => ModerationService))
+    private readonly moderation: ModerationService,
   ) {}
 
   // ── Public ──────────────────────────────────────────────────────────────────
@@ -52,7 +55,11 @@ export class PortalBlogService {
 
   // ── Auteur ──────────────────────────────────────────────────────────────────
 
-  create(dto: CreateArticleDto, authorId: string) {
+  async create(dto: CreateArticleDto, authorId: string) {
+    const filter = await this.moderation.filterContent(dto.content);
+    if (!filter.allowed) {
+      throw new BadRequestException(filter.reason ?? 'Contenu non autorisé');
+    }
     return this.repo.create({ ...dto, authorId });
   }
 
@@ -72,11 +79,19 @@ export class PortalBlogService {
     return { success: true };
   }
 
-  async publish(id: string, authorId: string) {
+  async publish(id: string, authorId: string, trustLevel?: string) {
     const article = await this.repo.findById(id);
     if (!article) throw new NotFoundException('Article introuvable');
     if (article.authorId !== authorId) throw new ForbiddenException();
-    await this.repo.submit(id, authorId);
+
+    const filter = await this.moderation.filterContent(article.content);
+    if (!filter.allowed) {
+      throw new BadRequestException(filter.reason ?? 'Contenu non autorisé');
+    }
+
+    const resolvedTrust = trustLevel ?? await this.zahab.getTrustLevel(authorId);
+    const autoApprove = filter.action !== 'flag' && ['TRUSTED', 'VETERAN', 'GUARDIAN'].includes(resolvedTrust);
+    await this.repo.submit(id, authorId, autoApprove ? 'APPROVED' : 'PENDING');
 
     // Récompense ZAHAB fire-and-forget — uniquement si modération APPROVED
     // Pour les TRUSTED+, le post passe directement APPROVED
