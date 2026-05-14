@@ -11,6 +11,8 @@ import { PublicModule } from './modules/public/public.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { SystemModule } from './modules/system/system.module';
+import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
+import { PortalFeedModule } from './modules/portal-feed/portal-feed.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { SystemModule } from './modules/system/system.module';
     AuditModule,
     PermissionsModule,
     SystemModule,
+    PortalAuthModule,
+    PortalFeedModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
