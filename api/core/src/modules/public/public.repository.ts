@@ -104,7 +104,7 @@ export class PublicRepository {
       where: { slug, isPublic: true, status: FormationStatus.PUBLISHED },
       include: {
         modules: {
-          select: { id: true, title: true, order: true, duration: true },
+          select: { id: true, title: true, order: true, durationMin: true },
           orderBy: { order: 'asc' },
         },
         _count: { select: { modules: true, enrollments: true } },

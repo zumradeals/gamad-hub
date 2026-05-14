@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { CommunicationService } from './communication.service';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Actor } from '../../common/decorators/actor.decorator';
+import { ActorId as Actor } from '../../common/decorators/actor.decorator';
 import { CreateThreadDto } from './dto/create-thread.dto';
 import { UpdateThreadDto } from './dto/update-thread.dto';
 import { CreatePostDto } from './dto/create-post.dto';

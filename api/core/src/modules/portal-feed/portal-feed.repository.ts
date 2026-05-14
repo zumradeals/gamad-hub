@@ -31,7 +31,11 @@ export class PortalFeedRepository {
 
   create(gamadId: string, data: { content: string; imageUrl?: string }) {
     return this.prisma.portalFeedPost.create({
-      data: { gamadId, content: data.content, imageUrl: data.imageUrl },
+      data: {
+        gamadId,
+        content: data.content,
+        ...(data.imageUrl ? { mediaUrls: [data.imageUrl] } : {}),
+      },
       include: POST_INCLUDE,
     });
   }
@@ -52,7 +56,12 @@ export class PortalFeedRepository {
 
   createWithStatus(gamadId: string, data: { content: string; imageUrl?: string }, moderationStatus: ModerationStatus) {
     return this.prisma.portalFeedPost.create({
-      data: { gamadId, content: data.content, imageUrl: data.imageUrl, moderationStatus },
+      data: {
+        gamadId,
+        content: data.content,
+        moderationStatus,
+        ...(data.imageUrl ? { mediaUrls: [data.imageUrl] } : {}),
+      },
       include: POST_INCLUDE,
     });
   }

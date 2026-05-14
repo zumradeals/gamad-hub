@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { KnowledgeService } from './knowledge.service';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Actor } from '../../common/decorators/actor.decorator';
+import { ActorId as Actor } from '../../common/decorators/actor.decorator';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { AddVersionDto } from './dto/add-version.dto';
 

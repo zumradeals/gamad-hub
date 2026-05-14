@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { PublicService } from './public.service';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Actor } from '../../common/decorators/actor.decorator';
+import { ActorId as Actor } from '../../common/decorators/actor.decorator';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { CreateVideoDto } from './dto/create-video.dto';
 

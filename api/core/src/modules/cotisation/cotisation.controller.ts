@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { CotisationService } from './cotisation.service';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { Actor } from '../../common/decorators/actor.decorator';
+import { ActorId as Actor } from '../../common/decorators/actor.decorator';
 import { CreatePeriodDto } from './dto/create-period.dto';
 import { RecordPaymentDto } from './dto/record-payment.dto';
 
