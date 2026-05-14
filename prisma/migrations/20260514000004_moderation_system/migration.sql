@@ -2,16 +2,25 @@
 -- Migration: 20260514000004_moderation_system
 
 -- New enums
-CREATE TYPE "ReportReason" AS ENUM (
-  'SPAM', 'HATE_SPEECH', 'MISINFORMATION', 'HARASSMENT',
-  'INAPPROPRIATE_CONTENT', 'COPYRIGHT', 'OTHER'
-);
+DO $$ BEGIN
+  CREATE TYPE "ReportReason" AS ENUM (
+    'SPAM', 'HATE_SPEECH', 'MISINFORMATION', 'HARASSMENT',
+    'INAPPROPRIATE_CONTENT', 'COPYRIGHT', 'OTHER'
+  );
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TYPE "ReportStatus" AS ENUM (
-  'PENDING', 'UNDER_REVIEW', 'VALIDATED', 'DISMISSED'
-);
+DO $$ BEGIN
+  CREATE TYPE "ReportStatus" AS ENUM (
+    'PENDING', 'UNDER_REVIEW', 'VALIDATED', 'DISMISSED'
+  );
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TYPE "FilterSeverity" AS ENUM ('BLOCK', 'FLAG');
+DO $$ BEGIN
+  CREATE TYPE "FilterSeverity" AS ENUM ('BLOCK', 'FLAG');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
 -- ContentReport : signalements de contenu
 CREATE TABLE "ContentReport" (
