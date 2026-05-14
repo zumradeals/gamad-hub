@@ -2,24 +2,24 @@ version: '3.9'
 
 # Overlay for production with Let's Encrypt TLS.
 # Usage: docker compose -f docker/docker-compose.yml -f docker/docker-compose.tls.yml up -d
-
-volumes:
-  certbot_www:
-  certbot_certs:
+#
+# Uses bind mounts (../certbot/www, ../certbot/certs) so the host path is
+# shared between nginx and certbot without Docker named-volume naming issues.
 
 services:
   nginx:
     volumes:
       - ../infra/nginx/gamad-hub-tls.conf:/etc/nginx/nginx.conf:ro
-      - certbot_certs:/etc/letsencrypt:ro
-      - certbot_www:/var/www/certbot:ro
+      - ../certbot/certs:/etc/letsencrypt:ro
+      # ../certbot/www:/var/www/certbot:ro is inherited from the base compose file
 
   certbot:
     image: certbot/certbot:latest
     container_name: gamad_certbot
+    restart: unless-stopped
     volumes:
-      - certbot_certs:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
+      - ../certbot/certs:/etc/letsencrypt
+      - ../certbot/www:/var/www/certbot
     entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done"
     networks:
       - gamad_internal
