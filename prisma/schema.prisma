@@ -1,0 +1,675 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum IdentityType {
+  PERSON
+  ORGANIZATION
+  SYSTEM
+}
+
+enum IdentityStatus {
+  PENDING
+  ACTIVE
+  LIMITED
+  SUSPENDED
+  ARCHIVED
+  BANNED
+}
+
+enum AccountStatus {
+  ACTIVE
+  LOCKED
+  DISABLED
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  INTERNAL
+  PRIVATE
+}
+
+enum RoleScope {
+  GLOBAL
+  UNIT
+  MODULE
+}
+
+enum PermissionAction {
+  READ
+  CREATE
+  UPDATE
+  DELETE
+  VALIDATE
+  MANAGE
+  EXPORT
+  MODERATE
+  ARCHIVE
+  ASSIGN
+  REVOKE
+  AUDIT
+}
+
+enum OrganizationUnitType {
+  HCG
+  DEPARTMENT
+  COORDINATION
+  SECTION
+  ZUMARA
+}
+
+enum OrganizationUnitStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum MembershipType {
+  MEMBER
+  RESPONSIBLE
+  ASSISTANT
+  OBSERVER
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum ZumaraVisibility {
+  PUBLIC
+  INTERNAL
+  PRIVATE
+}
+
+enum FormationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ThreadVisibility {
+  PUBLIC
+  INTERNAL
+  UNIT
+  PRIVATE
+}
+
+enum PostStatus {
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+  ARCHIVED
+}
+
+enum AnnouncementAudience {
+  PUBLIC
+  INTERNAL
+  UNIT
+  ROLE
+}
+
+enum ActivityStatus {
+  DRAFT
+  SUBMITTED
+  VALIDATED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ActivityPriority {
+  LOW
+  NORMAL
+  HIGH
+  STRATEGIC
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  CANCELLED
+}
+
+enum DocumentType {
+  STATUTE
+  REPORT
+  MANUAL
+  PROCEDURE
+  MEDIA
+  ARCHIVE
+  TRAINING
+}
+
+enum DocumentClassification {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  STRATEGIC
+}
+
+enum DocumentStatus {
+  DRAFT
+  SUBMITTED
+  VALIDATED
+  ARCHIVED
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum VideoStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ─── IDENTITY ─────────────────────────────────────────────────────────────────
+
+model GamadId {
+  id           String         @id @default(uuid())
+  publicCode   String         @unique
+  identityType IdentityType   @default(PERSON)
+  status       IdentityStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  account     Account?
+  profile     Profile?
+  memberRoles MemberRole[]
+  memberships Membership[]
+  ownedActivities Activity[]  @relation("ActivityOwner")
+  assignedTasks   Task[]      @relation("TaskAssignee")
+  ownedDocuments  Document[]  @relation("DocumentOwner")
+  sentMessages    Message[]   @relation("MessageSender")
+  receivedMessages Message[]  @relation("MessageRecipient")
+  notifications   Notification[]
+  auditEvents     AuditEvent[] @relation("AuditActor")
+  documentVersions DocumentVersion[] @relation("VersionCreator")
+  grantedRoles    MemberRole[] @relation("RoleGranter")
+  enrollments     FormationEnrollment[]
+  moduleCompletions ModuleCompletion[]
+  posts           Post[]
+  reactions       PostReaction[]
+  publishedAnnouncements Announcement[]
+  activityReports ActivityReport[]
+}
+
+model Account {
+  id           String        @id @default(uuid())
+  gamadId      String        @unique
+  gamad        GamadId       @relation(fields: [gamadId], references: [id])
+  email        String        @unique
+  phone        String?
+  passwordHash String
+  mfaEnabled   Boolean       @default(false)
+  lastLoginAt  DateTime?
+  status       AccountStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Profile {
+  id          String            @id @default(uuid())
+  gamadId     String            @unique
+  gamad       GamadId           @relation(fields: [gamadId], references: [id])
+  firstName   String?
+  lastName    String?
+  displayName String
+  avatarUrl   String?
+  bio         String?
+  birthDate   DateTime?
+  country     String?
+  city        String?
+  visibility  ProfileVisibility @default(INTERNAL)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Role {
+  id           String     @id @default(uuid())
+  name         String     @unique
+  scope        RoleScope  @default(GLOBAL)
+  description  String?
+  isSystemRole Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  rolePermissions RolePermission[]
+  memberRoles     MemberRole[]
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  code        String           @unique
+  module      String
+  action      PermissionAction
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([roleId, permissionId])
+}
+
+model MemberRole {
+  id                 String          @id @default(uuid())
+  gamadId            String
+  gamad              GamadId         @relation(fields: [gamadId], references: [id])
+  roleId             String
+  role               Role            @relation(fields: [roleId], references: [id])
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
+  grantedBy          String?
+  granter            GamadId?        @relation("RoleGranter", fields: [grantedBy], references: [id])
+  grantedAt          DateTime        @default(now())
+  revokedAt          DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+// ─── ORGANIZATION ─────────────────────────────────────────────────────────────
+
+model OrganizationUnit {
+  id          String                 @id @default(uuid())
+  name        String
+  type        OrganizationUnitType
+  parentId    String?
+  parent      OrganizationUnit?      @relation("UnitHierarchy", fields: [parentId], references: [id])
+  children    OrganizationUnit[]     @relation("UnitHierarchy")
+  status      OrganizationUnitStatus @default(ACTIVE)
+  description String?
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  zumara       Zumara?
+  memberships  Membership[]
+  memberRoles  MemberRole[]
+  activities   Activity[]
+  documents    Document[]
+  announcements Announcement[]
+  messages     Message[]
+  auditEvents  AuditEvent[]
+  threads      Thread[]
+}
+
+model Membership {
+  id                 String           @id @default(uuid())
+  gamadId            String
+  gamad              GamadId          @relation(fields: [gamadId], references: [id])
+  organizationUnitId String
+  organizationUnit   OrganizationUnit @relation(fields: [organizationUnitId], references: [id])
+  membershipType     MembershipType   @default(MEMBER)
+  status             MembershipStatus @default(PENDING)
+  joinedAt           DateTime         @default(now())
+  leftAt             DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+model Zumara {
+  id                 String           @id @default(uuid())
+  organizationUnitId String           @unique
+  organizationUnit   OrganizationUnit @relation(fields: [organizationUnitId], references: [id])
+  activityDomain     String?
+  mission            String?
+  visibility         ZumaraVisibility @default(INTERNAL)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+// ─── FORMATION ────────────────────────────────────────────────────────────────
+
+model Formation {
+  id          String          @id @default(uuid())
+  title       String
+  description String?
+  slug        String          @unique
+  imageUrl    String?
+  isPublic    Boolean         @default(false)
+  status      FormationStatus @default(DRAFT)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  modules     FormationModule[]
+  enrollments FormationEnrollment[]
+}
+
+model FormationModule {
+  id          String    @id @default(uuid())
+  formationId String
+  formation   Formation @relation(fields: [formationId], references: [id])
+  title       String
+  description String?
+  order       Int       @default(0)
+  durationMin Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  completions ModuleCompletion[]
+}
+
+model FormationEnrollment {
+  id          String           @id @default(uuid())
+  gamadId     String
+  gamad       GamadId          @relation(fields: [gamadId], references: [id])
+  formationId String
+  formation   Formation        @relation(fields: [formationId], references: [id])
+  status      EnrollmentStatus @default(ENROLLED)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([gamadId, formationId])
+}
+
+model ModuleCompletion {
+  id        String          @id @default(uuid())
+  gamadId   String
+  gamad     GamadId         @relation(fields: [gamadId], references: [id])
+  moduleId  String
+  module    FormationModule @relation(fields: [moduleId], references: [id])
+  completedAt DateTime      @default(now())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@unique([gamadId, moduleId])
+}
+
+// ─── COMMUNICATION ────────────────────────────────────────────────────────────
+
+model Thread {
+  id                 String           @id @default(uuid())
+  title              String
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
+  visibility         ThreadVisibility  @default(INTERNAL)
+  isPinned           Boolean           @default(false)
+  isLocked           Boolean           @default(false)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  posts Post[]
+}
+
+model Post {
+  id        String     @id @default(uuid())
+  threadId  String
+  thread    Thread     @relation(fields: [threadId], references: [id])
+  authorId  String
+  author    GamadId    @relation(fields: [authorId], references: [id])
+  content   String
+  status    PostStatus @default(PUBLISHED)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  reactions PostReaction[]
+}
+
+model PostReaction {
+  id        String   @id @default(uuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  gamadId   String
+  gamad     GamadId  @relation(fields: [gamadId], references: [id])
+  emoji     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([postId, gamadId, emoji])
+}
+
+model Announcement {
+  id                 String               @id @default(uuid())
+  title              String
+  content            String
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit?    @relation(fields: [organizationUnitId], references: [id])
+  audienceScope      AnnouncementAudience @default(INTERNAL)
+  publishedBy        String
+  publisher          GamadId              @relation(fields: [publishedBy], references: [id])
+  publishedAt        DateTime?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+}
+
+model Message {
+  id                 String            @id @default(uuid())
+  senderId           String
+  sender             GamadId           @relation("MessageSender", fields: [senderId], references: [id])
+  recipientId        String
+  recipient          GamadId           @relation("MessageRecipient", fields: [recipientId], references: [id])
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
+  content            String
+  status             MessageStatus     @default(SENT)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  gamadId   String
+  gamad     GamadId  @relation(fields: [gamadId], references: [id])
+  type      String
+  content   String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── ACTIVITY ─────────────────────────────────────────────────────────────────
+
+model Activity {
+  id                 String           @id @default(uuid())
+  title              String
+  description        String?
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
+  ownerId            String
+  owner              GamadId          @relation("ActivityOwner", fields: [ownerId], references: [id])
+  status             ActivityStatus   @default(DRAFT)
+  priority           ActivityPriority @default(NORMAL)
+  startDate          DateTime?
+  endDate            DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  tasks   Task[]
+  reports ActivityReport[]
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  activityId  String
+  activity    Activity   @relation(fields: [activityId], references: [id])
+  title       String
+  description String?
+  assignedTo  String?
+  assignee    GamadId?   @relation("TaskAssignee", fields: [assignedTo], references: [id])
+  status      TaskStatus @default(TODO)
+  dueDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model ActivityReport {
+  id         String   @id @default(uuid())
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id])
+  authorId   String
+  author     GamadId  @relation(fields: [authorId], references: [id])
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── KNOWLEDGE ────────────────────────────────────────────────────────────────
+
+model Document {
+  id                 String                 @id @default(uuid())
+  title              String
+  documentType       DocumentType           @default(MANUAL)
+  classification     DocumentClassification @default(INTERNAL)
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit?      @relation(fields: [organizationUnitId], references: [id])
+  ownerId            String
+  owner              GamadId                @relation("DocumentOwner", fields: [ownerId], references: [id])
+  status             DocumentStatus         @default(DRAFT)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+
+  versions DocumentVersion[]
+}
+
+model DocumentVersion {
+  id            String   @id @default(uuid())
+  documentId    String
+  document      Document @relation(fields: [documentId], references: [id])
+  versionNumber String
+  fileUrl       String
+  checksum      String?
+  createdBy     String
+  creator       GamadId  @relation("VersionCreator", fields: [createdBy], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── COTISATION ───────────────────────────────────────────────────────────────
+
+model CotisationPeriod {
+  id        String   @id @default(uuid())
+  label     String
+  startDate DateTime
+  endDate   DateTime
+  amount    Float
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payments CotisationPayment[]
+}
+
+model CotisationPayment {
+  id        String           @id @default(uuid())
+  gamadId   String
+  periodId  String
+  period    CotisationPeriod @relation(fields: [periodId], references: [id])
+  amount    Float
+  currency  String           @default("XOF")
+  reference String?
+  paidAt    DateTime         @default(now())
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+// ─── AUDIT (APPEND-ONLY) ──────────────────────────────────────────────────────
+
+model AuditEvent {
+  id                 String            @id @default(uuid())
+  actorId            String?
+  actor              GamadId?          @relation("AuditActor", fields: [actorId], references: [id])
+  action             String
+  targetType         String
+  targetId           String?
+  organizationUnitId String?
+  organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
+  oldValue           Json?
+  newValue           Json?
+  ipAddress          String?
+  userAgent          String?
+  createdAt          DateTime          @default(now())
+}
+
+// ─── PORTAIL PUBLIC ───────────────────────────────────────────────────────────
+
+model ArticleCategory {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  articles Article[]
+}
+
+model Article {
+  id         String          @id @default(uuid())
+  title      String
+  slug       String          @unique
+  excerpt    String?
+  content    String
+  imageUrl   String?
+  categoryId String?
+  category   ArticleCategory? @relation(fields: [categoryId], references: [id])
+  status     ArticleStatus   @default(DRAFT)
+  publishedAt DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model VideoCategory {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  videos Video[]
+}
+
+model Video {
+  id          String        @id @default(uuid())
+  title       String
+  slug        String        @unique
+  description String?
+  thumbnailUrl String?
+  videoUrl    String?
+  duration    Int?
+  categoryId  String?
+  category    VideoCategory? @relation(fields: [categoryId], references: [id])
+  status      VideoStatus   @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}

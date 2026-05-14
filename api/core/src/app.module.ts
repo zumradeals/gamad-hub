@@ -1,0 +1,32 @@
+import { Module } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+import { IdentityModule } from './modules/identity/identity.module';
+import { OrganizationModule } from './modules/organization/organization.module';
+import { FormationModule } from './modules/formation/formation.module';
+import { CommunicationModule } from './modules/communication/communication.module';
+import { ActivityModule } from './modules/activity/activity.module';
+import { KnowledgeModule } from './modules/knowledge/knowledge.module';
+import { CotisationModule } from './modules/cotisation/cotisation.module';
+import { PublicModule } from './modules/public/public.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
+import { SystemModule } from './modules/system/system.module';
+
+@Module({
+  imports: [
+    IdentityModule,
+    OrganizationModule,
+    FormationModule,
+    CommunicationModule,
+    ActivityModule,
+    KnowledgeModule,
+    CotisationModule,
+    PublicModule,
+    AuditModule,
+    PermissionsModule,
+    SystemModule,
+  ],
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
+export class AppModule {}
