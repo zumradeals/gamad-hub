@@ -1,12 +1,38 @@
 #!/usr/bin/env node
 // Creates the initial super-admin account from env vars ADMIN_EMAIL / ADMIN_PASSWORD.
-// Idempotent: skips if the account already exists.
+// Idempotent: if the account already exists, ensures the RESPONSABLE_HCG role is assigned.
 'use strict';
 
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
+
+// Role name expected by computeLevel() in auth.service.ts
+const HCG_ROLE_NAME = 'RESPONSABLE_HCG';
+
+async function ensureHcgRole() {
+  return prisma.role.upsert({
+    where: { name: HCG_ROLE_NAME },
+    create: {
+      name: HCG_ROLE_NAME,
+      description: 'Haut Conseil de Gouvernance — autorité souveraine',
+      isSystemRole: true,
+    },
+    update: {},
+  });
+}
+
+async function assignRole(gamadIdValue, roleId, grantedBy) {
+  const existing = await prisma.memberRole.findFirst({
+    where: { gamadId: gamadIdValue, roleId },
+  });
+  if (!existing) {
+    await prisma.memberRole.create({
+      data: { gamadId: gamadIdValue, roleId, grantedBy },
+    });
+  }
+}
 
 async function main() {
   const email       = process.env.ADMIN_EMAIL;
@@ -18,14 +44,22 @@ async function main() {
     return;
   }
 
-  const existing = await prisma.account.findUnique({ where: { email } });
+  const hcgRole = await ensureHcgRole();
+
+  const existing = await prisma.account.findUnique({
+    where: { email },
+    include: { gamad: { include: { memberRoles: true } } },
+  });
+
   if (existing) {
-    console.log(`[seed-admin] Compte ${email} déjà existant — ignoré`);
+    // Account exists — ensure HCG role is assigned (idempotent upgrade)
+    await assignRole(existing.gamad.id, hcgRole.id, existing.gamad.id);
+    console.log(`[seed-admin] Compte ${email} existant — rôle ${HCG_ROLE_NAME} vérifié/assigné`);
     return;
   }
 
-  const total      = await prisma.gamadId.count();
-  const publicCode = `GMD-${String(total + 1).padStart(6, '0')}`;
+  const total        = await prisma.gamadId.count();
+  const publicCode   = `GMD-${String(total + 1).padStart(6, '0')}`;
   const passwordHash = await bcrypt.hash(password, 12);
 
   const gamadId = await prisma.gamadId.create({
@@ -42,16 +76,9 @@ async function main() {
     },
   });
 
-  // Assign HCG role if it exists
-  const hcgRole = await prisma.role.findFirst({ where: { name: 'HCG' } });
-  if (hcgRole) {
-    await prisma.memberRole.create({
-      data: { gamadId: gamadId.id, roleId: hcgRole.id, grantedBy: gamadId.id },
-    });
-    console.log(`[seed-admin] Compte admin créé : ${email} (${publicCode}) — rôle HCG assigné`);
-  } else {
-    console.log(`[seed-admin] Compte admin créé : ${email} (${publicCode})`);
-  }
+  await assignRole(gamadId.id, hcgRole.id, gamadId.id);
+
+  console.log(`[seed-admin] Compte admin créé : ${email} (${publicCode}) — rôle ${HCG_ROLE_NAME} assigné`);
 }
 
 main()
