@@ -96,6 +96,45 @@ export class ZahabService {
     await this.repo.incrementStats(gamadId, 'totalComments');
   }
 
+  /**
+   * Appelé quand un article blog est approuvé et publié.
+   */
+  async onArticlePublished(gamadId: string, referenceId: string) {
+    const amount = REWARD_RULES['ARTICLE_PUBLISHED'];
+    await this.repo.getOrCreateWallet(gamadId);
+    await this.repo.credit(gamadId, amount);
+    await this.repo.createTransaction({
+      toId: gamadId,
+      amount,
+      reason: ZahabTransactionReason.ARTICLE_PUBLISHED,
+      referenceId,
+      note: 'Article de blog publié',
+    });
+    await this.repo.getOrCreateReputation(gamadId);
+    await this.repo.incrementReputation(gamadId, 10, 'contentScore');
+    await this.repo.incrementStats(gamadId, 'totalPosts');
+  }
+
+  /**
+   * Appelé quand un article atteint un palier de vues (100 ou 1000).
+   */
+  async onArticleMilestone(gamadId: string, referenceId: string, milestone: '100' | '1k') {
+    const key = milestone === '100' ? 'ARTICLE_MILESTONE_100' : 'ARTICLE_MILESTONE_1K';
+    const reason = milestone === '100'
+      ? ZahabTransactionReason.ARTICLE_MILESTONE_100
+      : ZahabTransactionReason.ARTICLE_MILESTONE_1K;
+    const amount = REWARD_RULES[key];
+    await this.repo.getOrCreateWallet(gamadId);
+    await this.repo.credit(gamadId, amount);
+    await this.repo.createTransaction({
+      toId: gamadId,
+      amount,
+      reason,
+      referenceId,
+      note: `Palier ${milestone === '100' ? '100' : '1 000'} vues atteint`,
+    });
+  }
+
   // ── Transfert entre membres ──────────────────────────────────────────────────
 
   async transfer(fromId: string, toId: string, amount: number, note?: string) {
