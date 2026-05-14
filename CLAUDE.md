@@ -8,16 +8,45 @@
 ## Ce que tu construis
 
 GAMAD HUB 2.0 est une infrastructure numérique civilisationnelle.
-Deux applications publiques, un backend souverain, une doctrine claire.
+Deux applications publiques, un backend souverain, une monnaie native, une doctrine claire.
 
 Ce n'est pas une application de gestion. Ce n'est pas un panneau admin.
-C'est un monde numérique avec ses lois, ses citoyens, sa mémoire.
+C'est un monde numérique avec ses lois, ses citoyens, sa mémoire et son économie.
 
 | Application | Domaine | Nature |
 |---|---|---|
-| `apps/portal` | gamad.net | Portail web public — carrefour universel, incognito |
-| `apps/core` | hub.gamad.net | Espace souverain des citoyens GAMAD |
+| `apps/portal` | gamad.net | Portail web public — écosystème GAFAM-like, compte universel |
+| `apps/core` | hub.gamad.net | Monde souverain invisible des citoyens GAMAD |
 | `api/core` | api interne | Backend NestJS — l'autorité absolue |
+
+---
+
+## Vision fondamentale — à lire avant tout code
+
+### Le Portail (apps/portal)
+Le portail est un **écosystème numérique complet** qui rivalise avec les GAFAM.
+Ce n'est pas une vitrine. C'est un monde vivant avec :
+- Un compte utilisateur universel (GAMAD ID silencieux)
+- Un feed social avec modération par réputation
+- Un blog éditorial rémunéré
+- Une économie interne (ZAHAB)
+- Des services (mail, cloud, market — à venir)
+- Un espace auteur/créateur
+
+Tout utilisateur qui s'inscrit au portail reçoit **silencieusement un GAMAD ID** (statut `PORTAL_USER`).
+Il n'a pas besoin de connaître l'existence du Core pour utiliser le portail.
+
+### Le Core (apps/core)
+Le Core est un **monde invisible guidé par une idéologie**.
+Il est inaccessible depuis le portail. Aucun lien direct ne le révèle.
+Le seul passage : le pipeline "Rejoindre le Réseau" → formulaire minimal → validation manuelle → email avec lien Core.
+
+### ZAHAB
+ZAHAB est la **monnaie officielle et civilisationnelle de GAMAD**.
+- Présente dans le portail (récompenses, réputation, wallet)
+- Présente dans le Core (cotisations, services internes)
+- Destinée à devenir un stablecoin décentralisé sur **Stellar blockchain**
+- Adossable à l'or à terme
 
 ---
 
@@ -36,6 +65,7 @@ docs/00-foundation/gamad-visibility-sovereignty-model-v0.1.md
 docs/01-core/gamad-hub-core-specification-v0.1.md
 docs/01-core/gamad-hub-data-model-v0.1.md
 docs/01-core/gamad-hub-permission-model-v0.1.md
+docs/07-zahab/zahab-specification-v0.1.md
 docs/06-prompts/00-bootstrap.md
 ```
 
@@ -54,6 +84,7 @@ docs/06-prompts/00-bootstrap.md
 | Monorepo | npm workspaces | — |
 | Conteneurs | Docker + Docker Compose | — |
 | Reverse proxy | Nginx | 1.27-alpine |
+| Blockchain ZAHAB | Stellar Network | — |
 
 **Prisma binaryTargets obligatoire :**
 ```
@@ -78,10 +109,25 @@ app.setGlobalPrefix('api/v1')
 2. **Toute action critique produit un AuditEvent.** Sans exception.
 3. **Aucun module ne gère sa propre identité.** Tout passe par Identity Core.
 4. **Les AuditEvent sont append-only.** Jamais modifiés, jamais supprimés.
-5. **Aucune permission implicite.** Tout droit doit être explicitement accordé.
-6. **Aucun secret hardcodé.** Tout depuis les variables d'environnement.
-7. **`prisma migrate deploy` en production.** Jamais `migrate dev`.
-8. **Mobile-first.** Le portail public doit fonctionner sur connexion faible.
+5. **Les ZahabTransaction sont append-only.** Jamais modifiées, jamais supprimées.
+6. **Aucune permission implicite.** Tout droit doit être explicitement accordé.
+7. **Aucun secret hardcodé.** Tout depuis les variables d'environnement.
+8. **`prisma migrate deploy` en production.** Jamais `migrate dev`.
+9. **Mobile-first.** Le portail public doit fonctionner sur connexion faible.
+10. **Le Core est invisible depuis le portail.** Zéro lien direct. Zéro mot interdit.
+
+---
+
+## Mots interdits sur apps/portal
+
+Ne jamais faire apparaître sur le portail public :
+- CORE, HCG, Zumara, Mouvement, Confrérie, souverain, noyau, citoyen GAMAD
+- La structure hiérarchique interne (niveaux, rangs)
+- Les doctrines internes et idéologie explicite
+- Tout lien direct vers hub.gamad.net ou une page interne du CORE
+- Les GAMAD ID des membres
+
+**Seul passage vers le Core :** bouton "Rejoindre le Réseau" → /rejoindre → pipeline contrôlé
 
 ---
 
@@ -100,10 +146,51 @@ app.setGlobalPrefix('api/v1')
 | `audit` | Traces immuables, historique, événements |
 | `permissions` | RBAC, contexte organisationnel |
 | `system` | Health check, infos système |
+| `portal-auth` | Inscription/connexion portail, pipeline candidature |
+| `portal-feed` | Feed social public — posts, réactions, modération |
+| `zahab` | Wallet, transactions, réputation, récompenses automatiques |
 
 ---
 
-## Niveaux de citoyenneté (apps/core)
+## Pipeline d'identité portail
+
+```
+Visiteur
+  └─ /inscription          → PORTAL_USER créé (GAMAD ID silencieux)
+       └─ /dashboard        → Compte portail actif
+            └─ /rejoindre   → PortalApplication soumise
+                 └─ Email   → Formulaire Core avancé
+                      └─ Validation HCG → Lien hub.gamad.net envoyé
+```
+
+Statuts `ApplicationStatus` : SUBMITTED → UNDER_REVIEW → APPROVED / REJECTED
+
+---
+
+## Système ZAHAB — règles de récompense
+
+| Événement | Récompense | Bénéficiaire |
+|---|---|---|
+| Inscription | +10 Z | Nouveau membre |
+| Publication de contenu | +5 Z | Auteur |
+| Commentaire posté | +1 Z | Auteur commentaire |
+| Réaction reçue | +0.5 Z | Auteur du post |
+| Parrainage | à définir | Parrain |
+| Crédit manuel | montant variable | Opérateur |
+
+## Système de réputation — seuils TrustLevel
+
+| Niveau | Seuil (pts) | Effet modération |
+|---|---|---|
+| NEWCOMER | 0 | Publications soumises à modération |
+| MEMBER | 50 | Modération accélérée |
+| TRUSTED | 200 | Publication directe sans modération |
+| VETERAN | 1 000 | Accès modérateur |
+| GUARDIAN | 5 000 | Autorité éditoriale |
+
+---
+
+## Niveaux de citoyenneté (apps/core — usage interne uniquement)
 
 | Niveau | Statut | Accès |
 |---|---|---|
@@ -114,34 +201,21 @@ app.setGlobalPrefix('api/v1')
 
 ---
 
-## Ce qui ne doit JAMAIS apparaître sur apps/portal
-
-- Les mots : CORE, HCG, Zumara, Mouvement, Confrérie, souverain, noyau
-- La structure hiérarchique interne
-- Les niveaux de citoyenneté
-- Les doctrines internes
-- Tout lien direct vers des pages internes du CORE
-- Les GAMAD ID des membres
-
-Un seul lien vers le CORE : "Espace membre" -> /connexion -> redirect hub.gamad.net
-
----
-
-## Architecture du portail public (apps/portal)
-
-Le portail est un carrefour universel. G-SEARCH est son identité publique.
+## Architecture du portail public (apps/portal) — implémentée
 
 ```
-/                     Accueil avec G-SEARCH central
-/recherche?q=&type=   Résultats G-SEARCH filtrés
-/blog                 Articles éditoriaux GAMAD Blog
-/blog/[slug]          Article individuel
-/tv                   Catalogue vidéos GAMAD TV
-/formations           Formations publiques
-/ressources           Bibliothèque publique
-/services             Carte de l'écosystème GAMAD
-/rejoindre            Formulaire candidature GAMAD ID
-/connexion            Redirect vers hub.gamad.net
+/                       Accueil — Hero, piliers, services, articles
+/vision                 Mission et valeurs GAMAD
+/services               Écosystème complet (4 catégories, badges disponible/bientôt)
+/blog                   Articles éditoriaux GAMAD Blog
+/blog/[slug]            Article individuel
+/ressources             Bibliothèque publique
+/feed                   Feed social — composer (connecté) ou CTA connexion
+/inscription            Formulaire d'inscription portail → auto-login → /dashboard
+/connexion              Connexion portail JWT (portal-auth séparé du Core)
+/rejoindre              Formulaire minimal de candidature Réseau
+/dashboard              Espace compte unifié — raccourcis, statut candidature, infos
+/dashboard/wallet       Wallet ZAHAB — solde, réputation, historique transactions
 ```
 
 ---
@@ -163,23 +237,42 @@ Le portail est un carrefour universel. G-SEARCH est son identité publique.
 
 ---
 
+## Design system portail (implémenté)
+
+**Polices :**
+- Inter : interface utilisateur principale
+- JetBrains Mono : montants ZAHAB, identifiants techniques
+
+**Palette officielle GAMAD :**
+```css
+--gold:   #E5C100   /* Or civilisationnel — CTA primaire */
+--blue:   #1696D2   /* Bleu souverain — liens, info */
+--green:  #0E9F4B   /* Vert croissance — succès, gains */
+--navy:   #071326   /* Marine profond — header, balances */
+--muted:  #6B7280   /* Gris texto secondaire */
+--border: #E5E7EB   /* Bordures subtiles */
+```
+
+---
+
 ## Prompts de développement
 
-Tous les prompts sont dans docs/06-prompts/. Les lire et les suivre dans l'ordre :
-
 ```
-00-bootstrap.md       Monorepo complet + Prisma schema étendu
-01-identity.md        Backend Identity + Auth JWT
-02-organization.md    Backend Organization + Zumara
-03-formation.md       Module Formation
-04-communication.md   Threads, forums, messagerie
-05-activity.md        Activités et workflows
-06-knowledge.md       Documents et mémoire
-07-cotisation.md      Cotisations et paiements
-08-public-api.md      Endpoints publics pour le portail
-09-frontend-core.md   Interface CORE (monde vivant, fond sombre)
-10-frontend-portal.md Portail public (G-SEARCH, blog, TV)
-11-deployment.md      Docker, Nginx, VPS, HTTPS
+docs/06-prompts/00-bootstrap.md       Monorepo complet + Prisma schema étendu
+docs/06-prompts/01-identity.md        Backend Identity + Auth JWT
+docs/06-prompts/02-organization.md    Backend Organization + Zumara
+docs/06-prompts/03-formation.md       Module Formation
+docs/06-prompts/04-communication.md   Threads, forums, messagerie
+docs/06-prompts/05-activity.md        Activités et workflows
+docs/06-prompts/06-knowledge.md       Documents et mémoire
+docs/06-prompts/07-cotisation.md      Cotisations et paiements
+docs/06-prompts/08-public.md          Endpoints publics pour le portail
+docs/06-prompts/09-frontend-core.md   Interface CORE (monde vivant, fond sombre)
+docs/06-prompts/10-frontend-portal.md Portail public — refonte GAFAM-like
+docs/06-prompts/11-deployment.md      Docker, Nginx, VPS, HTTPS
+docs/06-prompts/12-creator-dashboard.md  Phase B — Dashboard créateur, blog monétisé
+docs/06-prompts/13-moderation.md         Phase C — Système de modération et IA
+docs/06-prompts/14-stellar-zahab.md      Phase D — Intégration Stellar, ZAHAB Coin
 ```
 
 ---
