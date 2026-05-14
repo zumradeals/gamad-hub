@@ -207,6 +207,28 @@ enum ModerationStatus {
   FLAGGED
 }
 
+enum ReportReason {
+  SPAM
+  HATE_SPEECH
+  MISINFORMATION
+  HARASSMENT
+  INAPPROPRIATE_CONTENT
+  COPYRIGHT
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  VALIDATED
+  DISMISSED
+}
+
+enum FilterSeverity {
+  BLOCK
+  FLAG
+}
+
 enum ZahabTransactionReason {
   CONTENT_PUBLISHED
   CONTENT_REWARD
@@ -268,6 +290,8 @@ model GamadId {
   sentZahab       ZahabTransaction[] @relation("ZahabSender")
   receivedZahab   ZahabTransaction[] @relation("ZahabReceiver")
   articles        Article[]          @relation("ArticleAuthor")
+  reportsMade     ContentReport[]    @relation("ReportsMade")
+  reportsReviewed ContentReport[]    @relation("ReportsReviewed")
 }
 
 model Account {
@@ -835,4 +859,32 @@ model ReputationScore {
   totalReported   Int        @default(0)
   totalFlagged    Int        @default(0)
   updatedAt       DateTime   @updatedAt
+}
+
+// ─── MODÉRATION ───────────────────────────────────────────────────────────────
+
+model ContentReport {
+  id          String       @id @default(uuid())
+  reporterId  String
+  reporter    GamadId      @relation("ReportsMade", fields: [reporterId], references: [id])
+  contentId   String
+  contentType String
+  reason      ReportReason
+  note        String?
+  status      ReportStatus @default(PENDING)
+  reviewerId  String?
+  reviewer    GamadId?     @relation("ReportsReviewed", fields: [reviewerId], references: [id])
+  reviewNote  String?
+  createdAt   DateTime     @default(now())
+  reviewedAt  DateTime?
+
+  @@unique([reporterId, contentId, contentType])
+}
+
+model ContentFilterRule {
+  id        String         @id @default(uuid())
+  keyword   String         @unique
+  severity  FilterSeverity @default(FLAG)
+  createdAt DateTime       @default(now())
+  createdBy String
 }

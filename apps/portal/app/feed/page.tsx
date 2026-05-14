@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
+import SignalButton from '../../components/SignalButton';
 import { publicGet, authPost, getToken, getUser } from '../../lib/api';
 import Link from 'next/link';
 
@@ -147,7 +148,7 @@ export default function FeedPage() {
                       </div>
                     )}
                     {isLoggedIn && (
-                      <div style={{ display: 'flex', gap: '0.375rem', marginTop: '0.75rem' }}>
+                      <div style={{ display: 'flex', gap: '0.375rem', marginTop: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
                         {['👍', '❤️', '🙏', '🔥'].map(em => (
                           <button key={em} onClick={() => react(p.id, em)} style={{
                             background: 'transparent', border: '1px solid var(--border)',
@@ -157,6 +158,9 @@ export default function FeedPage() {
                             {em}
                           </button>
                         ))}
+                        <div style={{ marginLeft: 'auto' }}>
+                          <SignalButton contentId={p.id} contentType="feed" />
+                        </div>
                       </div>
                     )}
                   </div>

@@ -6,7 +6,7 @@ import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
 import { getUser, getToken, clearSession, authGet } from '../../lib/api';
 
-const SHORTCUTS = [
+const BASE_SHORTCUTS = [
   { icon: '💰', label: 'Wallet ZAHAB', href: '/dashboard/wallet' },
   { icon: '✍️', label: 'Espace Créateur', href: '/dashboard/creator' },
   { icon: '📰', label: 'Blog', href: '/blog' },
@@ -14,6 +14,8 @@ const SHORTCUTS = [
   { icon: '📚', label: 'Ressources', href: '/ressources' },
   { icon: '💼', label: 'Services', href: '/services' },
 ];
+
+const MODERATION_SHORTCUT = { icon: '🛡️', label: 'Modération', href: '/dashboard/moderation' };
 
 interface Me {
   displayName: string;
@@ -29,12 +31,21 @@ interface Me {
 export default function DashboardPage() {
   const router = useRouter();
   const [me, setMe] = useState<Me | null>(null);
+  const [trustLevel, setTrustLevel] = useState<string>('NEWCOMER');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!getToken()) { router.push('/connexion'); return; }
-    authGet<Me>('/portal/auth/me')
-      .then(setMe)
+    Promise.all([
+      authGet<Me>('/portal/auth/me'),
+      authGet<{ reputation: { trustLevel: string } }>('/portal/wallet').catch(() => null),
+    ])
+      .then(([meData, walletData]) => {
+        setMe(meData);
+        if (walletData?.reputation?.trustLevel) {
+          setTrustLevel(walletData.reputation.trustLevel);
+        }
+      })
       .catch(() => { clearSession(); router.push('/connexion'); })
       .finally(() => setLoading(false));
   }, [router]);
@@ -120,7 +131,7 @@ export default function DashboardPage() {
           <div style={{ marginBottom: '2.5rem' }}>
             <h2 style={{ fontSize: '1.125rem', marginBottom: '1.25rem' }}>Mes espaces</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
-              {SHORTCUTS.map(s => (
+              {[...BASE_SHORTCUTS, ...(['VETERAN', 'GUARDIAN'].includes(trustLevel) ? [MODERATION_SHORTCUT] : [])].map(s => (
                 <Link key={s.label} href={s.href} className="card" style={{
                   display: 'flex',
                   flexDirection: 'column',

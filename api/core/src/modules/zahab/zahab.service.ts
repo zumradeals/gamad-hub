@@ -8,6 +8,11 @@ export class ZahabService {
 
   // ── Lecture ──────────────────────────────────────────────────────────────────
 
+  async getTrustLevel(gamadId: string): Promise<string> {
+    const rep = await this.repo.getOrCreateReputation(gamadId);
+    return rep.trustLevel;
+  }
+
   async getMyWallet(gamadId: string) {
     const [wallet, reputation, transactions] = await Promise.all([
       this.repo.getOrCreateWallet(gamadId),
@@ -133,6 +138,22 @@ export class ZahabService {
       referenceId,
       note: `Palier ${milestone === '100' ? '100' : '1 000'} vues atteint`,
     });
+  }
+
+  // ── Pénalités de modération ──────────────────────────────────────────────────
+
+  /** Signalement validé — -5 pts à l'auteur, incrément totalReported */
+  async onContentReported(authorId: string) {
+    await this.repo.getOrCreateReputation(authorId);
+    await this.repo.decrementReputation(authorId, 5);
+    await this.repo.incrementStats(authorId, 'totalReported');
+  }
+
+  /** Contenu rejeté par modérateur — -10 pts à l'auteur, incrément totalFlagged */
+  async onContentRejected(authorId: string) {
+    await this.repo.getOrCreateReputation(authorId);
+    await this.repo.decrementReputation(authorId, 10);
+    await this.repo.incrementStats(authorId, 'totalFlagged');
   }
 
   // ── Transfert entre membres ──────────────────────────────────────────────────
