@@ -1,216 +1,147 @@
-# Documentation GAMAD HUB
+# Documentation GAMAD HUB 2.0
 
-> Source de vérité officielle du projet. Tout ce qui n'est pas ici n'est pas officiel.
+> Source de vérité officielle. Tout ce qui n'est pas ici n'est pas officiel.
+> Lire dans l'ordre des couches. Ne jamais sauter une couche.
 
 ---
 
-## Principe de lecture
+## Pyramide de lecture
 
-Cette documentation est organisée en couches hiérarchiques strictes.
-Chaque couche dépend de celle qui la précède. Ne jamais lire une couche technique
-sans avoir compris la couche doctrinale qui la gouverne.
-
-```text
-00-civilization    <- Les lois du monde (invariants absolus)
-00-foundation      <- Les modèles humains et civils
-01-core            <- Les spécifications techniques du noyau
-02-ui              <- Les fondations visuelles et interfaces
-03-ecosystem       <- L'architecture de l'écosystème public
-04-build           <- La stratégie et les spécifications de construction
-05-repository      <- Le blueprint Git officiel
-api/               <- Les contrats API par domaine
-deployment/        <- La documentation opérationnelle
-qa/                <- Les rapports de qualité et tests
-roadmap/           <- Le futur et les exclusions MVP
+```
+00-civilization    Lois du monde — invariants absolus — lire en premier
+00-foundation      Modèles humains et civils
+01-core            Spécifications techniques du noyau
+02-ui              Fondations visuelles et design system
+03-ecosystem       Architecture écosystème et portail public
+04-build           Stratégie de construction et décisions techniques
+05-infra           Infrastructure, déploiement, Nginx
+06-prompts         Prompts Claude Code séquentiels
+api/               Contrats API par domaine
+deployment/        Documentation opérationnelle VPS
+roadmap/           Futur et exclusions du MVP
 ```
 
-Les prompts de développement IA sont volontairement isolés hors de `docs/`, dans `tools/prompts/`.
-Ils sont des outils de travail, pas des références d'architecture ou de doctrine.
-
 ---
 
-## Couche 00-civilization — Les lois du monde
+## 00-civilization — Lois du monde (invariants)
 
-**Ces documents ne changent pas avec les itérations techniques.**
-Ils définissent ce que GAMAD est, pas comment il fonctionne.
+Ces documents ne changent pas avec les itérations techniques.
+En cas de contradiction avec un document technique, la doctrine prime.
 
 | Fichier | Rôle |
 |---|---|
-| `constitution-of-the-world.md` | Lois fondatrices invariantes du système GAMAD |
-| `ontology.md` | Ce qui peut exister dans le monde GAMAD (entités, relations) |
-| `identity-doctrine.md` | Nature réelle du GAMAD ID : existence, réputation, appartenance |
-| `sovereignty-laws.md` | Ce que le Core contrôle absolument, frontières inviolables |
-| `zumara-doctrine.md` | Nature, cycle de vie et rôle des cellules Zumara |
-
-> Toute décision d'architecture ou d'implémentation doit rester cohérente
-> avec ces documents. En cas de contradiction, la doctrine prime.
+| `constitution-of-the-world.md` | Lois fondatrices et invariants absolus |
+| `identity-doctrine.md` | Nature du GAMAD ID : existence, réputation, appartenance |
+| `zumara-doctrine.md` | Nature et cycle de vie des cellules Zumara |
+| `ontology.md` | Ce qui peut exister dans le monde GAMAD |
+| `sovereignty-laws.md` | Ce que le Core contrôle absolument |
 
 ---
 
-## Couche 00-foundation — Les modèles civils
-
-Ces documents décrivent comment GAMAD s'organise en tant que civilisation numérique :
-citoyenneté, visibilité, niveaux d'appartenance.
+## 00-foundation — Modèles civils
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-civilization-model-v0.1.md` | Vision civilisationnelle globale de GAMAD |
-| `gamad-digital-citizenship-model-v0.1.md` | Niveaux d'appartenance et cycle de vie citoyen |
-| `gamad-visibility-sovereignty-model-v0.1.md` | Ce qui est public, discret, souverain ou interne |
+| `constitution-technique-gamad-hub.md` | Constitution technique fondatrice |
+| `gamad-civilization-model-v0.1.md` | Vision civilisationnelle — nation numérique |
+| `gamad-digital-citizenship-model-v0.1.md` | 5 niveaux + 3 relations JE SUIS / TRAVAILLE |
+| `gamad-visibility-sovereignty-model-v0.1.md` | Visibilité asymétrique — fruits vs racines |
 
 ---
 
-## Couche 01-core — Spécifications techniques du noyau
-
-Ces documents traduisent la doctrine en architecture technique concrète.
-Ils définissent le MVP opérationnel.
+## 01-core — Spécifications techniques
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-hub-core-specification-v0.1.md` | Spécification complète du GAMAD HUB CORE |
-| `gamad-hub-data-model-v0.1.md` | Modèle de données officiel (entités, relations, contraintes) |
-| `gamad-hub-permission-model-v0.1.md` | RBAC, rôles, permissions, contexte organisationnel |
-| `gamad-hub-event-model-v0.1.md` | Événements système, audit, correlation_id, causation_id |
-| `gamad-hub-api-contracts-v0.1.md` | Contrats API complets par domaine |
-| `gamad-hub-mvp-scope-v0.1.md` | Périmètre officiel du MVP - ce qui est inclus et exclu |
-
-> Le frontend ne décide jamais des permissions.
-> Le backend est l'autorité. Ces documents définissent les règles du backend.
+| `gamad-hub-core-specification-v0.1.md` | 7 domaines, frontières, règles absolues |
+| `gamad-hub-data-model-v0.1.md` | Toutes les entités et leurs relations |
+| `gamad-hub-permission-model-v0.1.md` | RBAC + contexte organisationnel |
+| `gamad-hub-event-model-v0.1.md` | Événements système et audit |
+| `gamad-hub-api-contracts-v0.1.md` | Contrats API par domaine |
+| `gamad-hub-mvp-scope-v0.1.md` | Ce qui est dans le MVP, ce qui est futur |
+| `gamad-hub-reference-architecture-v0.1.md` | Architecture de référence globale |
 
 ---
 
-## Couche 02-ui — Fondations visuelles
+## 02-ui — Design system
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-design-system-specification-v0.1.md` | Palette, typographie, tokens, doctrine visuelle |
-| `gamad-ui-foundation-v0.1.md` | Composants, layouts, comportements UI |
-| `gamad-public-portal-information-architecture-v0.1.md` | Architecture informationnelle du portail public |
+| `gamad-design-system-specification-v0.1.md` | Palette, typographie, tokens |
+| `gamad-ui-foundation-v0.1.md` | Composants, layouts, comportements |
+| `gamad-public-portal-information-architecture-v0.1.md` | Architecture info du portail |
 
 ---
 
-## Couche 03-ecosystem — Architecture de l'écosystème
+## 03-ecosystem — Écosystème et portail
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-ecosystem-architecture-v0.1.md` | Cartographie des couches, satellites, GAMAD ID transversal |
-| `gamad-public-portal-specification-v0.1.md` | Vision et doctrine du portail public mondial |
+| `gamad-ecosystem-architecture-v0.1.md` | Les 5 couches du monde GAMAD |
+| `gamad-public-portal-specification-v0.1.md` | Doctrine du portail public |
 
 ---
 
-## Couche 04-build — Stratégie de construction
-
-Ces documents guident les décisions techniques et le séquencement du développement.
+## 04-build — Construction
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-hub-build-spec-v0.1.md` | Backlog, user stories, critères d'acceptation, sprints |
-| `gamad-hub-implementation-strategy-v0.1.md` | Méthode de développement, Git, CI/CD, releases |
-| `gamad-hub-tech-stack-decision-v0.1.md` | Choix techniques officiels (Next.js, NestJS, PostgreSQL, Prisma) |
-| `gamad-public-portal-design-build-v0.1.md` | Build du portail public (document futur, post-stabilisation Core) |
+| `gamad-hub-build-spec-v0.1.md` | Backlog, user stories, critères |
+| `gamad-hub-implementation-strategy-v0.1.md` | Méthode, Git, CI/CD |
+| `gamad-hub-tech-stack-decision-v0.1.md` | Décisions techniques officielles |
+| `gamad-public-portal-design-build-v0.1.md` | Build du portail public |
 
 ---
 
-## Couche 05-repository — Blueprint Git
+## 05-infra — Infrastructure
 
 | Fichier | Rôle |
 |---|---|
-| `gamad-hub-repository-blueprint-v0.1.md` | Structure officielle du dépôt, conventions, branches, commits |
+| `nginx-config.md` | Documentation des configs Nginx |
+| `docker-setup.md` | Structure Docker et docker-compose |
+| `vps-checklist.md` | Checklist de mise en production |
 
 ---
 
-## Dossier api/ — Contrats API par domaine
+## 06-prompts — Prompts Claude Code
 
-Documentation de référence rapide pour chaque domaine API.
+À utiliser dans l'ordre. Un prompt = une session Claude Code = un commit.
+
+| Fichier | Module |
+|---|---|
+| `00-bootstrap.md` | Monorepo + Prisma schema complet |
+| `01-identity.md` | Backend Identity + Auth JWT |
+| `02-organization.md` | Backend Organization + Zumara |
+| `03-formation.md` | Module Formation |
+| `04-communication.md` | Threads, forums, messagerie |
+| `05-activity.md` | Activités et workflows |
+| `06-knowledge.md` | Documents et mémoire |
+| `07-cotisation.md` | Cotisations et paiements |
+| `08-public-api.md` | Endpoints publics pour le portail |
+| `09-frontend-core.md` | Interface CORE — monde vivant |
+| `10-frontend-portal.md` | Portail public — G-SEARCH et carrefour |
+| `11-deployment.md` | Docker, Nginx, VPS, HTTPS |
+
+---
+
+## api/ — Contrats API par domaine
 
 | Fichier | Domaine |
 |---|---|
-| `identity-api.md` | GAMAD ID, comptes, authentification, profils |
-| `organization-api.md` | Unités, Zumara, membres, responsables |
-| `knowledge-api.md` | Documents, versions, validation, export |
+| `identity-api.md` | GAMAD ID, auth, profils |
+| `organization-api.md` | Unités, Zumara, membres |
+| `knowledge-api.md` | Documents, versions, validation |
 | `activity-api.md` | Activités, tâches, workflows |
 | `communication-api.md` | Annonces, messages, notifications |
 | `audit-api.md` | Événements d'audit, export |
 
 ---
 
-## Dossier deployment/ — Documentation opérationnelle
+## Règles de contribution
 
-| Fichier | Rôle |
-|---|---|
-| `vps-deployment.md` | Déploiement sur VPS Ubuntu avec Docker |
-| `backup-restore.md` | Procédures de sauvegarde et restauration |
-| `environment-variables.md` | Variables d'environnement requises |
-| `logging.md` | Commandes de consultation des logs |
-
----
-
-## Dossier qa/ — Qualité et tests
-
-| Fichier | Rôle |
-|---|---|
-| `mvp-test-report.md` | État des tests, critères bloquants, prochains travaux QA |
-
----
-
-## Dossier roadmap/ — Futur et exclusions
-
-| Fichier | Rôle |
-|---|---|
-| `future-roadmap.md` | Phases de développement post-MVP |
-| `excluded-from-mvp.md` | Modules explicitement exclus du MVP (Wallet, TV, Marketplace, etc.) |
-
----
-
-## Prompts IA
-
-Les prompts de développement IA sont conservés dans `tools/prompts/`.
-Ils ne font pas partie de la documentation officielle du projet.
-
-| Fichier | Rôle |
-|---|---|
-| `tools/prompts/gamad-hub-prompt-pack-v0.1.md` | 13 prompts séquentiels pour construire le MVP module par module |
-
----
-
-## Modules inclus dans le MVP
-
-- Identity Core
-- Permission Engine
-- Organization Core
-- Audit & Event Engine
-- Knowledge Core
-- Activity Core
-- Communication minimale
-- Frontend MVP
-- Docker / VPS
-
-## Modules exclus du MVP
-
-- ZAHAB Wallet
-- Marketplace / G-Market
-- GAMAD TV / GAMADTUBE
-- IA avancée
-- Blockchain
-- Publicité publique
-- Réseau social complet
-- Gamification massive
-
-Ces modules attendent la stabilisation complète du Core.
-Voir `roadmap/excluded-from-mvp.md` pour les détails.
-
----
-
-## Règles de contribution documentaire
-
-1. Tout nouveau document doit être placé dans la couche correspondant à sa nature.
-2. Un document de doctrine (`00-civilization`) ne contient jamais de détails techniques.
-3. Un contrat API (`api/`) ne contient jamais de logique de déploiement.
-4. Les prompts IA (`tools/prompts/`) ne sont jamais des références d'architecture.
-5. Toute modification d'un document `01-core` doit être versionnée (`v0.2`, etc.).
-6. Aucun secret, mot de passe ou clé API ne doit apparaître dans ce dossier.
-
----
-
-*Ce README est la carte de navigation du projet GAMAD HUB CORE.*
-*En cas de doute sur le positionnement d'un document, revenir à la pyramide des couches.*
+1. Tout nouveau document va dans la couche correspondant à sa nature.
+2. Un document de doctrine (00-civilization) ne contient jamais de détails techniques.
+3. Un contrat API (api/) ne contient jamais de logique de déploiement.
+4. Les prompts (06-prompts) ne sont jamais des références d'architecture.
+5. Toute modification d'un doc 01-core doit être versionnée (v0.2, etc.).
+6. Aucun secret, mot de passe ou clé API dans ce dossier.

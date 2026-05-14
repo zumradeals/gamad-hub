@@ -1,34 +1,42 @@
-# Dependencies
+# Dépendances
 node_modules/
-.pnpm-store/
+.pnp
+.pnp.js
 
-# Build outputs
+# Build
 .next/
 dist/
 build/
-coverage/
+out/
 
-# Environment files
+# Environnement — JAMAIS versionné
 .env
-.env.*
-!.env.example
+.env.local
+.env.*.local
+
+# Prisma
+prisma/migrations/
 
 # Logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Prisma
-prisma/migrations/dev/
+# Système
+.DS_Store
+Thumbs.db
 
-# Storage and backups
+# Docker volumes locaux
 storage/
 uploads/
 backups/
 
-# OS / editors
-.DS_Store
-Thumbs.db
+# IDE
 .vscode/
 .idea/
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Tests
+coverage/
