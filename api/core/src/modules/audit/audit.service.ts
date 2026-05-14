@@ -23,9 +23,14 @@ export class AuditService {
     organizationUnitId?: string;
     oldValue?: any;
     newValue?: any;
+    metadata?: Record<string, any>;
     ipAddress?: string;
     userAgent?: string;
   }) {
-    return this.repo.create(data);
+    const { metadata, ...rest } = data;
+    return this.repo.create({
+      ...rest,
+      newValue: rest.newValue ?? metadata,
+    });
   }
 }

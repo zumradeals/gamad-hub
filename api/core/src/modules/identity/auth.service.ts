@@ -14,7 +14,7 @@ interface JwtPayload {
   exp?: number;
 }
 
-interface CitizenContext {
+export interface CitizenContext {
   gamadId: string;
   publicCode: string;
   displayName: string;

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { ApplicationStatus, IdentityStatus, IdentityType, AccountStatus, ProfileVisibility } from '@prisma/client';
-import { nanoid } from 'nanoid';
+
 
 @Injectable()
 export class PortalAuthRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   generatePublicCode(): string {
-    return `GMID-${nanoid(8).toUpperCase()}`;
+    const raw = crypto.randomUUID().replace(/-/g, '').substring(0, 8).toUpperCase();
+    return `GMID-${raw}`;
   }
 
   async createPortalUser(data: {
