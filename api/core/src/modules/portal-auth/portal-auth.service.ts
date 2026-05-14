@@ -10,6 +10,7 @@ import { PortalAuthRepository } from './portal-auth.repository';
 import { PortalRegisterDto } from './dto/portal-register.dto';
 import { PortalLoginDto } from './dto/portal-login.dto';
 import { PortalApplyDto } from './dto/portal-apply.dto';
+import { ZahabService } from '../zahab/zahab.service';
 
 interface PortalJwtPayload {
   gamadId: string;
@@ -25,7 +26,10 @@ export class PortalAuthService {
     return process.env.JWT_SECRET ?? 'fallback_secret';
   }
 
-  constructor(private readonly repo: PortalAuthRepository) {}
+  constructor(
+    private readonly repo: PortalAuthRepository,
+    private readonly zahab: ZahabService,
+  ) {}
 
   async register(dto: PortalRegisterDto) {
     const existing = await this.repo.findAccountByEmail(dto.email);
@@ -40,6 +44,9 @@ export class PortalAuthService {
       country: dto.country,
       city: dto.city,
     });
+
+    // Initialiser wallet Zahab + bonus de bienvenue (fire-and-forget)
+    this.zahab.onRegistration(gamadId.id).catch(() => {});
 
     return {
       message: 'Compte créé avec succès',

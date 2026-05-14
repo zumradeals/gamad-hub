@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PortalFeedRepository } from './portal-feed.repository';
 import { CreateFeedPostDto } from './dto/create-feed-post.dto';
+import { ZahabService } from '../zahab/zahab.service';
 
 @Injectable()
 export class PortalFeedService {
-  constructor(private readonly repo: PortalFeedRepository) {}
+  constructor(
+    private readonly repo: PortalFeedRepository,
+    private readonly zahab: ZahabService,
+  ) {}
 
   async getFeed(page: number) {
     const take = 20;
@@ -13,14 +17,22 @@ export class PortalFeedService {
     return { posts, total, page, pages: Math.ceil(total / take) };
   }
 
-  createPost(gamadId: string, dto: CreateFeedPostDto) {
-    return this.repo.create(gamadId, dto);
+  async createPost(gamadId: string, dto: CreateFeedPostDto) {
+    const post = await this.repo.create(gamadId, dto);
+    // Récompense Zahab pour publication (fire-and-forget)
+    this.zahab.onContentPublished(gamadId, post.id).catch(() => {});
+    return post;
   }
 
   async react(postId: string, gamadId: string, emoji: string) {
     const post = await this.repo.findById(postId);
     if (!post) throw new NotFoundException('Post introuvable');
-    return this.repo.toggleReaction(postId, gamadId, emoji);
+    const result = await this.repo.toggleReaction(postId, gamadId, emoji);
+    // Récompenser l'auteur du contenu si c'est un ajout de réaction
+    if (result.action === 'added' && post.gamadId !== gamadId) {
+      this.zahab.onReactionReceived(post.gamadId, postId).catch(() => {});
+    }
+    return result;
   }
 
   async deletePost(postId: string, gamadId: string) {

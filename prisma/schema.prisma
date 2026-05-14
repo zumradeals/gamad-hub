@@ -200,6 +200,34 @@ enum VideoStatus {
   ARCHIVED
 }
 
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+enum ZahabTransactionReason {
+  CONTENT_PUBLISHED
+  CONTENT_REWARD
+  COMMENT_REWARD
+  REACTION_RECEIVED
+  REFERRAL
+  COTISATION_PAYMENT
+  REGISTRATION_BONUS
+  MANUAL_CREDIT
+  MANUAL_DEBIT
+  CONVERSION_REQUEST
+}
+
+enum TrustLevel {
+  NEWCOMER
+  MEMBER
+  TRUSTED
+  VETERAN
+  GUARDIAN
+}
+
 // ─── IDENTITY ─────────────────────────────────────────────────────────────────
 
 model GamadId {
@@ -232,6 +260,10 @@ model GamadId {
   portalApplications PortalApplication[]
   feedPosts       PortalFeedPost[]
   feedReactions   PortalFeedReaction[]
+  zahabWallet     ZahabWallet?
+  reputation      ReputationScore?
+  sentZahab       ZahabTransaction[] @relation("ZahabSender")
+  receivedZahab   ZahabTransaction[] @relation("ZahabReceiver")
 }
 
 model Account {
@@ -645,18 +677,24 @@ model ArticleCategory {
 }
 
 model Article {
-  id         String          @id @default(uuid())
-  title      String
-  slug       String          @unique
-  excerpt    String?
-  content    String
-  imageUrl   String?
-  categoryId String?
-  category   ArticleCategory? @relation(fields: [categoryId], references: [id])
-  status     ArticleStatus   @default(DRAFT)
-  publishedAt DateTime?
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  id               String           @id @default(uuid())
+  title            String
+  slug             String           @unique
+  excerpt          String?
+  content          String
+  contentBlocks    Json?
+  imageUrl         String?
+  categoryId       String?
+  category         ArticleCategory? @relation(fields: [categoryId], references: [id])
+  authorId         String?
+  status           ArticleStatus    @default(DRAFT)
+  moderationStatus ModerationStatus @default(PENDING)
+  zahabRewarded    Boolean          @default(false)
+  rewardAmount     Float            @default(0)
+  viewCount        Int              @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 }
 
 model VideoCategory {
@@ -714,14 +752,19 @@ enum FeedPostStatus {
 }
 
 model PortalFeedPost {
-  id        String         @id @default(uuid())
-  gamadId   String
-  gamad     GamadId        @relation(fields: [gamadId], references: [id])
-  content   String
-  imageUrl  String?
-  status    FeedPostStatus @default(PUBLISHED)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id               String           @id @default(uuid())
+  gamadId          String
+  gamad            GamadId          @relation(fields: [gamadId], references: [id])
+  content          String
+  contentBlocks    Json?
+  mediaUrls        Json?
+  status           FeedPostStatus   @default(PUBLISHED)
+  moderationStatus ModerationStatus @default(APPROVED)
+  zahabRewarded    Boolean          @default(false)
+  rewardAmount     Float            @default(0)
+  viewCount        Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   reactions PortalFeedReaction[]
 }
@@ -737,4 +780,52 @@ model PortalFeedReaction {
   updatedAt DateTime       @updatedAt
 
   @@unique([postId, gamadId, emoji])
+}
+
+// ─── ZAHAB — MONNAIE CIVILISATIONNELLE ───────────────────────────────────────
+
+model ZahabWallet {
+  id           String   @id @default(uuid())
+  gamadId      String   @unique
+  gamad        GamadId  @relation(fields: [gamadId], references: [id])
+  balance      Float    @default(0)
+  lockedAmount Float    @default(0)
+  totalEarned  Float    @default(0)
+  totalSpent   Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sentTransactions     ZahabTransaction[] @relation("ZahabSender")
+  receivedTransactions ZahabTransaction[] @relation("ZahabReceiver")
+}
+
+model ZahabTransaction {
+  id          String                 @id @default(uuid())
+  fromId      String?
+  from        GamadId?               @relation("ZahabSender", fields: [fromId], references: [id])
+  toId        String
+  to          GamadId                @relation("ZahabReceiver", fields: [toId], references: [id])
+  amount      Float
+  reason      ZahabTransactionReason
+  referenceId String?
+  note        String?
+  createdAt   DateTime               @default(now())
+}
+
+// ─── RÉPUTATION ───────────────────────────────────────────────────────────────
+
+model ReputationScore {
+  id              String     @id @default(uuid())
+  gamadId         String     @unique
+  gamad           GamadId    @relation(fields: [gamadId], references: [id])
+  score           Int        @default(0)
+  contentScore    Int        @default(0)
+  engagementScore Int        @default(0)
+  trustLevel      TrustLevel @default(NEWCOMER)
+  totalPosts      Int        @default(0)
+  totalComments   Int        @default(0)
+  totalReactions  Int        @default(0)
+  totalReported   Int        @default(0)
+  totalFlagged    Int        @default(0)
+  updatedAt       DateTime   @updatedAt
 }
