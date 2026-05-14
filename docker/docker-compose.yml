@@ -56,15 +56,16 @@ services:
     container_name: gamad_core
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:4000/api/v1}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://hub.gamad.net/api/v1}
+      NEXT_PUBLIC_PORTAL_URL: ${NEXT_PUBLIC_PORTAL_URL:-https://gamad.net}
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
     depends_on:
       - api
     networks:
       - gamad_internal
     expose:
       - "3000"
-    ports:
-      - "3000:3000"
 
   portal:
     build:
@@ -73,23 +74,23 @@ services:
     container_name: gamad_portal
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:4000/api/v1}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://gamad.net/api/v1}
       NEXT_PUBLIC_CORE_URL: ${NEXT_PUBLIC_CORE_URL:-https://hub.gamad.net}
+      PORT: 3001
+      HOSTNAME: 0.0.0.0
     depends_on:
       - api
     networks:
       - gamad_internal
     expose:
       - "3001"
-    ports:
-      - "3001:3001"
 
   nginx:
     image: nginx:1.27-alpine
     container_name: gamad_nginx
     restart: unless-stopped
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../infra/nginx/gamad-hub.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80"
       - "443:443"
