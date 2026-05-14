@@ -335,9 +335,9 @@ fi
 ok "Conteneurs démarrés"
 
 # =============================================================================
-# 9. MIGRATIONS PRISMA
+# 9. ATTENTE DÉMARRAGE API (migrations déjà appliquées par l'entrypoint)
 # =============================================================================
-section "Migrations de la base de données"
+section "Vérification du démarrage"
 
 log "Attente que PostgreSQL soit prêt..."
 RETRIES=30
@@ -348,34 +348,24 @@ until docker exec gamad_postgres pg_isready -U "${POSTGRES_USER:-gamad_user}" > 
 done
 ok "PostgreSQL prêt"
 
-log "Attente que l'API soit prête..."
-RETRIES=30
-until docker exec gamad_api curl -sf http://localhost:4000/api/v1/system/health > /dev/null 2>&1; do
+log "Attente que l'API soit prête (migrations + seed inclus)..."
+RETRIES=40
+until docker exec gamad_api wget -qO/dev/null http://localhost:4000/api/v1/system/health > /dev/null 2>&1; do
   RETRIES=$((RETRIES - 1))
   [ "$RETRIES" -eq 0 ] && {
-    warn "L'API n'est pas encore prête. Logs des 30 dernières lignes :"
-    docker logs gamad_api --tail=30
-    error "API non disponible après 30 tentatives"
+    warn "L'API n'est pas encore prête. Logs des 40 dernières lignes :"
+    docker logs gamad_api --tail=40
+    warn "L'API démarre toujours — continuer manuellement avec: docker logs gamad_api -f"
+    break
   }
   sleep 3
 done
-ok "API prête"
 
-log "Application des migrations Prisma..."
-docker exec gamad_api npx prisma migrate deploy --schema /app/prisma/schema.prisma
-ok "Migrations appliquées"
-
-# =============================================================================
-# 10. HEALTH CHECK FINAL
-# =============================================================================
-section "Vérification finale"
-
-log "Test API..."
-API_HEALTH=$(docker exec gamad_api curl -sf http://localhost:4000/api/v1/system/health 2>/dev/null || echo "FAIL")
-if [ "$API_HEALTH" != "FAIL" ]; then
-  ok "API répond"
+# Vérifier le statut final
+if docker exec gamad_api wget -qO/dev/null http://localhost:4000/api/v1/system/health > /dev/null 2>&1; then
+  ok "API prête"
 else
-  warn "API ne répond pas encore — vérifier avec: docker logs gamad_api"
+  warn "API pas encore accessible via health check — vérifier: docker logs gamad_api"
 fi
 
 log "Statut des conteneurs :"
@@ -400,7 +390,7 @@ if [ "$USE_TLS" = "true" ]; then
   echo -e "  ${BOLD}Espace Core :${RESET}     https://${CORE_DOMAIN}"
   echo -e "  ${BOLD}API Health :${RESET}      https://${PORTAL_DOMAIN}/api/v1/system/health"
 else
-  SERVER_IP=$(curl -sf https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}')
+  SERVER_IP=$(hostname -I | awk '{print $1}')
   echo -e "  ${BOLD}Portail public :${RESET}  http://${SERVER_IP}  (HTTP uniquement)"
   echo -e "  ${BOLD}Pour activer HTTPS :${RESET} relancer ce script et répondre 'y' à la question Let's Encrypt"
 fi

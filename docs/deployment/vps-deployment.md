@@ -26,10 +26,10 @@ bash infra/setup/setup-vps.sh
 | 3 | Installe Docker CE, Git, UFW via dépôts officiels |
 | 4 | Configure le pare-feu (ports 22, 80, 443) |
 | 5 | Clone ou met à jour le dépôt dans `/opt/gamad-hub` |
-| 6 | Génère `.env` interactivement (secrets auto-générés via openssl) |
+| 6 | Génère `docker/.env` interactivement (secrets auto-générés via openssl) |
 | 7 | Obtient les certificats Let's Encrypt (optionnel, si DNS prêt) |
 | 8 | Build et démarre tous les conteneurs Docker |
-| 9 | Applique les migrations Prisma (`migrate deploy`) |
+| 9 | Applique les migrations Prisma via l'entrypoint API (au démarrage du conteneur) |
 | 10 | Vérifie la santé de l'API et affiche un résumé |
 
 ---
@@ -61,7 +61,7 @@ Le script génère automatiquement :
 
 Les autres variables sont saisies interactivement (domaines, email admin).
 
-**Le fichier `.env` est protégé en `chmod 600`** — il n'est jamais versionné.
+**Le fichier `docker/.env` est protégé en `chmod 600`** — il n'est jamais versionné.
 
 ---
 
@@ -108,7 +108,7 @@ docker exec -it gamad_api sh
 docker exec gamad_api npx prisma migrate deploy --schema /app/prisma/schema.prisma
 
 # Inspecter la base de données
-docker exec -it gamad_postgres psql -U gamad_user -d gamad_hub
+docker exec -it gamad_postgres psql -U gamad -d gamad_hub
 
 # Renouvellement manuel des certificats Let's Encrypt
 docker exec gamad_certbot certbot renew
@@ -144,7 +144,7 @@ apt-get install -y unattended-upgrades
 dpkg-reconfigure -plow unattended-upgrades
 
 # 3. Vérifier les permissions du .env
-ls -la /opt/gamad-hub/.env   # doit afficher -rw------- (600)
+ls -la /opt/gamad-hub/docker/.env   # doit afficher -rw------- (600)
 
 # 4. Sauvegardes automatiques PostgreSQL (cron quotidien)
 echo '0 3 * * * root docker exec gamad_postgres pg_dump -U gamad_user gamad_hub | gzip > /opt/gamad-hub/backups/$(date +\%Y\%m\%d).sql.gz' >> /etc/cron.d/gamad-backup
@@ -157,4 +157,5 @@ echo '0 3 * * * root docker exec gamad_postgres pg_dump -U gamad_user gamad_hub 
 - **Prisma `migrate deploy`** — uniquement utilisé en production (jamais `migrate dev`)
 - **Volumes Docker persistants** — `postgres_data`, `uploads_data`, `backups_data` (données survivent aux redémarrages)
 - **Certbot** — renouvellement automatique toutes les 12h via le conteneur certbot
-- **Nginx resolver** — `127.0.0.11` (DNS interne Docker) pour la résolution dynamique des upstreams
+- **Nginx upstreams** — blocs `upstream {}` statiques (`api:4000`, `portal:3001`, `core:3000`) résolus via le DNS interne Docker (`127.0.0.11`)
+- **Next.js standalone** — les `node_modules` du workspace root sont copiés dans l'image finale pour garantir la disponibilité de toutes les dépendances runtime en contexte monorepo
