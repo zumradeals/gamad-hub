@@ -32,7 +32,8 @@ En cas de contradiction avec un document technique, la doctrine prime.
 |---|---|
 | `constitution-of-the-world.md` | Lois fondatrices et invariants absolus |
 | `identity-doctrine.md` | Nature du GAMAD ID : existence, réputation, appartenance |
-| `zumara-doctrine.md` | Nature et cycle de vie des cellules Zumara |
+| `zumara-doctrine.md` | Nature, cycle de vie et financement des Zumara — v2.0 |
+| `core-access-doctrine.md` | Doctrine de l'accès au Core — les 4 chemins de révélation |
 | `ontology.md` | Ce qui peut exister dans le monde GAMAD |
 | `sovereignty-laws.md` | Ce que le Core contrôle absolument |
 
@@ -58,6 +59,7 @@ En cas de contradiction avec un document technique, la doctrine prime.
 | `gamad-hub-permission-model-v0.1.md` | RBAC + contexte organisationnel |
 | `gamad-hub-event-model-v0.1.md` | Événements système et audit |
 | `gamad-hub-api-contracts-v0.1.md` | Contrats API par domaine |
+| `zumara-lifecycle-model-v0.1.md` | Schéma Prisma, endpoints et règles métier Zumara |
 | `gamad-hub-mvp-scope-v0.1.md` | Ce qui est dans le MVP, ce qui est futur |
 | `gamad-hub-reference-architecture-v0.1.md` | Architecture de référence globale |
 
