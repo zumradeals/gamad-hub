@@ -7,6 +7,7 @@ export default function IdentityPage() {
   const [citizen, setCitizenState] = useState<CitizenContext | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [audits, setAudits] = useState<any[]>([]);
+  const [memberships, setMemberships] = useState<any[]>([]);
   const [editing, setEditing] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
@@ -22,6 +23,9 @@ export default function IdentityPage() {
       .catch(() => {});
     api.get<any>('/audit/events?take=10')
       .then(r => setAudits(Array.isArray(r) ? r.slice(0, 10) : r.events?.slice(0, 10) ?? []))
+      .catch(() => {});
+    api.get<any>('/organization/units?take=10')
+      .then(r => setMemberships(Array.isArray(r) ? r.flatMap((u: any) => u.memberships ?? []).slice(0, 5) : []))
       .catch(() => {});
   }, []);
 
@@ -167,7 +171,7 @@ export default function IdentityPage() {
       </div>
 
       {/* Memberships */}
-      {citizen.memberships?.length > 0 && (
+      {memberships.length > 0 && (
         <div style={{
           background: 'var(--bg-card)',
           border: '1px solid var(--border)',
@@ -179,9 +183,9 @@ export default function IdentityPage() {
             Structures d'appartenance
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-            {citizen.memberships.map((m, i) => (
+            {memberships.map((m: any, i: number) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{m.unitName}</span>
+                <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{m.unit?.name ?? m.unitName ?? '—'}</span>
                 <span style={{
                   padding: '2px 8px',
                   background: 'rgba(245,158,11,0.1)',
@@ -191,7 +195,7 @@ export default function IdentityPage() {
                   fontSize: '0.6875rem',
                   fontWeight: 600,
                 }}>
-                  {m.roleName}
+                  {m.role?.name ?? m.roleName ?? '—'}
                 </span>
               </div>
             ))}
