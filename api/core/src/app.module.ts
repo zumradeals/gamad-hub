@@ -15,6 +15,8 @@ import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
 import { ZumaraModule } from './modules/zumara/zumara.module';
 import { PortalZumaraModule } from './modules/portal-zumara/portal-zumara.module';
 import { RevelationModule } from './modules/revelation/revelation.module';
+import { PortalProfilesModule } from './modules/portal-profiles/portal-profiles.module';
+import { PortalMessagesModule } from './modules/portal-messages/portal-messages.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { RevelationModule } from './modules/revelation/revelation.module';
     ZumaraModule,
     PortalZumaraModule,
     RevelationModule,
+    PortalProfilesModule,
+    PortalMessagesModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

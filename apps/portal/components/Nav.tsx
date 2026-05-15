@@ -7,6 +7,7 @@ const LINKS = [
   { href: '/services',   label: 'Services' },
   { href: '/blog',       label: 'Blog' },
   { href: '/zumara',     label: 'Zumara' },
+  { href: '/citoyens',   label: 'Citoyens' },
   { href: '/ressources', label: 'Ressources' },
 ];
 
