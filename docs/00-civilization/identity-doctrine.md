@@ -10,6 +10,28 @@ Il represente l'existence reconnue dans le monde numerique GAMAD.
 
 ---
 
+# Axiome fondateur
+
+> **Chaque entité ou humain est susceptible d'être un potentiel GAMAD.**
+
+GAMAD n'est pas une marque que l'on rejoint.
+C'est ce que l'on devient.
+
+Tout humain qui s'inscrit sur le portail porte en lui un GAMAD ID silencieux.
+Il ne le sait peut-être pas encore.
+Mais il est déjà dans le monde GAMAD.
+
+La question n'est pas "Est-il GAMAD ?"
+La question est "Jusqu'où ira-t-il ?"
+
+De la même façon, toute entreprise, tout collectif, toute institution
+peut devenir une Zumara — puis une organisation — puis un Satellite.
+
+Le potentiel précède la réalisation.
+L'identité précède la certification.
+
+---
+
 # Principe fondamental
 
 Toute entite reconnue dans le Core possede une identite.

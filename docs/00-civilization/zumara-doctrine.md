@@ -246,15 +246,94 @@ chaque Zumara qui réussit finance les Zumara suivantes.
 
 ---
 
+## Zumara — Identité de référence d'une startup GAMAD
+
+Une Zumara certifiée est, dans sa nature profonde, une **startup GAMAD**.
+
+Son nom interne dans le système GAMAD est son **identité de référence** :
+traçable, immuable, liée à son GAMAD ID, soumise aux lois souveraines.
+
+Son nom public et commercial est libre.
+
+### Convention de nommage commercial
+
+Une Zumara peut choisir :
+
+- **d'afficher la marque GAMAD** dans son nom commercial :
+  `Gamad Restaurant`, `Gamad Immobilier`, `Gamad Informatique`, `Gamad Transport`…
+  Ce choix signale l'appartenance à l'écosystème et renforce la marque collective.
+
+- **d'opérer sous un nom propre indépendant** :
+  `IKOMA Group`, `Soleil du Sahel`, `Horizon Digital`…
+  La Zumara reste certifiée GAMAD en interne sans exposer la marque publiquement.
+
+Il n'y a pas d'obligation. Il y a une opportunité.
+
+Porter le nom GAMAD, c'est revendiquer une identité civilisationnelle.
+Ne pas le porter, c'est choisir la discrétion — sans perdre la certification.
+
+> Le Core connaît chaque Zumara par son identité de référence.
+> Le monde la connaît par le nom qu'elle a choisi.
+
+---
+
+## Zumara — Hiérarchie vivante
+
+Si GAMAD est une Nation, alors :
+
+```
+GAMAD (la Nation)
+  └── HCG (le gouvernement souverain)
+        └── Département / Organisation (les ministères)
+              └── Coordination / Section (les services)
+                    └── Zumara (les antennes — régionales et internationales)
+                          └── Membres (les citoyens actifs)
+```
+
+Une Zumara naît antenne.
+Elle grandit, se certifie, se structure.
+Elle peut devenir Satellite, puis intégrer une Coordination.
+Les plus matures deviennent elles-mêmes des Départements.
+
+La Zumara n'est pas le bas de la pyramide.
+Elle en est le **moteur ascendant**.
+
+---
+
+## Zumara — Le carrefour vivant du portail
+
+Le portail GAMAD s'appelle **Zumara** parce qu'il est exactement cela :
+le lieu de rassemblement de tous les citoyens,
+de tous les groupes,
+de toutes les missions.
+
+Ce n'est pas un fil d'actualités.
+C'est la **place publique de la Nation GAMAD** —
+là où les humains se trouvent, se reconnaissent, s'organisent.
+
+```
+LE Zumara (le portail, la nation)        ← espace macro, tout le monde
+  └── UNE Zumara (cellule certifiée)     ← espace micro, groupe structuré
+        └── LE Core (invisible)          ← espace souverain, les révélés
+```
+
+La majuscule fait la distinction :
+- **Le Zumara** = la communauté GAMAD dans son ensemble
+- **Une Zumara** = une cellule certifiée, une startup GAMAD
+
+---
+
 ## Règles fondamentales
 
-1. Toute Zumara possède une identité GAMAD traçable.
-2. Aucune Zumara ne peut contourner les lois souveraines du Core.
-3. La formation GAMAD est une condition non négociable pour l'activation.
-4. La cotisation est libre dans sa forme, conditionnelle pour les aides.
-5. Le Core peut promouvoir une Zumara au niveau Elite sans notification publique.
-6. Toute action critique au sein d'une Zumara produit un AuditEvent.
-7. Une Zumara dissoute conserve son historique — la mémoire est permanente.
+1. Toute Zumara possède une identité GAMAD traçable — c'est son nom de référence interne.
+2. Son nom commercial est libre — avec ou sans la marque GAMAD.
+3. Aucune Zumara ne peut contourner les lois souveraines du Core.
+4. La formation GAMAD est une condition non négociable pour l'activation.
+5. La cotisation est libre dans sa forme, conditionnelle pour les aides.
+6. Le Core peut promouvoir une Zumara au niveau Elite sans notification publique.
+7. Toute action critique au sein d'une Zumara produit un AuditEvent.
+8. Une Zumara dissoute conserve son historique — la mémoire est permanente.
+9. Toute Zumara mûre peut gravir la hiérarchie : antenne → département → organisation.
 
 ---
 
@@ -262,9 +341,15 @@ chaque Zumara qui réussit finance les Zumara suivantes.
 
 Les Zumara constituent le moteur organique d'évolution de l'écosystème GAMAD.
 
+GAMAD dit : **l'humain dit communauté, composée de groupes pour le développement.**
+Ce groupe, c'est la Zumara.
+Cette communauté, c'est le Zumara.
+Cette civilisation, c'est GAMAD.
+
 Chaque Zumara est une promesse :
 un groupe d'humains alignés sur les valeurs GAMAD,
 engagés dans une mission commune,
 formés selon la Loi GAMAD,
-et prêts à contribuer à la civilisation numérique et physique
-que GAMAD est en train de construire.
+portant un nom qui leur appartient,
+et construisant — avec ou sans badge visible —
+la civilisation numérique et physique que GAMAD incarne.
