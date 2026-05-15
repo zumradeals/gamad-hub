@@ -18,6 +18,8 @@ const GOV_NAV = [
   { href: '/governance/members',      label: 'Membres',       icon: '◈' },
   { href: '/governance/organization', label: 'Organisation',  icon: '◉' },
   { href: '/governance/candidatures', label: 'Candidatures',  icon: '◎' },
+  { href: '/governance/zumara',       label: 'Zumara',        icon: '⬡' },
+  { href: '/governance/revelation',   label: 'Révélation',    icon: '✦' },
   { href: '/governance/audit',        label: 'Audit',         icon: '▦' },
 ];
 

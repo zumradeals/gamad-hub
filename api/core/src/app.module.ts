@@ -12,6 +12,9 @@ import { AuditModule } from './modules/audit/audit.module';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { SystemModule } from './modules/system/system.module';
 import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
+import { ZumaraModule } from './modules/zumara/zumara.module';
+import { PortalZumaraModule } from './modules/portal-zumara/portal-zumara.module';
+import { RevelationModule } from './modules/revelation/revelation.module';
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import { PortalAuthModule } from './modules/portal-auth/portal-auth.module';
     PermissionsModule,
     SystemModule,
     PortalAuthModule,
+    ZumaraModule,
+    PortalZumaraModule,
+    RevelationModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
