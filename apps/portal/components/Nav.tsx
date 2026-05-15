@@ -6,7 +6,7 @@ const LINKS = [
   { href: '/vision',     label: 'Vision' },
   { href: '/services',   label: 'Services' },
   { href: '/blog',       label: 'Blog' },
-  { href: '/feed',       label: 'Communauté' },
+  { href: '/zumara',     label: 'Zumara' },
   { href: '/ressources', label: 'Ressources' },
 ];
 

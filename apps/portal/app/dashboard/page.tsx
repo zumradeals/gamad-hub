@@ -10,7 +10,7 @@ const BASE_SHORTCUTS = [
   { icon: '💰', label: 'Wallet ZAHAB', href: '/dashboard/wallet' },
   { icon: '✍️', label: 'Espace Créateur', href: '/dashboard/creator' },
   { icon: '📰', label: 'Blog', href: '/blog' },
-  { icon: '🌐', label: 'Communauté', href: '/feed' },
+  { icon: '⬡', label: 'Zumara', href: '/zumara' },
   { icon: '📚', label: 'Ressources', href: '/ressources' },
   { icon: '💼', label: 'Services', href: '/services' },
 ];

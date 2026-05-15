@@ -33,7 +33,7 @@ const PILLARS = [
 
 const SERVICES = [
   { icon: '📰', label: 'Blog', href: '/blog', desc: 'Articles et actualités' },
-  { icon: '🌐', label: 'Communauté', href: '/feed', desc: 'Fil social public' },
+  { icon: '⬡', label: 'Zumara', href: '/zumara', desc: 'La place publique GAMAD' },
   { icon: '📚', label: 'Ressources', href: '/ressources', desc: 'Bibliothèque ouverte' },
   { icon: '🎓', label: 'Formation', href: '/services', desc: 'Parcours et certifications' },
   { icon: '💼', label: 'Services', href: '/services', desc: 'Outils et solutions' },
