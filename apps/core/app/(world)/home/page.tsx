@@ -17,6 +17,7 @@ export default function HomePage() {
   const [activities, setActivities] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [threads, setThreads] = useState<any[]>([]);
+  const [zumaras, setZumaras] = useState<any[]>([]);
 
   useEffect(() => {
     const ctx = getCitizen();
@@ -26,11 +27,10 @@ export default function HomePage() {
     api.get<any>('/activities?take=3').then(r => setActivities(r.slice ? r.slice(0, 3) : [])).catch(() => {});
     api.get<any>('/communication/announcements?take=3').then(r => setAnnouncements(r.slice ? r.slice(0, 3) : [])).catch(() => {});
     api.get<any>('/communication/threads?take=3').then(r => setThreads(r.slice ? r.slice(0, 3) : [])).catch(() => {});
+    api.get<any>('/portal/zumara/mine').then(r => setZumaras(Array.isArray(r) ? r.slice(0, 3) : [])).catch(() => {});
   }, []);
 
   if (!citizen) return null;
-
-  const zumaras = citizen.memberships?.filter(m => m.roleName?.includes('ZUMARA') || m.unitName?.includes('Zumara')) ?? [];
 
   return (
     <div style={{ maxWidth: 900 }}>
@@ -87,10 +87,10 @@ export default function HomePage() {
           {zumaras.length === 0 ? (
             <Empty>Aucune Zumara assignée</Empty>
           ) : (
-            zumaras.map((z, i) => (
+            zumaras.map((z: any, i: number) => (
               <Row key={i}>
-                <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{z.unitName}</span>
-                <Badge color="var(--level-hcg)">{z.roleName}</Badge>
+                <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{z.cell?.name ?? z.name ?? '—'}</span>
+                <Badge color="#a78bfa">{z.role ?? z.status ?? '—'}</Badge>
               </Row>
             ))
           )}
