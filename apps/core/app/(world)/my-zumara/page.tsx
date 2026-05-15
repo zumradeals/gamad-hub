@@ -18,28 +18,26 @@ export default function MyZumaraPage() {
     if (!ctx) return;
     setCitizenState(ctx);
 
-    // Find the member's Zumara unit from their memberships
-    const zumaraUnit = ctx.memberships?.find(m =>
-      m.unitName?.toLowerCase().includes('zumara') || m.roleName?.toLowerCase().includes('zumara')
-    );
-
-    if (!zumaraUnit) { setLoading(false); return; }
-
-    const uid = zumaraUnit.unitId;
-    Promise.all([
-      api.get<any>(`/organization/units/${uid}`),
-      api.get<any>(`/activities?unitId=${uid}&take=5`),
-      api.get<any>(`/documents?unitId=${uid}&take=5`),
-      api.get<any>(`/communication/threads?unitId=${uid}&visibility=PRIVATE&take=5`),
-      api.get<any>(`/communication/announcements?unitId=${uid}&take=3`),
-    ]).then(([unit, acts, docs, thr, ann]) => {
-      setZumara(unit);
-      setMembers(unit.memberships ?? []);
-      setActivities(Array.isArray(acts) ? acts : []);
-      setDocuments(Array.isArray(docs) ? docs : []);
-      setThreads(Array.isArray(thr) ? thr : []);
-      setAnnouncements(Array.isArray(ann) ? ann : []);
-    }).catch(() => {}).finally(() => setLoading(false));
+    api.get<any[]>('/portal/zumara/mine')
+      .then(memberships => {
+        if (!memberships || memberships.length === 0) { setLoading(false); return; }
+        const cell = memberships[0]?.cell ?? memberships[0];
+        setZumara(cell);
+        setMembers(memberships);
+        return Promise.all([
+          api.get<any>('/activities?take=5').catch(() => []),
+          api.get<any>('/knowledge?take=5').catch(() => []),
+          api.get<any>('/communication/threads?take=5').catch(() => []),
+          api.get<any>('/communication/announcements?take=3').catch(() => []),
+        ]).then(([acts, docs, thr, ann]) => {
+          setActivities(Array.isArray(acts) ? acts : []);
+          setDocuments(Array.isArray(docs) ? docs : []);
+          setThreads(Array.isArray(thr) ? thr : []);
+          setAnnouncements(Array.isArray(ann) ? ann : []);
+        });
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   if (!citizen) return null;
@@ -112,9 +110,9 @@ export default function MyZumaraPage() {
             members.slice(0, 6).map((m: any, i: number) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>
-                  {m.gamad?.profile?.displayName ?? 'Citoyen'}
+                  {m.gamad?.profile?.displayName ?? m.member?.profile?.displayName ?? m.publicCode ?? 'Citoyen'}
                 </span>
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{m.role?.name ?? ''}</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{m.role ?? m.roleName ?? ''}</span>
               </div>
             ))
           )}
