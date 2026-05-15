@@ -12,6 +12,7 @@ const NAV = [
   { href: '/activities',  label: 'Activités',       icon: '◧',  minLevel: 1 },
   { href: '/knowledge',   label: 'Bibliothèque',    icon: '▤',  minLevel: 1 },
   { href: '/cotisation',  label: 'Cotisation',      icon: '◎',  minLevel: 1 },
+  { href: '/messages',    label: 'Messages',         icon: '✉',  minLevel: 1 },
 ];
 
 const GOV_NAV = [

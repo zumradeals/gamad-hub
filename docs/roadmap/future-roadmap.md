@@ -1,7 +1,7 @@
 # Roadmap GAMAD HUB 2.0
 
-**Mise à jour :** 2026-05-14  
-**Version :** 2.0 — Architecture civilisationnelle avec portail GAFAM-like + ZAHAB Economy
+**Mise à jour :** 2026-05-15  
+**Version :** 2.1 — Zumara comme atome civilisationnel + réseau social PHPFox-like
 
 ---
 
@@ -45,7 +45,39 @@
 
 ---
 
+### Phase 4 — Gouvernance Core opérationnelle (complété)
+
+- Module `portal-auth` HCG : gestion des candidatures (review/approve/reject)
+- Module `permissions` enrichi : assignation/révocation de rôles
+- Frontend Core : login fonctionnel, layout dynamique CitizenContext
+- Pages gouvernance : Membres, Organisation, Candidatures (toutes fonctionnelles)
+- Modals : créer membre, assigner rôle, créer unité
+
+### Phase 5 — Doctrine Zumara + modules (complété)
+
+- Doctrine consolidée : `zumara-doctrine.md` v2.0, `core-access-doctrine.md`, `identity-doctrine.md`
+- Constitution enrichie : Zumara comme atome civilisationnel (articles 8 et 9)
+- Modules backend : `zumara`, `portal-zumara`, `revelation` (complets)
+- Prisma : ZumaraRequest, ZumaraCell, ZumaraCellMembership, RevelationEvent
+- Pages gouvernance Core : Zumara, Révélation
+- Pages portail : annuaire /zumara, profil /zumara/[slug], création, dashboard
+- Carrefour Zumara : /feed → /zumara (Publications + Groupes unifiés)
+- Roadmap réseau social : `docs/roadmap/zumara-social-network-roadmap.md`
+
+---
+
 ## Prochaines phases
+
+### Phase 6 — Core Phase 2 (en cours)
+
+**Objectif :** Rendre les 5 pages monde du Core pleinement fonctionnelles.
+
+Périmètre :
+- `/discussions` : forums et fils de discussion (créer thread, poster, réagir)
+- `/formation` : catalogue, inscription, progression module par module
+- `/activities` : projets et tâches (créer, assigner, changer statut)
+- `/knowledge` : bibliothèque documents (lister, soumettre, consulter)
+- `/cotisation` : statut cotisation, historique paiements, périodes actives
 
 ### Phase B — Dashboard Créateur
 **Objectif :** Rémunérer les créateurs de contenu long-form sur le portail.

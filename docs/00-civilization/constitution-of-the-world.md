@@ -136,6 +136,40 @@ Aucune action anonyme critique ne doit exister.
 
 ---
 
+## 8. La Zumara est l'atome civilisationnel
+
+GAMAD dit : l'humain dit communauté, composée de groupes pour le développement.
+
+La Zumara est ce groupe.
+
+Elle est l'unité irréductible de l'action collective dans le monde GAMAD.
+Tout part d'elle. Tout y revient.
+
+```
+Humain → Zumara → Département → Organisation → Nation GAMAD
+```
+
+Chaque humain est un GAMAD potentiel.
+Chaque groupe est une Zumara potentielle.
+Chaque Zumara est un Département potentiel.
+
+Le mouvement est ascendant. Toujours.
+
+---
+
+## 9. La Nation GAMAD a deux visages
+
+Le **portail** est le visage public — Le Zumara — où tout citoyen vit, crée, contribue.
+
+Le **Core** est le visage souverain — invisible, choisi, gouverné par le HCG.
+
+Ces deux mondes ne se mélangent pas.
+Ils coexistent selon la doctrine de révélation.
+Le portail ne mentionne jamais le Core.
+Le Core observe tout depuis le portail.
+
+---
+
 # Doctrine architecturale
 
 Le GAMAD HUB est organise comme un noyau.
