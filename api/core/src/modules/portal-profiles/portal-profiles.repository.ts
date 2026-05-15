@@ -49,7 +49,6 @@ export class PortalProfilesRepository {
         status: { in: ['PORTAL_USER', 'PENDING', 'ACTIVE', 'MISSIONARY', 'ILLUMINATED'] },
         profile: {
           visibility: { in: ['PUBLIC', 'INTERNAL'] },
-          displayName: { not: null },
           ...(filters.country ? { country: filters.country } : {}),
         },
         ...(filters.trustLevel ? { reputation: { trustLevel: filters.trustLevel as any } } : {}),

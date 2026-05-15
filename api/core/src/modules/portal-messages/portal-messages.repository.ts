@@ -9,7 +9,7 @@ export class PortalMessagesRepository {
     return this.prisma.message.findMany({
       where: { recipientId: gamadId, status: { not: 'ARCHIVED' } },
       include: {
-        sender: { include: { profile: { select: { displayName: true } }, gamad: { select: { publicCode: true } } } },
+        sender: { include: { profile: { select: { displayName: true } } } },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
@@ -20,7 +20,7 @@ export class PortalMessagesRepository {
     return this.prisma.message.findMany({
       where: { senderId: gamadId },
       include: {
-        recipient: { include: { profile: { select: { displayName: true } }, gamad: { select: { publicCode: true } } } },
+        recipient: { include: { profile: { select: { displayName: true } } } },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
