@@ -20,6 +20,8 @@ enum IdentityStatus {
   PORTAL_USER
   PENDING
   ACTIVE
+  MISSIONARY
+  ILLUMINATED
   LIMITED
   SUSPENDED
   ARCHIVED
@@ -98,6 +100,45 @@ enum ZumaraVisibility {
   PUBLIC
   INTERNAL
   PRIVATE
+  CORE
+}
+
+enum ZumaraType {
+  LOCAL
+  DIGITAL
+  HYBRID
+}
+
+enum ZumaraRequestStatus {
+  SUBMITTED
+  PRE_VALIDATED
+  IN_FORMATION
+  ACTIVE
+  REJECTED
+  EXPIRED
+}
+
+enum ZumaraStatus {
+  ACTIVE
+  ESTABLISHED
+  SATELLITE
+  ELITE
+  SUSPENDED
+  DISSOLVED
+}
+
+enum ZumaraMemberRole {
+  FOUNDER
+  CO_FOUNDER
+  MEMBER
+  OBSERVER
+}
+
+enum RevelationPath {
+  DIRECT
+  THRESHOLD
+  SPONSORED
+  CHOSEN
 }
 
 enum FormationStatus {
@@ -292,6 +333,11 @@ model GamadId {
   articles        Article[]          @relation("ArticleAuthor")
   reportsMade     ContentReport[]    @relation("ReportsMade")
   reportsReviewed ContentReport[]    @relation("ReportsReviewed")
+
+  zumaraRequests        ZumaraRequest[]        @relation("ZumaraRequests")
+  zumaraFounderships    ZumaraFounder[]        @relation("ZumaraFounderships")
+  zumaraCellMemberships ZumaraCellMembership[] @relation("ZumaraCellMemberships")
+  revelationEvents      RevelationEvent[]      @relation("RevelationEvents")
 }
 
 model Account {
@@ -885,4 +931,91 @@ model ContentFilterRule {
   severity  FilterSeverity @default(FLAG)
   createdAt DateTime       @default(now())
   createdBy String
+}
+
+// ─── ZUMARA — CELLULES CERTIFIÉES GAMAD ──────────────────────────────────────
+
+model ZumaraRequest {
+  id           String              @id @default(uuid())
+  gamadId      String
+  gamad        GamadId             @relation("ZumaraRequests", fields: [gamadId], references: [id])
+  name         String
+  objective    String
+  type         ZumaraType          @default(HYBRID)
+  country      String?
+  city         String?
+  status       ZumaraRequestStatus @default(SUBMITTED)
+  reviewNote   String?
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  deadline     DateTime?
+  activatedAt  DateTime?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  founders     ZumaraFounder[]
+  cell         ZumaraCell?
+}
+
+model ZumaraFounder {
+  id          String          @id @default(uuid())
+  requestId   String
+  request     ZumaraRequest   @relation(fields: [requestId], references: [id])
+  gamadId     String?
+  gamad       GamadId?        @relation("ZumaraFounderships", fields: [gamadId], references: [id])
+  email       String
+  role        ZumaraMemberRole @default(CO_FOUNDER)
+  trained     Boolean         @default(false)
+  joinedAt    DateTime        @default(now())
+
+  @@unique([requestId, email])
+}
+
+model ZumaraCell {
+  id               String          @id @default(uuid())
+  requestId        String          @unique
+  request          ZumaraRequest   @relation(fields: [requestId], references: [id])
+  name             String
+  slug             String          @unique
+  objective        String
+  type             ZumaraType
+  country          String?
+  city             String?
+  status           ZumaraStatus    @default(ACTIVE)
+  visibility       ZumaraVisibility @default(PUBLIC)
+  memberCount      Int             @default(5)
+  cotisationAmount Float?
+  cotisationPeriod String?
+  walletBalance    Float           @default(0)
+  activatedAt      DateTime        @default(now())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  memberships      ZumaraCellMembership[]
+}
+
+model ZumaraCellMembership {
+  id         String           @id @default(uuid())
+  cellId     String
+  cell       ZumaraCell       @relation(fields: [cellId], references: [id])
+  gamadId    String
+  gamad      GamadId          @relation("ZumaraCellMemberships", fields: [gamadId], references: [id])
+  role       ZumaraMemberRole @default(MEMBER)
+  status     MembershipStatus @default(ACTIVE)
+  joinedAt   DateTime         @default(now())
+  leftAt     DateTime?
+
+  @@unique([cellId, gamadId])
+}
+
+// ─── RÉVÉLATION — ACCÈS CORE ─────────────────────────────────────────────────
+
+model RevelationEvent {
+  id        String         @id @default(uuid())
+  gamadId   String
+  gamad     GamadId        @relation("RevelationEvents", fields: [gamadId], references: [id])
+  path      RevelationPath
+  actorId   String?
+  note      String?
+  grantedAt DateTime       @default(now())
 }
