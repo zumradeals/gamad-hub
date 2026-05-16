@@ -833,6 +833,8 @@ model PortalFeedPost {
   id               String           @id @default(uuid())
   gamadId          String
   gamad            GamadId          @relation(fields: [gamadId], references: [id])
+  cellId           String?
+  cell             ZumaraCell?      @relation(fields: [cellId], references: [id])
   content          String
   contentBlocks    Json?
   mediaUrls        Json?
@@ -1005,6 +1007,7 @@ model ZumaraCell {
   updatedAt        DateTime        @updatedAt
 
   memberships      ZumaraCellMembership[]
+  feedPosts        PortalFeedPost[]
 }
 
 model ZumaraCellMembership {

@@ -15,8 +15,9 @@ export class PortalFeedController {
     @Query('page') page = '1',
     @Query('sort') sort?: string,
     @Query('hashtag') hashtag?: string,
+    @Query('cellId') cellId?: string,
   ) {
-    return this.service.getFeed(Number(page), sort, hashtag);
+    return this.service.getFeed(Number(page), sort, hashtag, cellId);
   }
 
   @Get(':id')

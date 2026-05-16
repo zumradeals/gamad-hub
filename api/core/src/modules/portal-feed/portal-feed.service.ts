@@ -17,14 +17,14 @@ export class PortalFeedService {
     private readonly moderation: ModerationService,
   ) {}
 
-  async getFeed(page: number, sort?: string, hashtag?: string) {
+  async getFeed(page: number, sort?: string, hashtag?: string, cellId?: string) {
     const take = 20;
     const skip = (page - 1) * take;
     const sortMode = sort === 'popular' ? 'popular' : 'recent';
     const tag = hashtag?.replace(/^#/, '');
     const [posts, total] = await Promise.all([
-      this.repo.findAll({ skip, take, hashtag: tag, sort: sortMode }),
-      this.repo.count(tag),
+      this.repo.findAll({ skip, take, hashtag: tag, sort: sortMode, cellId }),
+      this.repo.count(tag, cellId),
     ]);
     return { posts, total, page, pages: Math.ceil(total / take) };
   }

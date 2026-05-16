@@ -31,10 +31,14 @@ export class PortalFeedRepository {
     take?: number;
     hashtag?: string;
     sort?: 'recent' | 'popular';
+    cellId?: string;
   }) {
     const where: any = { status: FeedPostStatus.PUBLISHED };
     if (opts.hashtag) {
       where.content = { contains: `#${opts.hashtag}`, mode: 'insensitive' };
+    }
+    if (opts.cellId) {
+      where.cellId = opts.cellId;
     }
     const orderBy: any =
       opts.sort === 'popular'
@@ -50,10 +54,13 @@ export class PortalFeedRepository {
     });
   }
 
-  count(hashtag?: string) {
+  count(hashtag?: string, cellId?: string) {
     const where: any = { status: FeedPostStatus.PUBLISHED };
     if (hashtag) {
       where.content = { contains: `#${hashtag}`, mode: 'insensitive' };
+    }
+    if (cellId) {
+      where.cellId = cellId;
     }
     return this.prisma.portalFeedPost.count({ where });
   }
@@ -64,7 +71,7 @@ export class PortalFeedRepository {
 
   createWithStatus(
     gamadId: string,
-    data: { content: string; imageUrl?: string },
+    data: { content: string; imageUrl?: string; cellId?: string },
     moderationStatus: ModerationStatus,
   ) {
     return this.prisma.portalFeedPost.create({
@@ -73,12 +80,13 @@ export class PortalFeedRepository {
         content: data.content,
         moderationStatus,
         ...(data.imageUrl ? { mediaUrls: [data.imageUrl] } : {}),
+        ...(data.cellId ? { cellId: data.cellId } : {}),
       },
       include: POST_INCLUDE,
     });
   }
 
-  create(gamadId: string, data: { content: string; imageUrl?: string }) {
+  create(gamadId: string, data: { content: string; imageUrl?: string; cellId?: string }) {
     return this.createWithStatus(gamadId, data, ModerationStatus.APPROVED);
   }
 
