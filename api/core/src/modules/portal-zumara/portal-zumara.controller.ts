@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { PortalZumaraService } from './portal-zumara.service';
 import { PortalJwtGuard } from '../portal-auth/portal-jwt.guard';
 import { CreateZumaraRequestDto } from './dto/create-zumara-request.dto';
@@ -52,8 +52,20 @@ export class PortalZumaraController {
     return this.service.join(id, req.portalUserId);
   }
 
+  @Delete(':id/leave')
+  @UseGuards(PortalJwtGuard)
+  leave(@Param('id') id: string, @Request() req: any) {
+    return this.service.leave(id, req.portalUserId);
+  }
+
+  @Get(':id/members')
+  getMembers(@Param('id') id: string, @Query('page') page = '1') {
+    return this.service.getMembers(id, Number(page));
+  }
+
   @Get(':slug')
-  getBySlug(@Param('slug') slug: string) {
-    return this.service.getBySlug(slug);
+  getBySlug(@Param('slug') slug: string, @Request() req: any) {
+    const gamadId = req?.user?.sub ?? req?.portalUserId;
+    return this.service.getBySlug(slug, gamadId);
   }
 }

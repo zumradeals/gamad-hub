@@ -3,7 +3,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import Nav from '../../components/Nav';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
-import { publicGet, authPost, getToken } from '../../lib/api';
+import { publicGet, authPost, getToken, getUser } from '../../lib/api';
 
 /* ─── Types ─── */
 type Tab = 'feed' | 'groupes' | 'pages' | 'marche' | 'events';
@@ -16,6 +16,13 @@ interface FeedPost {
   gamad: { publicCode: string; profile: { displayName: string; avatarUrl?: string } };
   reactions: { emoji: string; gamadId: string }[];
   _count?: { comments: number };
+}
+
+interface FeedComment {
+  id: string;
+  content: string;
+  createdAt: string;
+  gamad: { publicCode: string; profile: { displayName: string; avatarUrl?: string } };
 }
 
 interface ZumaraCell {
@@ -109,6 +116,8 @@ export default function ZumaraCarrefourPage() {
       const token = getToken();
       setIsLoggedIn(!!token);
       if (token) {
+        const stored = getUser<PortalUser>();
+        if (stored) setMe(stored);
         publicGet<PortalUser>('/portal/auth/me').then(setMe).catch(() => {});
       }
     }
@@ -413,7 +422,7 @@ function FeedTab({ posts, feedLoading, isLoggedIn, me, onReact, onPosted }: {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {posts.map(p => (
-            <PostCard key={p.id} post={p} isLoggedIn={isLoggedIn} onReact={onReact} />
+            <PostCard key={p.id} post={p} isLoggedIn={isLoggedIn} me={me} onReact={onReact} />
           ))}
         </div>
       )}
@@ -660,11 +669,16 @@ function Composer({ me, isLoggedIn, onPosted }: {
 }
 
 /* ─── Post Card ─── */
-function PostCard({ post, isLoggedIn, onReact }: {
-  post: FeedPost; isLoggedIn: boolean; onReact: (id: string, emoji: string) => void;
+function PostCard({ post, isLoggedIn, me, onReact }: {
+  post: FeedPost; isLoggedIn: boolean; me: PortalUser | null;
+  onReact: (id: string, emoji: string) => void;
 }) {
   const [showReactions, setShowReactions] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<FeedComment[]>([]);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
   const reactionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const reactions = post.reactions.reduce<Record<string, number>>((acc, r) => {
@@ -673,6 +687,28 @@ function PostCard({ post, isLoggedIn, onReact }: {
 
   const totalReactions = post.reactions.length;
   const displayName = post.gamad?.profile?.displayName ?? 'Citoyen';
+
+  async function loadComments() {
+    if (commentsLoaded) { setShowComments(v => !v); return; }
+    setShowComments(true);
+    try {
+      const list = await publicGet<FeedComment[]>(`/portal/feed/${post.id}/comments`);
+      setComments(Array.isArray(list) ? list : []);
+      setCommentsLoaded(true);
+    } catch { /* silent */ }
+  }
+
+  async function submitComment(e: React.FormEvent) {
+    e.preventDefault();
+    if (!commentText.trim() || !isLoggedIn) return;
+    setSubmittingComment(true);
+    try {
+      const c = await authPost<FeedComment>(`/portal/feed/${post.id}/comments`, { content: commentText });
+      setComments(prev => [...prev, c]);
+      setCommentText('');
+    } catch { /* silent */ }
+    finally { setSubmittingComment(false); }
+  }
 
   return (
     <div style={{
@@ -783,7 +819,7 @@ function PostCard({ post, isLoggedIn, onReact }: {
 
         {/* Comment button */}
         <button
-          onClick={() => setShowComments(v => !v)}
+          onClick={loadComments}
           style={{
             flex: 1, padding: '0.5rem', background: 'transparent', border: 'none',
             cursor: 'pointer', borderRadius: 8,
@@ -807,24 +843,72 @@ function PostCard({ post, isLoggedIn, onReact }: {
         </button>
       </div>
 
-      {/* Inline comment input */}
+      {/* Comments section */}
       {showComments && (
-        <div style={{ padding: '0 1rem 1rem', borderTop: '1px solid #f3f4f6', paddingTop: '0.75rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <input
-              placeholder={isLoggedIn ? 'Écrire un commentaire…' : 'Connectez-vous pour commenter'}
-              disabled={!isLoggedIn}
-              style={{
-                flex: 1, border: '1px solid #e5e7eb', borderRadius: 20,
-                padding: '0.5rem 1rem', fontSize: '0.875rem',
-                background: '#f0f2f5', outline: 'none', color: '#1f2937',
-              }}
-              onKeyDown={e => { if (e.key === 'Enter') e.preventDefault(); }}
-            />
-          </div>
-          <p style={{ fontSize: '0.75rem', color: '#9ca3af', margin: '0.375rem 0 0 0' }}>
-            Les commentaires arrivent bientôt.
-          </p>
+        <div style={{ borderTop: '1px solid #f3f4f6', padding: '0.75rem 1rem' }}>
+          {comments.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginBottom: '0.75rem' }}>
+              {comments.map(c => {
+                const cName = c.gamad?.profile?.displayName ?? 'Citoyen';
+                return (
+                  <div key={c.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                    <div style={{
+                      width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                      background: avatarColor(cName), color: 'white',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 700, fontSize: '0.65rem',
+                    }}>
+                      {initials(cName)}
+                    </div>
+                    <div style={{ background: '#f0f2f5', borderRadius: '0 12px 12px 12px', padding: '0.5rem 0.75rem', flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#071326', marginBottom: 2 }}>{cName}</div>
+                      <div style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.5 }}>{c.content}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {isLoggedIn ? (
+            <form onSubmit={submitComment} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                background: avatarColor(me?.profile?.displayName ?? ''),
+                color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: '0.65rem',
+              }}>
+                {initials(me?.profile?.displayName ?? me?.publicCode ?? '')}
+              </div>
+              <input
+                value={commentText}
+                onChange={e => setCommentText(e.target.value)}
+                placeholder="Écrire un commentaire…"
+                maxLength={500}
+                style={{
+                  flex: 1, border: '1px solid #e5e7eb', borderRadius: 20,
+                  padding: '0.5rem 1rem', fontSize: '0.875rem',
+                  background: '#f0f2f5', outline: 'none', color: '#1f2937',
+                }}
+              />
+              <button
+                type="submit"
+                disabled={!commentText.trim() || submittingComment}
+                style={{
+                  background: commentText.trim() ? '#E5C100' : '#e5e7eb',
+                  border: 'none', borderRadius: 8, padding: '0.4rem 0.625rem',
+                  cursor: commentText.trim() ? 'pointer' : 'default',
+                  fontWeight: 700, fontSize: '0.8rem', flexShrink: 0,
+                  color: commentText.trim() ? '#071326' : '#9ca3af',
+                }}
+              >
+                {submittingComment ? '…' : 'Envoyer'}
+              </button>
+            </form>
+          ) : (
+            <p style={{ fontSize: '0.8rem', color: '#9ca3af', margin: 0, textAlign: 'center' }}>
+              <Link href="/connexion" style={{ color: '#1696D2', fontWeight: 600 }}>Connectez-vous</Link> pour commenter
+            </p>
+          )}
         </div>
       )}
     </div>

@@ -2,6 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { ZumaraType, ZumaraVisibility } from '@prisma/client';
 
+const MEMBER_PROFILE = {
+  gamad: {
+    select: {
+      publicCode: true,
+      profile: { select: { displayName: true, avatarUrl: true } },
+    },
+  },
+};
+
 @Injectable()
 export class PortalZumaraRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -44,17 +53,44 @@ export class PortalZumaraRepository {
         country: true,
         city: true,
         status: true,
+        visibility: true,
         memberCount: true,
         cotisationAmount: true,
         cotisationPeriod: true,
+        walletBalance: true,
         activatedAt: true,
+        createdAt: true,
         memberships: {
           where: { status: 'ACTIVE' },
-          select: { role: true, joinedAt: true },
-          take: 10,
+          select: {
+            role: true,
+            joinedAt: true,
+            ...MEMBER_PROFILE,
+          },
+          take: 6,
+          orderBy: { joinedAt: 'asc' },
         },
+        _count: { select: { memberships: true } },
       },
     });
+  }
+
+  findMembers(cellId: string, skip: number, take: number) {
+    return this.prisma.zumaraCellMembership.findMany({
+      where: { cellId, status: 'ACTIVE' },
+      select: {
+        role: true,
+        joinedAt: true,
+        ...MEMBER_PROFILE,
+      },
+      orderBy: [{ role: 'asc' }, { joinedAt: 'asc' }],
+      skip,
+      take,
+    });
+  }
+
+  countMembers(cellId: string) {
+    return this.prisma.zumaraCellMembership.count({ where: { cellId, status: 'ACTIVE' } });
   }
 
   findSuggestions(country: string) {
@@ -101,10 +137,18 @@ export class PortalZumaraRepository {
     });
   }
 
+  async deleteMembership(cellId: string, gamadId: string) {
+    const m = await this.findMembership(cellId, gamadId);
+    if (!m) return null;
+    return this.prisma.zumaraCellMembership.delete({
+      where: { cellId_gamadId: { cellId, gamadId } },
+    });
+  }
+
   findMyCells(gamadId: string) {
     return this.prisma.zumaraCellMembership.findMany({
       where: { gamadId, status: 'ACTIVE' },
-      include: { cell: { select: { id: true, name: true, slug: true, status: true, type: true, country: true } } },
+      include: { cell: { select: { id: true, name: true, slug: true, status: true, type: true, country: true, memberCount: true } } },
     });
   }
 }
