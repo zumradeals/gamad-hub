@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? '';
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
 type QueueItem = {
   id: string;
@@ -37,7 +37,7 @@ function useAuth() {
   const [trustLevel, setTrustLevel] = useState<string>('NEWCOMER');
 
   useEffect(() => {
-    const t = localStorage.getItem('portal_token');
+    const t = localStorage.getItem('portalToken');
     setToken(t);
     if (t) {
       try {
@@ -51,7 +51,7 @@ function useAuth() {
 }
 
 async function apiFetch(url: string, token: string, opts: RequestInit = {}) {
-  const res = await fetch(`${API}/api/v1${url}`, {
+  const res = await fetch(`${BASE}${url}`, {
     ...opts,
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
   });

@@ -1,9 +1,10 @@
 import {
-  Controller, Get, Post, Put, Body, Param, Query,
+  Controller, Get, Post, Put, Delete, Body, Param, Query,
   UseGuards, Request,
 } from '@nestjs/common';
 import { ModerationService } from './moderation.service';
 import { PortalJwtGuard } from '../portal-auth/portal-jwt.guard';
+import { PermissionGuard } from '../../common/guards/permission.guard';
 import { VeteranGuard, GuardianGuard } from './veteran.guard';
 import { ReviewContentDto } from './dto/review-content.dto';
 import { ReportContentDto } from './dto/report-content.dto';
@@ -55,6 +56,33 @@ export class ModerationController {
   @UseGuards(PortalJwtGuard, GuardianGuard)
   getStats() {
     return this.service.getStats();
+  }
+}
+
+// ── Gouvernance HCG — règles de filtrage (Core JWT) ──────────────────────────
+@Controller('governance/moderation')
+@UseGuards(PermissionGuard)
+export class ModerationGovernanceController {
+  constructor(private readonly service: ModerationService) {}
+
+  @Get('stats')
+  getStats() {
+    return this.service.getStats();
+  }
+
+  @Get('filter-rules')
+  getFilterRules() {
+    return this.service.getFilterRules();
+  }
+
+  @Post('filter-rules')
+  addFilterRule(@Body() body: { keyword: string; severity: 'FLAG' | 'BLOCK' }, @Request() req: any) {
+    return this.service.addFilterRule(body.keyword, body.severity, req.actorId);
+  }
+
+  @Delete('filter-rules/:id')
+  deleteFilterRule(@Param('id') id: string) {
+    return this.service.deleteFilterRule(id);
   }
 }
 

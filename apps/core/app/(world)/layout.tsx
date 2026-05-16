@@ -23,6 +23,7 @@ const GOV_NAV = [
   { href: '/governance/revelation',   label: 'Révélation',    icon: '✦' },
   { href: '/governance/audit',        label: 'Audit',         icon: '▦' },
   { href: '/governance/modules/blog', label: 'Blog (config)',  icon: '📰' },
+  { href: '/governance/moderation',   label: 'Modération',    icon: '🛡' },
 ];
 
 export default function WorldLayout({ children }: { children: React.ReactNode }) {

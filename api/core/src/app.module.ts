@@ -20,6 +20,7 @@ import { PortalMessagesModule } from './modules/portal-messages/portal-messages.
 import { PortalPagesModule } from './modules/portal-pages/portal-pages.module';
 import { PortalMarketModule } from './modules/portal-market/portal-market.module';
 import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
+import { ModerationModule } from './modules/moderation/moderation.module';
 import { ModuleConfigModule } from './modules/module-config/module-config.module';
 
 @Module({
@@ -45,6 +46,7 @@ import { ModuleConfigModule } from './modules/module-config/module-config.module
     PortalPagesModule,
     PortalMarketModule,
     PortalBlogModule,
+    ModerationModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

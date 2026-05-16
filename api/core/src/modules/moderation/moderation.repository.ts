@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { ModerationStatus, ReportReason, ReportStatus } from '@prisma/client';
+import { ModerationStatus, ReportReason, ReportStatus, FilterSeverity } from '@prisma/client';
 
 @Injectable()
 export class ModerationRepository {
@@ -126,5 +126,17 @@ export class ModerationRepository {
 
   async getFilterRules() {
     return this.prisma.contentFilterRule.findMany({ orderBy: { keyword: 'asc' } });
+  }
+
+  async addFilterRule(keyword: string, severity: FilterSeverity, createdBy: string) {
+    return this.prisma.contentFilterRule.upsert({
+      where: { keyword },
+      update: { severity, createdBy },
+      create: { keyword, severity, createdBy },
+    });
+  }
+
+  async deleteFilterRule(id: string) {
+    return this.prisma.contentFilterRule.delete({ where: { id } });
   }
 }
