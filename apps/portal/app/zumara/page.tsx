@@ -189,7 +189,10 @@ export default function ZumaraCarrefourPage() {
             {tab === 'groupes' && (
               <GroupesTab cells={cells} loading={groupsLoading} isLoggedIn={isLoggedIn} />
             )}
-            {(tab === 'pages' || tab === 'marche' || tab === 'events') && (
+            {tab === 'pages' && (
+              <PagesTab />
+            )}
+            {(tab === 'marche' || tab === 'events') && (
               <ComingSoon tab={tab} />
             )}
           </main>
@@ -1013,6 +1016,56 @@ function GroupesTab({ cells, loading, isLoggedIn }: {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ─── Pages Tab ─── */
+function PagesTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{
+        background: 'white', borderRadius: 12, padding: '20px 24px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12,
+      }}>
+        <div>
+          <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 18, fontWeight: 700, color: '#071326', margin: 0 }}>
+            Pages Pro
+          </h2>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0' }}>
+            Marques et services de la communauté GAMAD
+          </p>
+        </div>
+        <a
+          href="/zumara/pages"
+          style={{
+            background: '#E5C100', color: '#071326', padding: '10px 20px',
+            borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          }}
+        >
+          Parcourir les Pages →
+        </a>
+      </div>
+      <div style={{
+        background: 'white', borderRadius: 12, padding: '2rem', textAlign: 'center',
+      }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>📄</div>
+        <h3 style={{ color: '#071326', fontWeight: 700, marginBottom: 8, fontSize: 16 }}>
+          Découvrez les Pages Pro
+        </h3>
+        <p style={{ color: '#6B7280', maxWidth: 400, margin: '0 auto 20px', fontSize: 14 }}>
+          Les Pages Pro sont les vitrines des Zumara ESTABLISHED — marques, services, publications et catalogues.
+        </p>
+        <a
+          href="/zumara/pages"
+          style={{
+            background: '#1696D2', color: '#fff', padding: '12px 28px',
+            borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none', display: 'inline-block',
+          }}
+        >
+          Voir toutes les Pages
+        </a>
+      </div>
     </div>
   );
 }

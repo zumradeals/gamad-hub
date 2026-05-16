@@ -17,6 +17,7 @@ import { PortalZumaraModule } from './modules/portal-zumara/portal-zumara.module
 import { RevelationModule } from './modules/revelation/revelation.module';
 import { PortalProfilesModule } from './modules/portal-profiles/portal-profiles.module';
 import { PortalMessagesModule } from './modules/portal-messages/portal-messages.module';
+import { PortalPagesModule } from './modules/portal-pages/portal-pages.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PortalMessagesModule } from './modules/portal-messages/portal-messages.
     RevelationModule,
     PortalProfilesModule,
     PortalMessagesModule,
+    PortalPagesModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
