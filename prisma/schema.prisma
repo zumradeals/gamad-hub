@@ -339,6 +339,7 @@ model GamadId {
   zumaraFounderships    ZumaraFounder[]        @relation("ZumaraFounderships")
   zumaraCellMemberships ZumaraCellMembership[] @relation("ZumaraCellMemberships")
   revelationEvents      RevelationEvent[]      @relation("RevelationEvents")
+  pageFollows           ZumaraPageFollow[]
 }
 
 model Account {
@@ -1008,6 +1009,7 @@ model ZumaraCell {
 
   memberships      ZumaraCellMembership[]
   feedPosts        PortalFeedPost[]
+  page             ZumaraPage?
 }
 
 model ZumaraCellMembership {
@@ -1034,4 +1036,78 @@ model RevelationEvent {
   actorId   String?
   note      String?
   grantedAt DateTime       @default(now())
+}
+
+// ─── PAGES PRO — MARQUE & COMMERCE ──────────────────────────────────────────
+
+enum PageStatus {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum PageProductType {
+  PRODUCT
+  SERVICE
+}
+
+model ZumaraPage {
+  id          String     @id @default(uuid())
+  cellId      String     @unique
+  cell        ZumaraCell @relation(fields: [cellId], references: [id])
+  name        String
+  slug        String     @unique
+  tagline     String?
+  description String?
+  logoUrl     String?
+  coverUrl    String?
+  category    String?
+  website     String?
+  email       String?
+  country     String?
+  city        String?
+  status      PageStatus @default(ACTIVE)
+  followCount Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  posts     ZumaraPagePost[]
+  products  ZumaraPageProduct[]
+  followers ZumaraPageFollow[]
+}
+
+model ZumaraPagePost {
+  id        String     @id @default(uuid())
+  pageId    String
+  page      ZumaraPage @relation(fields: [pageId], references: [id])
+  content   String
+  imageUrl  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model ZumaraPageProduct {
+  id          String          @id @default(uuid())
+  pageId      String
+  page        ZumaraPage      @relation(fields: [pageId], references: [id])
+  name        String
+  description String?
+  imageUrl    String?
+  price       Float?
+  currency    String          @default("ZAHAB")
+  type        PageProductType @default(SERVICE)
+  available   Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model ZumaraPageFollow {
+  id        String     @id @default(uuid())
+  pageId    String
+  page      ZumaraPage @relation(fields: [pageId], references: [id])
+  gamadId   String
+  gamad     GamadId    @relation(fields: [gamadId], references: [id])
+  createdAt DateTime   @default(now())
+
+  @@unique([pageId, gamadId])
 }
