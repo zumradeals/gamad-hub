@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Nav from '../../../components/Nav';
@@ -141,6 +141,10 @@ function PreviewPanel({ title, excerpt, content, videoUrl }: { title: string; ex
 
 /* ══════════════════════════════════════ MAIN PAGE ══════════════════════════════════════ */
 export default function EcrirePage() {
+  return <Suspense><EcrirePageInner /></Suspense>;
+}
+
+function EcrirePageInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const editId       = searchParams?.get('id') ?? null;
