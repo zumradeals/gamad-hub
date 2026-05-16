@@ -1,14 +1,16 @@
 import {
   Body, Controller, Delete, ForbiddenException, Get, Param,
-  Post, Query, Req, UseGuards,
+  Post, Put, Query, Req, UseGuards,
 } from '@nestjs/common';
 import { PortalVideoTubeService } from './portal-videotube.service';
 import { ModuleConfigService } from '../module-config/module-config.service';
 import { PortalJwtGuard } from '../portal-auth/portal-jwt.guard';
 import { OptionalPortalJwtGuard } from '../portal-auth/optional-portal-jwt.guard';
 import { SubmitVideoDto } from './dto/submit-video.dto';
+import { UpdateVideoDto } from './dto/update-video.dto';
 import { AddCommentDto } from './dto/add-comment.dto';
 import { ReviewVideoDto } from './dto/review-video.dto';
+import { UpsertChannelDto } from './dto/upsert-channel.dto';
 
 @Controller('portal/videos')
 export class PortalVideoTubeController {
@@ -44,7 +46,13 @@ export class PortalVideoTubeController {
     return this.service.getCategories();
   }
 
-  /* ── Author endpoints ── */
+  /* ── Studio: stats + video management ── */
+
+  @Get('studio/stats')
+  @UseGuards(PortalJwtGuard)
+  getStudioStats(@Req() req: any) {
+    return this.service.getStudioStats(req.portalUserId);
+  }
 
   @Get('me')
   @UseGuards(PortalJwtGuard)
@@ -56,6 +64,18 @@ export class PortalVideoTubeController {
   @UseGuards(PortalJwtGuard)
   submitVideo(@Req() req: any, @Body() dto: SubmitVideoDto) {
     return this.service.submitVideo(req.portalUserId, dto);
+  }
+
+  @Put(':id')
+  @UseGuards(PortalJwtGuard)
+  updateVideo(@Param('id') id: string, @Req() req: any, @Body() dto: UpdateVideoDto) {
+    return this.service.updateVideo(req.portalUserId, id, dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(PortalJwtGuard)
+  deleteVideo(@Param('id') id: string, @Req() req: any) {
+    return this.service.deleteVideo(req.portalUserId, id);
   }
 
   /* ── Editorial queue (EDITOR role) ── */
@@ -110,5 +130,33 @@ export class PortalVideoTubeController {
   @UseGuards(PortalJwtGuard)
   deleteComment(@Param('commentId') commentId: string, @Req() req: any) {
     return this.service.deleteComment(commentId, req.portalUserId);
+  }
+}
+
+@Controller('portal/channels')
+export class PortalChannelController {
+  constructor(private readonly service: PortalVideoTubeService) {}
+
+  @Get('me')
+  @UseGuards(PortalJwtGuard)
+  getMyChannel(@Req() req: any) {
+    return this.service.getMyChannel(req.portalUserId);
+  }
+
+  @Post()
+  @UseGuards(PortalJwtGuard)
+  upsertChannel(@Req() req: any, @Body() dto: UpsertChannelDto) {
+    return this.service.upsertChannel(req.portalUserId, dto);
+  }
+
+  @Put()
+  @UseGuards(PortalJwtGuard)
+  updateChannel(@Req() req: any, @Body() dto: UpsertChannelDto) {
+    return this.service.upsertChannel(req.portalUserId, dto);
+  }
+
+  @Get(':slug')
+  getChannel(@Param('slug') slug: string) {
+    return this.service.getChannelBySlug(slug);
   }
 }
