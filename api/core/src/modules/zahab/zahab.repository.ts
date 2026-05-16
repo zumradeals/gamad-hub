@@ -12,6 +12,8 @@ export const REWARD_RULES: Record<string, number> = {
   ARTICLE_PUBLISHED:     20,
   ARTICLE_MILESTONE_100: 10,
   ARTICLE_MILESTONE_1K:  50,
+  ARTICLE_READ:         0.5,
+  ARTICLE_LIKED:        0.2,
 };
 
 // Seuils de trustLevel par score cumulé

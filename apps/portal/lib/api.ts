@@ -68,3 +68,33 @@ export async function authGet<T>(path: string): Promise<T> {
   }
   return res.json() as Promise<T>;
 }
+
+export async function authPut<T>(path: string, body: unknown): Promise<T> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as any).message ?? `HTTP ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
+
+export async function authDelete<T>(path: string): Promise<T> {
+  const token = getToken();
+  const res = await fetch(`${BASE}${path}`, {
+    method: 'DELETE',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as any).message ?? `HTTP ${res.status}`);
+  }
+  return res.json() as Promise<T>;
+}
