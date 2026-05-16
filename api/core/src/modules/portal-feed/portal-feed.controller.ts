@@ -3,6 +3,7 @@ import {
 } from '@nestjs/common';
 import { PortalFeedService } from './portal-feed.service';
 import { CreateFeedPostDto } from './dto/create-feed-post.dto';
+import { CreateFeedCommentDto } from './dto/create-feed-comment.dto';
 import { PortalJwtGuard } from '../portal-auth/portal-jwt.guard';
 
 @Controller('portal/feed')
@@ -10,8 +11,17 @@ export class PortalFeedController {
   constructor(private readonly service: PortalFeedService) {}
 
   @Get()
-  getFeed(@Query('page') page = '1') {
-    return this.service.getFeed(Number(page));
+  getFeed(
+    @Query('page') page = '1',
+    @Query('sort') sort?: string,
+    @Query('hashtag') hashtag?: string,
+  ) {
+    return this.service.getFeed(Number(page), sort, hashtag);
+  }
+
+  @Get(':id')
+  getPost(@Param('id') id: string) {
+    return this.service.getPost(id);
   }
 
   @Post()
@@ -30,5 +40,31 @@ export class PortalFeedController {
   @UseGuards(PortalJwtGuard)
   deletePost(@Req() req: any, @Param('id') id: string) {
     return this.service.deletePost(id, req.portalUserId);
+  }
+
+  /* ── Comments ── */
+
+  @Get(':id/comments')
+  getComments(@Param('id') id: string) {
+    return this.service.getComments(id);
+  }
+
+  @Post(':id/comments')
+  @UseGuards(PortalJwtGuard)
+  addComment(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: CreateFeedCommentDto,
+  ) {
+    return this.service.addComment(req.portalUserId, id, dto);
+  }
+
+  @Delete(':id/comments/:commentId')
+  @UseGuards(PortalJwtGuard)
+  deleteComment(
+    @Req() req: any,
+    @Param('commentId') commentId: string,
+  ) {
+    return this.service.deleteComment(commentId, req.portalUserId);
   }
 }
