@@ -1,24 +1,42 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
 export class VeteranGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    const level: string = req.portalUser?.trustLevel ?? '';
+    const gamadId: string = req.portalUserId;
+    if (!gamadId) throw new ForbiddenException('Non authentifié');
+
+    const rep = await this.prisma.reputationScore.findUnique({ where: { gamadId } });
+    const level = rep?.trustLevel ?? 'NEWCOMER';
+
     if (!['VETERAN', 'GUARDIAN'].includes(level)) {
       throw new ForbiddenException('Accès réservé aux modérateurs (niveau Vétéran minimum)');
     }
+    req.portalUserTrustLevel = level;
     return true;
   }
 }
 
 @Injectable()
 export class GuardianGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    if (req.portalUser?.trustLevel !== 'GUARDIAN') {
+    const gamadId: string = req.portalUserId;
+    if (!gamadId) throw new ForbiddenException('Non authentifié');
+
+    const rep = await this.prisma.reputationScore.findUnique({ where: { gamadId } });
+    const level = rep?.trustLevel ?? 'NEWCOMER';
+
+    if (level !== 'GUARDIAN') {
       throw new ForbiddenException('Accès réservé aux Gardiens');
     }
+    req.portalUserTrustLevel = level;
     return true;
   }
 }

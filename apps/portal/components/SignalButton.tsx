@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? '';
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
 
 const REASONS = [
   { value: 'SPAM', label: 'Spam ou contenu répétitif' },
@@ -26,7 +26,7 @@ export default function SignalButton({ contentId, contentType }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   async function submit() {
-    const token = localStorage.getItem('portal_token');
+    const token = localStorage.getItem('portalToken');
     if (!token) {
       setError('Connectez-vous pour signaler ce contenu.');
       return;
@@ -39,9 +39,9 @@ export default function SignalButton({ contentId, contentType }: Props) {
     setError(null);
     try {
       const endpoint = contentType === 'feed'
-        ? `/api/v1/portal/feed/${contentId}/report`
-        : `/api/v1/portal/blog/${contentId}/report`;
-      const res = await fetch(`${API}${endpoint}`, {
+        ? `/portal/feed/${contentId}/report`
+        : `/portal/blog/${contentId}/report`;
+      const res = await fetch(`${BASE}${endpoint}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason, note: note.trim() || undefined }),

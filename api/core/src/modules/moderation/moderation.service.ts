@@ -178,4 +178,20 @@ export class ModerationService {
   getStats() {
     return this.repo.getStats();
   }
+
+  getFilterRules() {
+    return this.repo.getFilterRules();
+  }
+
+  async addFilterRule(keyword: string, severity: 'FLAG' | 'BLOCK', createdBy: string) {
+    const rule = await this.repo.addFilterRule(keyword.toLowerCase().trim(), severity as any, createdBy);
+    this.filterCacheAt = 0; // invalider le cache
+    return rule;
+  }
+
+  async deleteFilterRule(id: string) {
+    const result = await this.repo.deleteFilterRule(id);
+    this.filterCacheAt = 0; // invalider le cache
+    return result;
+  }
 }
