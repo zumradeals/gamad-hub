@@ -287,6 +287,12 @@ enum ZahabTransactionReason {
   ARTICLE_READ
   ARTICLE_LIKED
   MARKET_PURCHASE
+  VIDEO_WATCHED
+  VIDEO_LIKED
+  VIDEO_PUBLISHED
+  VIDEO_MILESTONE_100
+  VIDEO_MILESTONE_1K
+  VIDEO_MILESTONE_10K
 }
 
 enum TrustLevel {
@@ -348,6 +354,11 @@ model GamadId {
   articleLikes          ArticleLike[]          @relation("ArticleLikes")
   articleComments       ArticleComment[]       @relation("ArticleComments")
   moduleRoles           ModuleRole[]           @relation("ModuleRoles")
+  videoAuthored         GamadTubeVideo[]       @relation("VideoAuthor")
+  videoChannels         VideoChannel[]         @relation("ChannelOwner")
+  videoWatches          VideoWatch[]           @relation("VideoWatches")
+  videoLikes            VideoLike[]            @relation("VideoLikes")
+  videoComments         VideoComment[]         @relation("VideoComments")
 }
 
 model Account {
@@ -806,6 +817,7 @@ model VideoCategory {
   updatedAt DateTime @updatedAt
 
   videos Video[]
+  tubeVideos GamadTubeVideo[]
 }
 
 model Video {
@@ -1227,4 +1239,95 @@ model ModuleRole {
   updatedAt   DateTime @updatedAt
 
   @@unique([module, gamadId, role])
+}
+
+// ─── GAMADTUBE ────────────────────────────────────────────────────────────────
+
+
+model VideoChannel {
+  id          String           @id @default(uuid())
+  slug        String           @unique
+  name        String
+  description String?
+  avatarUrl   String?
+  bannerUrl   String?
+  isOfficial  Boolean          @default(false)
+  gamadId     String?
+  gamad       GamadId?         @relation("ChannelOwner", fields: [gamadId], references: [id])
+  videos      GamadTubeVideo[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model GamadTubeVideo {
+  id               String           @id @default(uuid())
+  slug             String           @unique
+  title            String
+  description      String?
+  youtubeUrl       String
+  thumbnailUrl     String?
+  categoryId       String?
+  category         VideoCategory?   @relation(fields: [categoryId], references: [id])
+  tags             String[]
+  durationMin      Int?
+  authorId         String?
+  author           GamadId?         @relation("VideoAuthor", fields: [authorId], references: [id])
+  channelId        String?
+  channel          VideoChannel?    @relation(fields: [channelId], references: [id])
+  sponsored        Boolean          @default(false)
+  sponsorName      String?
+  sponsorUrl       String?
+  verified         Boolean          @default(false)
+  status           VideoStatus      @default(DRAFT)
+  moderationStatus ModerationStatus @default(PENDING)
+  editorId         String?
+  rejectionNote    String?
+  viewCount        Int              @default(0)
+  likesCount       Int              @default(0)
+  watchRewardCount Int              @default(0)
+  milestone100     Boolean          @default(false)
+  milestone1k      Boolean          @default(false)
+  milestone10k     Boolean          @default(false)
+  zahabRewarded    Boolean          @default(false)
+  rewardAmount     Float            @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  watches          VideoWatch[]
+  likes            VideoLike[]
+  comments         VideoComment[]
+}
+
+model VideoWatch {
+  id        String         @id @default(uuid())
+  videoId   String
+  video     GamadTubeVideo @relation(fields: [videoId], references: [id])
+  gamadId   String
+  gamad     GamadId        @relation("VideoWatches", fields: [gamadId], references: [id])
+  createdAt DateTime       @default(now())
+
+  @@unique([videoId, gamadId])
+}
+
+model VideoLike {
+  id        String         @id @default(uuid())
+  videoId   String
+  video     GamadTubeVideo @relation(fields: [videoId], references: [id])
+  gamadId   String
+  gamad     GamadId        @relation("VideoLikes", fields: [gamadId], references: [id])
+  createdAt DateTime       @default(now())
+
+  @@unique([videoId, gamadId])
+}
+
+model VideoComment {
+  id        String         @id @default(uuid())
+  videoId   String
+  video     GamadTubeVideo @relation(fields: [videoId], references: [id])
+  gamadId   String
+  gamad     GamadId        @relation("VideoComments", fields: [gamadId], references: [id])
+  content   String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }

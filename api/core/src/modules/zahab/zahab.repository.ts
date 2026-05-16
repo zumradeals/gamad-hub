@@ -4,16 +4,24 @@ import { ZahabTransactionReason, TrustLevel } from '@prisma/client';
 
 // Règles de récompense (en Zahab Points)
 export const REWARD_RULES: Record<string, number> = {
-  REGISTRATION_BONUS:    10,
-  CONTENT_PUBLISHED:      5,
-  CONTENT_REWARD:         2,
-  COMMENT_REWARD:         1,
-  REACTION_RECEIVED:    0.5,
-  ARTICLE_PUBLISHED:     20,
-  ARTICLE_MILESTONE_100: 10,
-  ARTICLE_MILESTONE_1K:  50,
-  ARTICLE_READ:         0.5,
-  ARTICLE_LIKED:        0.2,
+  REGISTRATION_BONUS:      10,
+  CONTENT_PUBLISHED:        5,
+  CONTENT_REWARD:           2,
+  COMMENT_REWARD:           1,
+  REACTION_RECEIVED:      0.5,
+  ARTICLE_PUBLISHED:       20,
+  ARTICLE_MILESTONE_100:   10,
+  ARTICLE_MILESTONE_1K:    50,
+  ARTICLE_READ:           0.5,
+  ARTICLE_LIKED:          0.2,
+  VIDEO_WATCHED:          0.5,
+  VIDEO_LIKED_VIEWER:     0.1,
+  VIDEO_LIKED_AUTHOR:     0.3,
+  VIDEO_PUBLISHED:         30,
+  VIDEO_MILESTONE_100:     20,
+  VIDEO_MILESTONE_1K:     100,
+  VIDEO_MILESTONE_10K:    500,
+  VIDEO_COMMENT:            1,
 };
 
 // Seuils de trustLevel par score cumulé

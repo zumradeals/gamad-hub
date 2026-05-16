@@ -26,6 +26,18 @@ const DEFAULTS: Record<string, Record<string, string>> = {
     max_members:             '100',
     formation_min_days:      '30',
   },
+  VIDEOTUBE: {
+    watch_reward_viewer:     '0.5',
+    like_reward_viewer:      '0.1',
+    like_reward_author:      '0.3',
+    publish_reward:          '30',
+    milestone_100_reward:    '20',
+    milestone_1k_reward:     '100',
+    milestone_10k_reward:    '500',
+    comment_reward:          '1',
+    min_trust_to_publish:    'TRUSTED',
+    auto_moderation:         'true',
+  },
 };
 
 @Injectable()
