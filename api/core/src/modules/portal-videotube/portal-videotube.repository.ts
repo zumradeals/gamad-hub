@@ -249,4 +249,74 @@ export class PortalVideoTubeRepository {
   findAuthorTrust(gamadId: string) {
     return this.prisma.reputationScore.findUnique({ where: { gamadId } });
   }
+
+  /* ── Studio: video management ── */
+
+  updateVideo(id: string, authorId: string, data: Partial<{
+    title: string; description: string; thumbnailUrl: string;
+    tags: string[]; durationMin: number; sponsored: boolean;
+    sponsorName: string; sponsorUrl: string; categoryId: string; channelId: string;
+  }>) {
+    return this.prisma.gamadTubeVideo.updateMany({
+      where: { id, authorId },
+      data,
+    });
+  }
+
+  softDeleteVideo(id: string, authorId: string) {
+    return this.prisma.gamadTubeVideo.updateMany({
+      where: { id, authorId },
+      data: { status: VideoStatus.ARCHIVED },
+    });
+  }
+
+  async getCreatorStats(authorId: string) {
+    const videos = await this.prisma.gamadTubeVideo.findMany({
+      where: { authorId, status: VideoStatus.PUBLISHED, moderationStatus: ModerationStatus.APPROVED },
+      select: {
+        viewCount: true, likesCount: true, watchRewardCount: true,
+        rewardAmount: true, milestone100: true, milestone1k: true, milestone10k: true,
+        createdAt: true,
+      },
+    });
+    const totalPublished = videos.length;
+    const totalViews = videos.reduce((s, v) => s + v.viewCount, 0);
+    const totalLikes = videos.reduce((s, v) => s + v.likesCount, 0);
+    const totalWatchRewards = videos.reduce((s, v) => s + v.watchRewardCount, 0);
+    const totalZahab = videos.reduce((s, v) => s + v.rewardAmount, 0);
+    const milestones100 = videos.filter(v => v.milestone100).length;
+    const milestones1k  = videos.filter(v => v.milestone1k).length;
+    const milestones10k = videos.filter(v => v.milestone10k).length;
+    const avgViews = totalPublished ? Math.round(totalViews / totalPublished) : 0;
+
+    const draftCount   = await this.prisma.gamadTubeVideo.count({ where: { authorId, status: VideoStatus.DRAFT } });
+    const pendingCount = await this.prisma.gamadTubeVideo.count({ where: { authorId, moderationStatus: ModerationStatus.PENDING } });
+
+    return {
+      totalPublished, totalViews, totalLikes, totalWatchRewards,
+      totalZahab, avgViews, milestones100, milestones1k, milestones10k,
+      draftCount, pendingCount,
+    };
+  }
+
+  /* ── Studio: channel ── */
+
+  async findChannelByGamadId(gamadId: string) {
+    return this.prisma.videoChannel.findFirst({ where: { gamadId } });
+  }
+
+  async findChannelBySlug(slug: string) {
+    return this.prisma.videoChannel.findUnique({
+      where: { slug },
+      include: { videos: { where: { status: VideoStatus.PUBLISHED, moderationStatus: ModerationStatus.APPROVED }, select: VIDEO_SELECT, orderBy: { publishedAt: 'desc' }, take: 12 } },
+    });
+  }
+
+  async createChannel(gamadId: string, data: { name: string; slug: string; description?: string; avatarUrl?: string; bannerUrl?: string }) {
+    return this.prisma.videoChannel.create({ data: { ...data, gamadId } });
+  }
+
+  async updateChannel(id: string, gamadId: string, data: Partial<{ name: string; slug: string; description: string; avatarUrl: string; bannerUrl: string }>) {
+    return this.prisma.videoChannel.updateMany({ where: { id, gamadId }, data });
+  }
 }

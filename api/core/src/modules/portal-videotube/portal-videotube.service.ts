@@ -153,6 +153,42 @@ export class PortalVideoTubeService {
     return this.repo.findMyVideos(authorId);
   }
 
+  async updateVideo(authorId: string, videoId: string, data: any) {
+    await this.repo.updateVideo(videoId, authorId, data);
+    return { ok: true };
+  }
+
+  async deleteVideo(authorId: string, videoId: string) {
+    await this.repo.softDeleteVideo(videoId, authorId);
+    return { ok: true };
+  }
+
+  getStudioStats(authorId: string) {
+    return this.repo.getCreatorStats(authorId);
+  }
+
+  /* ── Channel ── */
+
+  async getMyChannel(gamadId: string) {
+    return this.repo.findChannelByGamadId(gamadId);
+  }
+
+  async upsertChannel(gamadId: string, data: {
+    name: string; slug: string; description?: string;
+    avatarUrl?: string; bannerUrl?: string;
+  }) {
+    const existing = await this.repo.findChannelByGamadId(gamadId);
+    if (existing) {
+      await this.repo.updateChannel(existing.id, gamadId, data);
+      return this.repo.findChannelByGamadId(gamadId);
+    }
+    return this.repo.createChannel(gamadId, data);
+  }
+
+  getChannelBySlug(slug: string) {
+    return this.repo.findChannelBySlug(slug);
+  }
+
   /* ── Editorial queue ── */
 
   async getPendingReview() {
