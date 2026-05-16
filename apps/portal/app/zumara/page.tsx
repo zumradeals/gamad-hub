@@ -192,7 +192,10 @@ export default function ZumaraCarrefourPage() {
             {tab === 'pages' && (
               <PagesTab />
             )}
-            {(tab === 'marche' || tab === 'events') && (
+            {tab === 'marche' && (
+              <MarcheTab />
+            )}
+            {tab === 'events' && (
               <ComingSoon tab={tab} />
             )}
           </main>
@@ -1065,6 +1068,66 @@ function PagesTab() {
         >
           Voir toutes les Pages
         </a>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Marché Tab ─── */
+function MarcheTab() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{
+        background: 'white', borderRadius: 12, padding: '20px 24px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12,
+      }}>
+        <div>
+          <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 18, fontWeight: 700, color: '#071326', margin: 0 }}>
+            Le Marché
+          </h2>
+          <p style={{ fontSize: 13, color: '#6B7280', margin: '4px 0 0' }}>
+            Produits et services des Zumara GAMAD — paiement ZAHAB, Wave ou Orange Money
+          </p>
+        </div>
+        <a
+          href="/zumara/marche"
+          style={{
+            background: '#E5C100', color: '#071326', padding: '10px 20px',
+            borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none',
+          }}
+        >
+          Accéder au Marché →
+        </a>
+      </div>
+      <div style={{ background: 'white', borderRadius: 12, padding: '2.5rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🛒</div>
+        <h3 style={{ color: '#071326', fontWeight: 700, marginBottom: 8, fontSize: 16 }}>
+          Achetez et vendez en ZAHAB
+        </h3>
+        <p style={{ color: '#6B7280', maxWidth: 420, margin: '0 auto 20px', fontSize: 14, lineHeight: 1.7 }}>
+          Le Marché GAMAD regroupe les produits et services des Pages Pro. Paiement en ZAHAB (instantané), Wave ou Orange Money.
+        </p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a
+            href="/zumara/marche"
+            style={{
+              background: '#1696D2', color: '#fff', padding: '11px 24px',
+              borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none',
+            }}
+          >
+            Parcourir le Marché
+          </a>
+          <a
+            href="/zumara/pages"
+            style={{
+              background: '#fff', color: '#071326', padding: '11px 24px',
+              borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none',
+              border: '1px solid #E5E7EB',
+            }}
+          >
+            Pages Pro
+          </a>
+        </div>
       </div>
     </div>
   );

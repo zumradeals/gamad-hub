@@ -304,42 +304,43 @@ model GamadId {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
-  account     Account?
-  profile     Profile?
-  memberRoles MemberRole[]
-  memberships Membership[]
-  ownedActivities Activity[]  @relation("ActivityOwner")
-  assignedTasks   Task[]      @relation("TaskAssignee")
-  ownedDocuments  Document[]  @relation("DocumentOwner")
-  sentMessages    Message[]   @relation("MessageSender")
-  receivedMessages Message[]  @relation("MessageRecipient")
-  notifications   Notification[]
-  auditEvents     AuditEvent[] @relation("AuditActor")
-  documentVersions DocumentVersion[] @relation("VersionCreator")
-  grantedRoles    MemberRole[] @relation("RoleGranter")
-  enrollments     FormationEnrollment[]
-  moduleCompletions ModuleCompletion[]
-  posts           Post[]
-  reactions       PostReaction[]
+  account                Account?
+  profile                Profile?
+  memberRoles            MemberRole[]
+  memberships            Membership[]
+  ownedActivities        Activity[]            @relation("ActivityOwner")
+  assignedTasks          Task[]                @relation("TaskAssignee")
+  ownedDocuments         Document[]            @relation("DocumentOwner")
+  sentMessages           Message[]             @relation("MessageSender")
+  receivedMessages       Message[]             @relation("MessageRecipient")
+  notifications          Notification[]
+  auditEvents            AuditEvent[]          @relation("AuditActor")
+  documentVersions       DocumentVersion[]     @relation("VersionCreator")
+  grantedRoles           MemberRole[]          @relation("RoleGranter")
+  enrollments            FormationEnrollment[]
+  moduleCompletions      ModuleCompletion[]
+  posts                  Post[]
+  reactions              PostReaction[]
   publishedAnnouncements Announcement[]
-  activityReports ActivityReport[]
-  portalApplications PortalApplication[]
-  feedPosts       PortalFeedPost[]
-  feedReactions   PortalFeedReaction[]
-  feedComments    PortalFeedComment[]
-  zahabWallet     ZahabWallet?
-  reputation      ReputationScore?
-  sentZahab       ZahabTransaction[] @relation("ZahabSender")
-  receivedZahab   ZahabTransaction[] @relation("ZahabReceiver")
-  articles        Article[]          @relation("ArticleAuthor")
-  reportsMade     ContentReport[]    @relation("ReportsMade")
-  reportsReviewed ContentReport[]    @relation("ReportsReviewed")
+  activityReports        ActivityReport[]
+  portalApplications     PortalApplication[]
+  feedPosts              PortalFeedPost[]
+  feedReactions          PortalFeedReaction[]
+  feedComments           PortalFeedComment[]
+  zahabWallet            ZahabWallet?
+  reputation             ReputationScore?
+  sentZahab              ZahabTransaction[]    @relation("ZahabSender")
+  receivedZahab          ZahabTransaction[]    @relation("ZahabReceiver")
+  articles               Article[]             @relation("ArticleAuthor")
+  reportsMade            ContentReport[]       @relation("ReportsMade")
+  reportsReviewed        ContentReport[]       @relation("ReportsReviewed")
 
   zumaraRequests        ZumaraRequest[]        @relation("ZumaraRequests")
   zumaraFounderships    ZumaraFounder[]        @relation("ZumaraFounderships")
   zumaraCellMemberships ZumaraCellMembership[] @relation("ZumaraCellMemberships")
   revelationEvents      RevelationEvent[]      @relation("RevelationEvents")
   pageFollows           ZumaraPageFollow[]
+  marketOrders          MarketOrder[]          @relation("MarketOrderBuyer")
 }
 
 model Account {
@@ -374,13 +375,13 @@ model Profile {
 }
 
 model Role {
-  id           String     @id @default(uuid())
-  name         String     @unique
-  scope        RoleScope  @default(GLOBAL)
+  id           String    @id @default(uuid())
+  name         String    @unique
+  scope        RoleScope @default(GLOBAL)
   description  String?
-  isSystemRole Boolean    @default(false)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  isSystemRole Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   rolePermissions RolePermission[]
   memberRoles     MemberRole[]
@@ -411,19 +412,19 @@ model RolePermission {
 }
 
 model MemberRole {
-  id                 String          @id @default(uuid())
+  id                 String            @id @default(uuid())
   gamadId            String
-  gamad              GamadId         @relation(fields: [gamadId], references: [id])
+  gamad              GamadId           @relation(fields: [gamadId], references: [id])
   roleId             String
-  role               Role            @relation(fields: [roleId], references: [id])
+  role               Role              @relation(fields: [roleId], references: [id])
   organizationUnitId String?
   organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
   grantedBy          String?
-  granter            GamadId?        @relation("RoleGranter", fields: [grantedBy], references: [id])
-  grantedAt          DateTime        @default(now())
+  granter            GamadId?          @relation("RoleGranter", fields: [grantedBy], references: [id])
+  grantedAt          DateTime          @default(now())
   revokedAt          DateTime?
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 }
 
 // ─── ORGANIZATION ─────────────────────────────────────────────────────────────
@@ -440,15 +441,15 @@ model OrganizationUnit {
   createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
 
-  zumara       Zumara?
-  memberships  Membership[]
-  memberRoles  MemberRole[]
-  activities   Activity[]
-  documents    Document[]
+  zumara        Zumara?
+  memberships   Membership[]
+  memberRoles   MemberRole[]
+  activities    Activity[]
+  documents     Document[]
   announcements Announcement[]
-  messages     Message[]
-  auditEvents  AuditEvent[]
-  threads      Thread[]
+  messages      Message[]
+  auditEvents   AuditEvent[]
+  threads       Thread[]
 }
 
 model Membership {
@@ -523,14 +524,14 @@ model FormationEnrollment {
 }
 
 model ModuleCompletion {
-  id        String          @id @default(uuid())
-  gamadId   String
-  gamad     GamadId         @relation(fields: [gamadId], references: [id])
-  moduleId  String
-  module    FormationModule @relation(fields: [moduleId], references: [id])
-  completedAt DateTime      @default(now())
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id          String          @id @default(uuid())
+  gamadId     String
+  gamad       GamadId         @relation(fields: [gamadId], references: [id])
+  moduleId    String
+  module      FormationModule @relation(fields: [moduleId], references: [id])
+  completedAt DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   @@unique([gamadId, moduleId])
 }
@@ -538,7 +539,7 @@ model ModuleCompletion {
 // ─── COMMUNICATION ────────────────────────────────────────────────────────────
 
 model Thread {
-  id                 String           @id @default(uuid())
+  id                 String            @id @default(uuid())
   title              String
   organizationUnitId String?
   organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
@@ -607,32 +608,32 @@ model Message {
 }
 
 model Notification {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   gamadId   String
-  gamad     GamadId  @relation(fields: [gamadId], references: [id])
+  gamad     GamadId   @relation(fields: [gamadId], references: [id])
   type      String
   content   String
   readAt    DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 // ─── ACTIVITY ─────────────────────────────────────────────────────────────────
 
 model Activity {
-  id                 String           @id @default(uuid())
+  id                 String            @id @default(uuid())
   title              String
   description        String?
   organizationUnitId String?
   organizationUnit   OrganizationUnit? @relation(fields: [organizationUnitId], references: [id])
   ownerId            String
-  owner              GamadId          @relation("ActivityOwner", fields: [ownerId], references: [id])
-  status             ActivityStatus   @default(DRAFT)
-  priority           ActivityPriority @default(NORMAL)
+  owner              GamadId           @relation("ActivityOwner", fields: [ownerId], references: [id])
+  status             ActivityStatus    @default(DRAFT)
+  priority           ActivityPriority  @default(NORMAL)
   startDate          DateTime?
   endDate            DateTime?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   tasks   Task[]
   reports ActivityReport[]
@@ -743,11 +744,11 @@ model AuditEvent {
 // ─── PORTAIL PUBLIC ───────────────────────────────────────────────────────────
 
 model ArticleCategory {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   articles Article[]
 }
@@ -787,39 +788,39 @@ model VideoCategory {
 }
 
 model Video {
-  id          String        @id @default(uuid())
-  title       String
-  slug        String        @unique
-  description String?
+  id           String         @id @default(uuid())
+  title        String
+  slug         String         @unique
+  description  String?
   thumbnailUrl String?
-  videoUrl    String?
-  duration    Int?
-  categoryId  String?
-  category    VideoCategory? @relation(fields: [categoryId], references: [id])
-  status      VideoStatus   @default(DRAFT)
-  publishedAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  videoUrl     String?
+  duration     Int?
+  categoryId   String?
+  category     VideoCategory? @relation(fields: [categoryId], references: [id])
+  status       VideoStatus    @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 // ─── PORTAIL — CANDIDATURES RÉSEAU ───────────────────────────────────────────
 
 model PortalApplication {
-  id          String            @id @default(uuid())
-  gamadId     String?
-  gamad       GamadId?          @relation(fields: [gamadId], references: [id])
-  firstName   String
-  lastName    String
-  email       String
-  country     String?
-  city        String?
-  message     String?
-  status      ApplicationStatus @default(SUBMITTED)
-  reviewNote  String?
-  reviewedAt  DateTime?
+  id                 String            @id @default(uuid())
+  gamadId            String?
+  gamad              GamadId?          @relation(fields: [gamadId], references: [id])
+  firstName          String
+  lastName           String
+  email              String
+  country            String?
+  city               String?
+  message            String?
+  status             ApplicationStatus @default(SUBMITTED)
+  reviewNote         String?
+  reviewedAt         DateTime?
   advancedFormSentAt DateTime?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 }
 
 // ─── PORTAIL — FEED SOCIAL ────────────────────────────────────────────────────
@@ -887,7 +888,6 @@ model ZahabWallet {
   totalSpent   Float    @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
 }
 
 model ZahabTransaction {
@@ -952,76 +952,76 @@ model ContentFilterRule {
 // ─── ZUMARA — CELLULES CERTIFIÉES GAMAD ──────────────────────────────────────
 
 model ZumaraRequest {
-  id           String              @id @default(uuid())
-  gamadId      String
-  gamad        GamadId             @relation("ZumaraRequests", fields: [gamadId], references: [id])
-  name         String
-  objective    String
-  type         ZumaraType          @default(HYBRID)
-  country      String?
-  city         String?
-  status       ZumaraRequestStatus @default(SUBMITTED)
-  reviewNote   String?
-  reviewedBy   String?
-  reviewedAt   DateTime?
-  deadline     DateTime?
-  activatedAt  DateTime?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id          String              @id @default(uuid())
+  gamadId     String
+  gamad       GamadId             @relation("ZumaraRequests", fields: [gamadId], references: [id])
+  name        String
+  objective   String
+  type        ZumaraType          @default(HYBRID)
+  country     String?
+  city        String?
+  status      ZumaraRequestStatus @default(SUBMITTED)
+  reviewNote  String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  deadline    DateTime?
+  activatedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
-  founders     ZumaraFounder[]
-  cell         ZumaraCell?
+  founders ZumaraFounder[]
+  cell     ZumaraCell?
 }
 
 model ZumaraFounder {
-  id          String          @id @default(uuid())
-  requestId   String
-  request     ZumaraRequest   @relation(fields: [requestId], references: [id])
-  gamadId     String?
-  gamad       GamadId?        @relation("ZumaraFounderships", fields: [gamadId], references: [id])
-  email       String
-  role        ZumaraMemberRole @default(CO_FOUNDER)
-  trained     Boolean         @default(false)
-  joinedAt    DateTime        @default(now())
+  id        String           @id @default(uuid())
+  requestId String
+  request   ZumaraRequest    @relation(fields: [requestId], references: [id])
+  gamadId   String?
+  gamad     GamadId?         @relation("ZumaraFounderships", fields: [gamadId], references: [id])
+  email     String
+  role      ZumaraMemberRole @default(CO_FOUNDER)
+  trained   Boolean          @default(false)
+  joinedAt  DateTime         @default(now())
 
   @@unique([requestId, email])
 }
 
 model ZumaraCell {
-  id               String          @id @default(uuid())
-  requestId        String          @unique
-  request          ZumaraRequest   @relation(fields: [requestId], references: [id])
+  id               String           @id @default(uuid())
+  requestId        String           @unique
+  request          ZumaraRequest    @relation(fields: [requestId], references: [id])
   name             String
-  slug             String          @unique
+  slug             String           @unique
   objective        String
   type             ZumaraType
   country          String?
   city             String?
-  status           ZumaraStatus    @default(ACTIVE)
+  status           ZumaraStatus     @default(ACTIVE)
   visibility       ZumaraVisibility @default(PUBLIC)
-  memberCount      Int             @default(5)
+  memberCount      Int              @default(5)
   cotisationAmount Float?
   cotisationPeriod String?
-  walletBalance    Float           @default(0)
-  activatedAt      DateTime        @default(now())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  walletBalance    Float            @default(0)
+  activatedAt      DateTime         @default(now())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
-  memberships      ZumaraCellMembership[]
-  feedPosts        PortalFeedPost[]
-  page             ZumaraPage?
+  memberships ZumaraCellMembership[]
+  feedPosts   PortalFeedPost[]
+  page        ZumaraPage?
 }
 
 model ZumaraCellMembership {
-  id         String           @id @default(uuid())
-  cellId     String
-  cell       ZumaraCell       @relation(fields: [cellId], references: [id])
-  gamadId    String
-  gamad      GamadId          @relation("ZumaraCellMemberships", fields: [gamadId], references: [id])
-  role       ZumaraMemberRole @default(MEMBER)
-  status     MembershipStatus @default(ACTIVE)
-  joinedAt   DateTime         @default(now())
-  leftAt     DateTime?
+  id       String           @id @default(uuid())
+  cellId   String
+  cell     ZumaraCell       @relation(fields: [cellId], references: [id])
+  gamadId  String
+  gamad    GamadId          @relation("ZumaraCellMemberships", fields: [gamadId], references: [id])
+  role     ZumaraMemberRole @default(MEMBER)
+  status   MembershipStatus @default(ACTIVE)
+  joinedAt DateTime         @default(now())
+  leftAt   DateTime?
 
   @@unique([cellId, gamadId])
 }
@@ -1099,6 +1099,7 @@ model ZumaraPageProduct {
   available   Boolean         @default(true)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+  orders      MarketOrder[]
 }
 
 model ZumaraPageFollow {
@@ -1110,4 +1111,36 @@ model ZumaraPageFollow {
   createdAt DateTime   @default(now())
 
   @@unique([pageId, gamadId])
+}
+
+enum MarketOrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum MarketPaymentMethod {
+  ZAHAB
+  WAVE
+  ORANGE_MONEY
+}
+
+model MarketOrder {
+  id            String              @id @default(uuid())
+  productId     String
+  product       ZumaraPageProduct   @relation(fields: [productId], references: [id])
+  buyerGamadId  String
+  buyer         GamadId             @relation("MarketOrderBuyer", fields: [buyerGamadId], references: [id])
+  quantity      Int                 @default(1)
+  unitPrice     Float
+  totalPrice    Float
+  currency      String              @default("ZAHAB")
+  paymentMethod MarketPaymentMethod @default(ZAHAB)
+  status        MarketOrderStatus   @default(PENDING)
+  note          String?
+  paymentRef    String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 }

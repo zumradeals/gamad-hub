@@ -18,6 +18,7 @@ import { RevelationModule } from './modules/revelation/revelation.module';
 import { PortalProfilesModule } from './modules/portal-profiles/portal-profiles.module';
 import { PortalMessagesModule } from './modules/portal-messages/portal-messages.module';
 import { PortalPagesModule } from './modules/portal-pages/portal-pages.module';
+import { PortalMarketModule } from './modules/portal-market/portal-market.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PortalPagesModule } from './modules/portal-pages/portal-pages.module';
     PortalProfilesModule,
     PortalMessagesModule,
     PortalPagesModule,
+    PortalMarketModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
