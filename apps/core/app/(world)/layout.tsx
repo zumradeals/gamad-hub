@@ -22,6 +22,7 @@ const GOV_NAV = [
   { href: '/governance/zumara',       label: 'Zumara',        icon: '⬡' },
   { href: '/governance/revelation',   label: 'Révélation',    icon: '✦' },
   { href: '/governance/audit',        label: 'Audit',         icon: '▦' },
+  { href: '/governance/modules/blog', label: 'Blog (config)',  icon: '📰' },
 ];
 
 export default function WorldLayout({ children }: { children: React.ReactNode }) {
