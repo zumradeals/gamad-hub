@@ -19,9 +19,12 @@ import { PortalProfilesModule } from './modules/portal-profiles/portal-profiles.
 import { PortalMessagesModule } from './modules/portal-messages/portal-messages.module';
 import { PortalPagesModule } from './modules/portal-pages/portal-pages.module';
 import { PortalMarketModule } from './modules/portal-market/portal-market.module';
+import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
+import { ModuleConfigModule } from './modules/module-config/module-config.module';
 
 @Module({
   imports: [
+    ModuleConfigModule,
     IdentityModule,
     OrganizationModule,
     FormationModule,
@@ -41,6 +44,7 @@ import { PortalMarketModule } from './modules/portal-market/portal-market.module
     PortalMessagesModule,
     PortalPagesModule,
     PortalMarketModule,
+    PortalBlogModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

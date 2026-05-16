@@ -156,6 +156,36 @@ export class ZahabService {
     await this.repo.incrementStats(authorId, 'totalFlagged');
   }
 
+  // ── Récompenses Blog ─────────────────────────────────────────────────────────
+
+  async onArticleRead(readerId: string, articleId: string) {
+    const amount = REWARD_RULES['ARTICLE_READ'];
+    await this.repo.getOrCreateWallet(readerId);
+    await this.repo.credit(readerId, amount);
+    await this.repo.createTransaction({
+      toId: readerId,
+      amount,
+      reason: ZahabTransactionReason.ARTICLE_READ,
+      referenceId: articleId,
+      note: 'Lecture d\'un article',
+    });
+    await this.repo.getOrCreateReputation(readerId);
+    await this.repo.incrementReputation(readerId, 1, 'contentScore');
+  }
+
+  async onArticleLiked(authorId: string, articleId: string) {
+    const amount = REWARD_RULES['ARTICLE_LIKED'];
+    await this.repo.getOrCreateWallet(authorId);
+    await this.repo.credit(authorId, amount);
+    await this.repo.createTransaction({
+      toId: authorId,
+      amount,
+      reason: ZahabTransactionReason.ARTICLE_LIKED,
+      referenceId: articleId,
+      note: 'Article aimé',
+    });
+  }
+
   // ── Transfert entre membres ──────────────────────────────────────────────────
 
   async transfer(fromId: string, toId: string, amount: number, note?: string) {

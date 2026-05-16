@@ -284,6 +284,9 @@ enum ZahabTransactionReason {
   ARTICLE_PUBLISHED
   ARTICLE_MILESTONE_100
   ARTICLE_MILESTONE_1K
+  ARTICLE_READ
+  ARTICLE_LIKED
+  MARKET_PURCHASE
 }
 
 enum TrustLevel {
@@ -341,6 +344,10 @@ model GamadId {
   revelationEvents      RevelationEvent[]      @relation("RevelationEvents")
   pageFollows           ZumaraPageFollow[]
   marketOrders          MarketOrder[]          @relation("MarketOrderBuyer")
+  articleReads          ArticleRead[]          @relation("ArticleReads")
+  articleLikes          ArticleLike[]          @relation("ArticleLikes")
+  articleComments       ArticleComment[]       @relation("ArticleComments")
+  moduleRoles           ModuleRole[]           @relation("ModuleRoles")
 }
 
 model Account {
@@ -761,20 +768,34 @@ model Article {
   content          String
   contentBlocks    Json?
   imageUrl         String?
+  videoUrl         String?
+  tags             String[]
+  sponsored        Boolean          @default(false)
+  sponsorName      String?
+  sponsorUrl       String?
   categoryId       String?
   category         ArticleCategory? @relation(fields: [categoryId], references: [id])
   authorId         String?
   author           GamadId?         @relation("ArticleAuthor", fields: [authorId], references: [id])
+  editorId         String?
   status           ArticleStatus    @default(DRAFT)
   moderationStatus ModerationStatus @default(PENDING)
+  rejectionNote    String?
   zahabRewarded    Boolean          @default(false)
   rewardAmount     Float            @default(0)
   viewCount        Int              @default(0)
+  readRewardCount  Int              @default(0)
+  likesCount       Int              @default(0)
+  readingTimeMin   Int?
   milestone100     Boolean          @default(false)
   milestone1k      Boolean          @default(false)
   publishedAt      DateTime?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+
+  reads            ArticleRead[]
+  likes            ArticleLike[]
+  comments         ArticleComment[]
 }
 
 model VideoCategory {
@@ -1143,4 +1164,67 @@ model MarketOrder {
   paymentRef    String?
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
+}
+
+// ─── BLOG ENGAGEMENT ─────────────────────────────────────────────────────────
+
+model ArticleRead {
+  id          String   @id @default(uuid())
+  articleId   String
+  article     Article  @relation(fields: [articleId], references: [id])
+  gamadId     String
+  gamad       GamadId  @relation("ArticleReads", fields: [gamadId], references: [id])
+  rewardedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  @@unique([articleId, gamadId])
+}
+
+model ArticleLike {
+  id        String   @id @default(uuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id])
+  gamadId   String
+  gamad     GamadId  @relation("ArticleLikes", fields: [gamadId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([articleId, gamadId])
+}
+
+model ArticleComment {
+  id        String   @id @default(uuid())
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id])
+  gamadId   String
+  gamad     GamadId  @relation("ArticleComments", fields: [gamadId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── MODULE SOVEREIGNTY ───────────────────────────────────────────────────────
+
+model ModuleConfig {
+  id        String   @id @default(uuid())
+  module    String
+  key       String
+  value     String
+  updatedBy String
+  updatedAt DateTime @updatedAt
+
+  @@unique([module, key])
+}
+
+model ModuleRole {
+  id          String   @id @default(uuid())
+  module      String
+  gamadId     String
+  gamad       GamadId  @relation("ModuleRoles", fields: [gamadId], references: [id])
+  role        String
+  grantedBy   String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([module, gamadId, role])
 }
