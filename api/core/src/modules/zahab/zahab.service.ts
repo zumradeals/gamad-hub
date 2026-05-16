@@ -186,6 +186,86 @@ export class ZahabService {
     });
   }
 
+  // ── Récompenses GamadTube ─────────────────────────────────────────────────────
+
+  async onVideoPublished(authorId: string, videoId: string) {
+    const amount = REWARD_RULES['VIDEO_PUBLISHED'];
+    await this.repo.getOrCreateWallet(authorId);
+    await this.repo.credit(authorId, amount);
+    await this.repo.createTransaction({
+      toId: authorId,
+      amount,
+      reason: ZahabTransactionReason.VIDEO_PUBLISHED,
+      referenceId: videoId,
+      note: 'Vidéo publiée sur GamadTube',
+    });
+    await this.repo.getOrCreateReputation(authorId);
+    await this.repo.incrementReputation(authorId, 10, 'contentScore');
+    await this.repo.incrementStats(authorId, 'totalPosts');
+  }
+
+  async onVideoWatched(viewerId: string, videoId: string) {
+    const amount = REWARD_RULES['VIDEO_WATCHED'];
+    await this.repo.getOrCreateWallet(viewerId);
+    await this.repo.credit(viewerId, amount);
+    await this.repo.createTransaction({
+      toId: viewerId,
+      amount,
+      reason: ZahabTransactionReason.VIDEO_WATCHED,
+      referenceId: videoId,
+      note: 'Vidéo regardée',
+    });
+    await this.repo.getOrCreateReputation(viewerId);
+    await this.repo.incrementReputation(viewerId, 1, 'engagementScore');
+  }
+
+  async onVideoLiked(viewerId: string, authorId: string, videoId: string) {
+    const viewerAmount = REWARD_RULES['VIDEO_LIKED_VIEWER'];
+    const authorAmount = REWARD_RULES['VIDEO_LIKED_AUTHOR'];
+
+    await this.repo.getOrCreateWallet(viewerId);
+    await this.repo.credit(viewerId, viewerAmount);
+    await this.repo.createTransaction({
+      toId: viewerId,
+      amount: viewerAmount,
+      reason: ZahabTransactionReason.VIDEO_LIKED,
+      referenceId: videoId,
+      note: 'Like vidéo donné',
+    });
+
+    if (authorId) {
+      await this.repo.getOrCreateWallet(authorId);
+      await this.repo.credit(authorId, authorAmount);
+      await this.repo.createTransaction({
+        toId: authorId,
+        amount: authorAmount,
+        reason: ZahabTransactionReason.VIDEO_LIKED,
+        referenceId: videoId,
+        note: 'Like reçu sur vidéo',
+      });
+    }
+  }
+
+  async onVideoMilestone(authorId: string, videoId: string, milestone: '100' | '1k' | '10k') {
+    const keys = { '100': 'VIDEO_MILESTONE_100', '1k': 'VIDEO_MILESTONE_1K', '10k': 'VIDEO_MILESTONE_10K' };
+    const reasons = {
+      '100': ZahabTransactionReason.VIDEO_MILESTONE_100,
+      '1k':  ZahabTransactionReason.VIDEO_MILESTONE_1K,
+      '10k': ZahabTransactionReason.VIDEO_MILESTONE_10K,
+    };
+    const labels = { '100': '100', '1k': '1 000', '10k': '10 000' };
+    const amount = REWARD_RULES[keys[milestone]];
+    await this.repo.getOrCreateWallet(authorId);
+    await this.repo.credit(authorId, amount);
+    await this.repo.createTransaction({
+      toId: authorId,
+      amount,
+      reason: reasons[milestone],
+      referenceId: videoId,
+      note: `Palier ${labels[milestone]} vues atteint`,
+    });
+  }
+
   // ── Transfert entre membres ──────────────────────────────────────────────────
 
   async transfer(fromId: string, toId: string, amount: number, note?: string) {

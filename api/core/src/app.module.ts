@@ -22,6 +22,7 @@ import { PortalMarketModule } from './modules/portal-market/portal-market.module
 import { PortalBlogModule } from './modules/portal-blog/portal-blog.module';
 import { ModerationModule } from './modules/moderation/moderation.module';
 import { ModuleConfigModule } from './modules/module-config/module-config.module';
+import { PortalVideoTubeModule } from './modules/portal-videotube/portal-videotube.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ModuleConfigModule } from './modules/module-config/module-config.module
     PortalMarketModule,
     PortalBlogModule,
     ModerationModule,
+    PortalVideoTubeModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

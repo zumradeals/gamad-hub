@@ -6,6 +6,8 @@ const LINKS = [
   { href: '/vision',     label: 'Vision' },
   { href: '/services',   label: 'Services' },
   { href: '/blog',       label: 'Blog' },
+  { href: '/videos',     label: 'GamadTube' },
+  { href: '/tv',         label: 'GAMAD TV' },
   { href: '/zumara',     label: 'Zumara' },
   { href: '/citoyens',   label: 'Citoyens' },
   { href: '/ressources', label: 'Ressources' },
